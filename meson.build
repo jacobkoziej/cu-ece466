@@ -27,3 +27,4 @@ flex = find_program('flex')
 
 
 subdir('src')
+subdir('tests')
