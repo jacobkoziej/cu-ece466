@@ -24,3 +24,6 @@ cmocka_dep = dependency(
 
 # programs
 flex = find_program('flex')
+
+
+subdir('src')
