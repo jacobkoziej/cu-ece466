@@ -13,3 +13,7 @@ project(
         ],
         meson_version : '>=1.0.0',
 )
+
+
+# programs
+flex = find_program('flex')
