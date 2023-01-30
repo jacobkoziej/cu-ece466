@@ -21,13 +21,13 @@ gen_lexer = custom_target(
 
 
 jkcc_src = files(
-        'jkcc.c',
 )
 
 
 executable(
         'jkcc',
         sources : [
+                'jkcc.c',
                 jkcc_src,
                 gen_lexer,
         ],
