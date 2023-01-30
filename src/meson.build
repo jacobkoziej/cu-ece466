@@ -18,3 +18,17 @@ gen_lexer = custom_target(
                 '@INPUT@',
         ],
 )
+
+
+jkcc_src = files(
+        'jkcc.c',
+)
+
+
+executable(
+        'jkcc',
+        sources : [
+                jkcc_src,
+                gen_lexer,
+        ],
+)
