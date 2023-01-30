@@ -15,5 +15,12 @@ project(
 )
 
 
+# dependencies
+cmocka_dep = dependency(
+        'cmocka',
+        required : get_option('tests'),
+)
+
+
 # programs
 flex = find_program('flex')
