@@ -2,10 +2,10 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
-lexer_c = custom_target(
-        'lexer.c',
+lex_yy_c = custom_target(
+        'lex.yy.c',
         input   : 'lexer.l',
-        output  : ['lexer.c', 'yylex.h'],
+        output  : ['lex.yy.c', 'lex.yy.h'],
         command : [
                 flex,
                 '--outfile=@OUTPUT0@',
@@ -29,6 +29,6 @@ executable(
         sources : [
                 'jkcc.c',
                 jkcc_src,
-                lexer_c,
+                lex_yy_c,
         ],
 )

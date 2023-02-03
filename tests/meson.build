@@ -5,7 +5,7 @@
 tests = {
         'lexer' : {
                 'sources' : [
-                        lexer_c,
+                        lex_yy_c,
                 ],
         },
 }
