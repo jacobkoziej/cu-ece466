@@ -5,7 +5,7 @@
 tests = {
         'lexer' : {
                 'sources' : [
-                        gen_lexer,
+                        lexer_c,
                 ],
         },
 }

@@ -2,9 +2,9 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
-gen_lexer = custom_target(
-        'gen-lexer',
-        input   : 'lexer.lex',
+lexer_c = custom_target(
+        'lexer.c',
+        input   : 'lexer.l',
         output  : ['lexer.c', 'yylex.h'],
         command : [
                 flex,
@@ -29,6 +29,6 @@ executable(
         sources : [
                 'jkcc.c',
                 jkcc_src,
-                gen_lexer,
+                lexer_c,
         ],
 )
