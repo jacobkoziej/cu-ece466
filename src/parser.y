@@ -56,6 +56,10 @@ void yyerror(char const *token)
 %token KEYWORD__STATIC_ASSERT
 %token KEYWORD__THREAD_LOCAL
 
+%token IDENTIFIER_NONDIGIT
+%token IDENTIFIER_DIGIT
+%token IDENTIFIER___FUNC__
+
 %%
 
 todo: // TODO: add rules
