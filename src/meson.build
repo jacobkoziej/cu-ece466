@@ -2,9 +2,22 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
+parser_tab_c = custom_target(
+        'parser.tab.c',
+        input  : 'parser.y',
+        output : ['parser.tab.c', 'parser.tab.h'],
+        command : [
+                bison,
+                '--header=@OUTPUT1@',
+                '--output=@OUTPUT0@',
+                '@INPUT0@',
+        ],
+)
+
+
 lex_yy_c = custom_target(
         'lex.yy.c',
-        input   : 'lexer.l',
+        input   : ['lexer.l', parser_tab_c],
         output  : ['lex.yy.c', 'lex.yy.h'],
         command : [
                 flex,
@@ -15,7 +28,7 @@ lex_yy_c = custom_target(
                 '--noyywrap',
                 '--reentrant',
                 '-Cef',
-                '@INPUT@',
+                '@INPUT0@',
         ],
 )
 
@@ -30,5 +43,6 @@ executable(
                 'jkcc.c',
                 jkcc_src,
                 lex_yy_c,
+                parser_tab_c,
         ],
 )

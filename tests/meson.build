@@ -6,6 +6,7 @@ tests = {
         'lexer' : {
                 'sources' : [
                         lex_yy_c,
+                        parser_tab_c,
                 ],
         },
 }

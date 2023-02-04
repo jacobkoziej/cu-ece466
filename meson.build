@@ -23,7 +23,8 @@ cmocka_dep = dependency(
 
 
 # programs
-flex = find_program('flex')
+bison = find_program('bison')
+flex  = find_program('flex')
 
 
 subdir('src')
