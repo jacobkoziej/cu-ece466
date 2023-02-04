@@ -60,6 +60,8 @@ void yyerror(char const *token)
 %token IDENTIFIER_DIGIT
 %token IDENTIFIER___FUNC__
 
+%token UNIVERSAL_CHARACTER_NAME
+
 %%
 
 todo: // TODO: add rules
