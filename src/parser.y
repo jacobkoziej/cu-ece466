@@ -5,6 +5,9 @@
  */
 
 %{
+#include "lex.yy.h"
+
+
 void yyerror(char const *token)
 {
 	(void) token;
