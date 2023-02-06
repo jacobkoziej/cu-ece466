@@ -26,7 +26,6 @@ lex_yy_c = custom_target(
                 '--8bit',
                 '--yylineno',
                 '--noyywrap',
-                '--reentrant',
                 '-Cef',
                 '@INPUT0@',
         ],
