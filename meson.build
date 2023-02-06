@@ -13,6 +13,7 @@ project(
         ],
         meson_version : '>=1.0.0',
 )
+add_global_arguments('-D_DEFAULT_SOURCE', language : 'c')
 
 
 # dependencies
