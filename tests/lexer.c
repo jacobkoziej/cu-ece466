@@ -145,6 +145,119 @@ static void test_keywords(void **state)
 	assert_string_equal(yytext, "_Thread_Local");
 }
 
+static void test_punctuators(void **state)
+{
+	(void) state;
+	assert_int_equal(yylex(),   PUNCTUATOR_LBRACKET);
+	assert_string_equal(yytext, "[");
+	assert_int_equal(yylex(),   PUNCTUATOR_LBRACKET);
+	assert_string_equal(yytext, "<:");
+	assert_int_equal(yylex(),   PUNCTUATOR_RBRACKET);
+	assert_string_equal(yytext, "]");
+	assert_int_equal(yylex(),   PUNCTUATOR_RBRACKET);
+	assert_string_equal(yytext, ":>");
+	assert_int_equal(yylex(),   PUNCTUATOR_LPARENTHESIS);
+	assert_string_equal(yytext, "(");
+	assert_int_equal(yylex(),   PUNCTUATOR_RPARENTHESIS);
+	assert_string_equal(yytext, ")");
+	assert_int_equal(yylex(),   PUNCTUATOR_LBRACE);
+	assert_string_equal(yytext, "{");
+	assert_int_equal(yylex(),   PUNCTUATOR_LBRACE);
+	assert_string_equal(yytext, "<%");
+	assert_int_equal(yylex(),   PUNCTUATOR_RBRACE);
+	assert_string_equal(yytext, "}");
+	assert_int_equal(yylex(),   PUNCTUATOR_RBRACE);
+	assert_string_equal(yytext, "%>");
+	assert_int_equal(yylex(),   PUNCTUATOR_MEMBER_ACCESS);
+	assert_string_equal(yytext, ".");
+	assert_int_equal(yylex(),   PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE);
+	assert_string_equal(yytext, "->");
+	assert_int_equal(yylex(),   PUNCTUATOR_INCREMENT);
+	assert_string_equal(yytext, "++");
+	assert_int_equal(yylex(),   PUNCTUATOR_DECREMENT);
+	assert_string_equal(yytext, "--");
+	assert_int_equal(yylex(),   PUNCTUATOR_AMPERSAND);
+	assert_string_equal(yytext, "&");
+	assert_int_equal(yylex(),   PUNCTUATOR_ASTERISK);
+	assert_string_equal(yytext, "*");
+	assert_int_equal(yylex(),   PUNCTUATOR_PLUS);
+	assert_string_equal(yytext, "+");
+	assert_int_equal(yylex(),   PUNCTUATOR_MINUS);
+	assert_string_equal(yytext, "-");
+	assert_int_equal(yylex(),   PUNCTUATOR_UNARY_COMPLEMENT);
+	assert_string_equal(yytext, "~");
+	assert_int_equal(yylex(),   PUNCTUATOR_LOGICAL_NOT);
+	assert_string_equal(yytext, "!");
+	assert_int_equal(yylex(),   PUNCTUATOR_DIVISION);
+	assert_string_equal(yytext, "/");
+	assert_int_equal(yylex(),   PUNCTUATOR_MODULO);
+	assert_string_equal(yytext, "%");
+	assert_int_equal(yylex(),   PUNCTUATOR_LBITSHIFT);
+	assert_string_equal(yytext, "<<");
+	assert_int_equal(yylex(),   PUNCTUATOR_RBITSHIFT);
+	assert_string_equal(yytext, ">>");
+	assert_int_equal(yylex(),   PUNCTUATOR_LESS_THAN);
+	assert_string_equal(yytext, "<");
+	assert_int_equal(yylex(),   PUNCTUATOR_GREATER_THAN);
+	assert_string_equal(yytext, ">");
+	assert_int_equal(yylex(),   PUNCTUATOR_LESS_THAN_OR_EQUAL);
+	assert_string_equal(yytext, "<=");
+	assert_int_equal(yylex(),   PUNCTUATOR_GREATER_THAN_OR_EQUAL);
+	assert_string_equal(yytext, ">=");
+	assert_int_equal(yylex(),   PUNCTUATOR_EQUALITY);
+	assert_string_equal(yytext, "==");
+	assert_int_equal(yylex(),   PUNCTUATOR_INEQUALITY);
+	assert_string_equal(yytext, "!=");
+	assert_int_equal(yylex(),   PUNCTUATOR_XOR);
+	assert_string_equal(yytext, "^");
+	assert_int_equal(yylex(),   PUNCTUATOR_OR);
+	assert_string_equal(yytext, "|");
+	assert_int_equal(yylex(),   PUNCTUATOR_LOGICAL_AND);
+	assert_string_equal(yytext, "&&");
+	assert_int_equal(yylex(),   PUNCTUATOR_LOGICAL_OR);
+	assert_string_equal(yytext, "||");
+	assert_int_equal(yylex(),   PUNCTUATOR_CONDITIONAL_QUESTION);
+	assert_string_equal(yytext, "?");
+	assert_int_equal(yylex(),   PUNCTUATOR_CONDITIONAL_COLON);
+	assert_string_equal(yytext, ":");
+	assert_int_equal(yylex(),   PUNCTUATOR_SEMICOLON);
+	assert_string_equal(yytext, ";");
+	assert_int_equal(yylex(),   PUNCTUATOR_VARIADIC);
+	assert_string_equal(yytext, "...");
+	assert_int_equal(yylex(),   PUNCTUATOR_ASSIGNMENT);
+	assert_string_equal(yytext, "=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_MULTIPLICATION);
+	assert_string_equal(yytext, "*=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_DIVISION);
+	assert_string_equal(yytext, "/=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_MODULO);
+	assert_string_equal(yytext, "%=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_ADDITION);
+	assert_string_equal(yytext, "+=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_SUBTRACTION);
+	assert_string_equal(yytext, "-=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_LBITSHIFT);
+	assert_string_equal(yytext, "<<=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_RBITSHIFT);
+	assert_string_equal(yytext, ">>=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_AND);
+	assert_string_equal(yytext, "&=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_XOR);
+	assert_string_equal(yytext, "^=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMPOUND_OR);
+	assert_string_equal(yytext, "|=");
+	assert_int_equal(yylex(),   PUNCTUATOR_COMMA);
+	assert_string_equal(yytext, ",");
+	assert_int_equal(yylex(),   PUNCTUATOR_PREPROCESSOR);
+	assert_string_equal(yytext, "#");
+	assert_int_equal(yylex(),   PUNCTUATOR_PREPROCESSOR);
+	assert_string_equal(yytext, "%:");
+	assert_int_equal(yylex(),   PUNCTUATOR_PREPROCESSOR_PASTING);
+	assert_string_equal(yytext, "##");
+	assert_int_equal(yylex(),   PUNCTUATOR_PREPROCESSOR_PASTING);
+	assert_string_equal(yytext, "%:%:");
+}
+
 
 int main(int argc, char **argv)
 {
@@ -160,6 +273,11 @@ int main(int argc, char **argv)
 		),
 		cmocka_unit_test_setup_teardown(
 			test_keywords,
+			setup,
+			teardown
+		),
+		cmocka_unit_test_setup_teardown(
+			test_punctuators,
 			setup,
 			teardown
 		),

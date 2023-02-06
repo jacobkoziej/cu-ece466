@@ -8,6 +8,7 @@ tests = {
                         files(
                                 'lexer.d/identifiers',
                                 'lexer.d/keywords',
+                                'lexer.d/punctuators',
                         ),
                 ],
                 'sources' : [
