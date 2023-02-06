@@ -4,6 +4,11 @@
 
 tests = {
         'lexer' : {
+                'args' : [
+                        files(
+                                'lexer.d/keywords',
+                        ),
+                ],
                 'sources' : [
                         lex_yy_c,
                         parser_tab_c,
@@ -23,6 +28,10 @@ if not get_option('tests').disabled() and cmocka_dep.found()
                         ]
                 )
 
-                test(name, exe)
+                test(
+                        name,
+                        exe,
+                        args : args.get('args', [ ]),
+                )
         endforeach
 endif
