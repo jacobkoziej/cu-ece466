@@ -68,3 +68,5 @@ __func__                        return IDENTIFIER___FUNC__;
 {NONDIGIT}({DIGIT}|{NONDIGIT})* return IDENTIFIER_GENERAL;
 \\u{HEXDIGIT}{4}                return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
 \\U{HEXDIGIT}{8}                return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
+
+.|\n ;
