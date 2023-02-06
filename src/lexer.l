@@ -10,6 +10,11 @@
 #include "parser.tab.h"
 %}
 
+/* definitions */
+NONDIGIT [_A-Za-z]
+DIGIT    [0-9]
+HEXDIGIT [0-9A-Fa-f]
+
 %%
 
                /* keywords */
@@ -57,3 +62,9 @@ _Imaginary     return KEYWORD__IMAGINARY;
 _Noreturn      return KEYWORD__NORETURN;
 _Static_Assert return KEYWORD__STATIC_ASSERT;
 _Thread_Local  return KEYWORD__THREAD_LOCAL;
+
+                                /* identifiers */
+__func__                        return IDENTIFIER___FUNC__;
+{NONDIGIT}({DIGIT}|{NONDIGIT})* return IDENTIFIER_GENERAL;
+\\u{HEXDIGIT}{4}                return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
+\\U{HEXDIGIT}{8}                return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
