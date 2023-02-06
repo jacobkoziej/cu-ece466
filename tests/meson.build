@@ -6,6 +6,7 @@ tests = {
         'lexer' : {
                 'args' : [
                         files(
+                                'lexer.d/identifiers',
                                 'lexer.d/keywords',
                         ),
                 ],

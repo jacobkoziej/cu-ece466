@@ -37,6 +37,20 @@ static int teardown(void **state)
 }
 
 
+static void test_identifiers(void **state)
+{
+	(void) state;
+
+	assert_int_equal(yylex(),   IDENTIFIER_GENERAL);
+	assert_string_equal(yytext, "_start");
+	assert_int_equal(yylex(),   IDENTIFIER___FUNC__);
+	assert_string_equal(yytext, "__func__");
+	assert_int_equal(yylex(),   IDENTIFIER_UNIVERSAL_CHARACTER_NAME);
+	assert_string_equal(yytext, "\\u3164");
+	assert_int_equal(yylex(),   IDENTIFIER_UNIVERSAL_CHARACTER_NAME);
+	assert_string_equal(yytext, "\\U0001f60f");
+}
+
 static void test_keywords(void **state)
 {
 	(void) state;
@@ -139,6 +153,11 @@ int main(int argc, char **argv)
 	yyin_next = argv + 1;
 
 	static const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(
+			test_identifiers,
+			setup,
+			teardown
+		),
 		cmocka_unit_test_setup_teardown(
 			test_keywords,
 			setup,
