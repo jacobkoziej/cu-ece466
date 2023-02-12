@@ -33,6 +33,7 @@ lex_yy_c = custom_target(
 
 
 jkcc_src = files(
+        'lexer.c',
         'string.c',
 )
 
