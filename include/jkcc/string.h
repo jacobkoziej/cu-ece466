@@ -8,4 +8,14 @@
 #define JKCC_STRING_H
 
 
+#include <stddef.h>
+
+
+typedef struct string_s {
+	char   *head;
+	char   *tail;
+	size_t  size;
+} string_t;
+
+
 #endif  /* JKCC_STRING_H */
