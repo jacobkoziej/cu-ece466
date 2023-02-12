@@ -63,3 +63,21 @@ int string_append(string_t *string, const char *str, size_t len)
 error:
 	return -1;
 }
+
+int string_init(string_t *string, size_t size)
+{
+	if (!size) size = STRING_DEFAULT_SIZE;
+
+	char *tmp = calloc(size, sizeof(*tmp));
+	if (!tmp) goto error;
+
+	*tmp = '\0';
+	string->head = tmp;
+	string->tail = tmp;
+	string->size = size;
+
+	return 0;
+
+error:
+	return -1;
+}

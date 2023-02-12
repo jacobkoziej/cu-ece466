@@ -11,6 +11,9 @@
 #include <stddef.h>
 
 
+#define STRING_DEFAULT_SIZE 64
+
+
 typedef struct string_s {
 	char   *head;
 	char   *tail;
@@ -19,6 +22,7 @@ typedef struct string_s {
 
 
 int string_append(string_t *string, const char *str, size_t len);
+int string_init(string_t *string, size_t size);
 
 
 #endif  /* JKCC_STRING_H */
