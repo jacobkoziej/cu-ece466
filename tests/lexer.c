@@ -41,14 +41,14 @@ static void test_identifiers(void **state)
 {
 	(void) state;
 
-	assert_int_equal(yylex(),   IDENTIFIER_GENERAL);
+	assert_int_equal(yylex(),   IDENTIFIER);
 	assert_string_equal(yytext, "_start");
-	assert_int_equal(yylex(),   IDENTIFIER___FUNC__);
+	assert_int_equal(yylex(),   IDENTIFIER);
 	assert_string_equal(yytext, "__func__");
-	assert_int_equal(yylex(),   IDENTIFIER_UNIVERSAL_CHARACTER_NAME);
-	assert_string_equal(yytext, "\\u3164");
-	assert_int_equal(yylex(),   IDENTIFIER_UNIVERSAL_CHARACTER_NAME);
-	assert_string_equal(yytext, "\\U0001f60f");
+	assert_int_equal(yylex(),   IDENTIFIER);
+	assert_string_equal(yytext, "ascii\\u3164unicode");
+	assert_int_equal(yylex(),   IDENTIFIER);
+	assert_string_equal(yytext, "_13\\U0001f60f");
 }
 
 static void test_keywords(void **state)

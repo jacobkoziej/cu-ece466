@@ -143,11 +143,8 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 "#"|"%:"    return PUNCTUATOR_PREPROCESSOR;
 "##"|"%:%:" return PUNCTUATOR_PREPROCESSOR_PASTING;
 
-                                /* identifiers */
-__func__                        return IDENTIFIER___FUNC__;
-{NONDIGIT}({DIGIT}|{NONDIGIT})* return IDENTIFIER_GENERAL;
-\\u{HEXADECIMAL_DIGIT}{4}       return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
-\\U{HEXADECIMAL_DIGIT}{8}       return IDENTIFIER_UNIVERSAL_CHARACTER_NAME;
+             /* identifiers */
+{IDENTIFIER} return IDENTIFIER;
 
               /* comments */
 "/*"          BEGIN(COMMENT);
