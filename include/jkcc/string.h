@@ -21,8 +21,9 @@ typedef struct string_s {
 } string_t;
 
 
-int string_append(string_t *string, const char *str, size_t len);
-int string_init(string_t *string, size_t size);
+int  string_append(string_t *string, const char *str, size_t len);
+void string_free(string_t *string);
+int  string_init(string_t *string, size_t size);
 
 
 #endif  /* JKCC_STRING_H */

@@ -64,6 +64,11 @@ error:
 	return -1;
 }
 
+void string_free(string_t *string)
+{
+	free(string->head);
+}
+
 int string_init(string_t *string, size_t size)
 {
 	if (!size) size = STRING_DEFAULT_SIZE;
