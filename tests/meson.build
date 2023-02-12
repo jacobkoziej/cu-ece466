@@ -13,7 +13,7 @@ tests = {
                 ],
                 'sources' : [
                         lex_yy_c,
-                        parser_tab_c,
+                        y_tab_c,
                 ],
         },
 }

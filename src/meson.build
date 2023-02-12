@@ -2,10 +2,10 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
-parser_tab_c = custom_target(
-        'parser.tab.c',
+y_tab_c = custom_target(
+        'y.tab.c',
         input  : 'parser.y',
-        output : ['parser.tab.c', 'parser.tab.h'],
+        output : ['y.tab.c', 'y.tab.h'],
         command : [
                 bison,
                 '--header=@OUTPUT1@',
@@ -17,7 +17,7 @@ parser_tab_c = custom_target(
 
 lex_yy_c = custom_target(
         'lex.yy.c',
-        input   : ['lexer.l', parser_tab_c],
+        input   : ['lexer.l', y_tab_c],
         output  : ['lex.yy.c', 'lex.yy.h'],
         command : [
                 flex,
@@ -44,6 +44,6 @@ executable(
                 'jkcc.c',
                 jkcc_src,
                 lex_yy_c,
-                parser_tab_c,
+                y_tab_c,
         ],
 )

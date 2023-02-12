@@ -7,7 +7,7 @@
 %{
 #include <stdio.h>
 
-#include "parser.tab.h"
+#include "y.tab.h"
 %}
 
 /* definitions */

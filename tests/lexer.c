@@ -12,7 +12,7 @@
 #include <cmocka.h>
 
 #include "lex.yy.h"
-#include "parser.tab.h"
+#include "y.tab.h"
 
 
 static char **yyin_next;
