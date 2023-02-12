@@ -38,6 +38,7 @@ jkcc_src = files(
 
 executable(
         'jkcc',
+        include_directories : jkcc_inc,
         sources : [
                 'jkcc.c',
                 jkcc_src,

@@ -28,5 +28,6 @@ bison = find_program('bison')
 flex  = find_program('flex')
 
 
+subdir('include')
 subdir('src')
 subdir('tests')

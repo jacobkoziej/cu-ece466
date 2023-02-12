@@ -23,7 +23,8 @@ if not get_option('tests').disabled() and cmocka_dep.found()
         foreach name, args : tests
                 exe = executable(
                         name.underscorify(),
-                        dependencies : cmocka_dep,
+                        dependencies        : cmocka_dep,
+                        include_directories : jkcc_inc,
                         sources      : [
                                 name + '.c',
                                 args.get('sources', [ ]),
