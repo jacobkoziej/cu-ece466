@@ -18,4 +18,7 @@ typedef struct string_s {
 } string_t;
 
 
+int string_append(string_t *string, const char *str, size_t len);
+
+
 #endif  /* JKCC_STRING_H */
