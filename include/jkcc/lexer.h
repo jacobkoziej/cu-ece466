@@ -8,4 +8,27 @@
 #define JKCC_LEXER_H
 
 
+enum integer_constant_e {
+	INT,
+	UNSIGNED_INT,
+	LONG_INT,
+	UNSIGNED_LONG_INT,
+	LONG_LONG_INT,
+	UNSIGNED_LONG_LONG_INT,
+};
+
+
+typedef struct integer_constant_s {
+	enum integer_constant_e type;
+	union {
+		int                    INT;
+		unsigned int           UNSIGNED_INT;
+		long int               LONG_INT;
+		unsigned long int      UNSIGNED_LONG_INT;
+		long long int          LONG_LONG_INT;
+		unsigned long long int UNSIGNED_LONG_LONG_INT;
+	};
+} integer_constant_t;
+
+
 #endif  /* JKCC_LEXER_H */
