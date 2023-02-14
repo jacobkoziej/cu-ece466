@@ -46,6 +46,11 @@ typedef struct floating_constant_s {
 } floating_constant_t;
 
 
+int lexer_floating_constant(
+	const char               *start,
+	const char               *end,
+	floating_constant_t      *val,
+	enum floating_constant_e  type);
 int lexer_signed_integer_constant(
 	const char              *start,
 	const char              *end,
