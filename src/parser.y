@@ -21,7 +21,8 @@ void yyerror(char const *token)
 }
 
 %union{
-	integer_constant_t integer_constant;
+	floating_constant_t floating_constant;
+	integer_constant_t  integer_constant;
 }
 
 %token KEYWORD_AUTO
@@ -71,7 +72,8 @@ void yyerror(char const *token)
 
 %token IDENTIFIER
 
-%token <integer_constant> INTEGER_CONSTANT
+%token <integer_constant>  INTEGER_CONSTANT
+%token <floating_constant> FLOATING_CONSTANT
 
 %token PUNCTUATOR_LBRACKET
 %token PUNCTUATOR_RBRACKET
