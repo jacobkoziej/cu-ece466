@@ -24,7 +24,7 @@ static int integer_constant_base;
 %}
 
 /* definitions */
-SIGN              \+-
+SIGN              [\+-]
 DIGIT             [0-9]
 NONDIGIT          [_A-Za-z]
 NONZERO_DIGIT     [1-9]
