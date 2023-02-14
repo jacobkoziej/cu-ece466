@@ -51,6 +51,32 @@ static void test_identifiers(void **state)
 	assert_string_equal(yytext, "_13\\U0001f60f");
 }
 
+static void test_integers(void **state)
+{
+	(void) state;
+
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.INT, 1859);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.INT, 007);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.INT, 0x4b1d);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.UNSIGNED_INT, 31415U);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_INT, 31415UL);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_LONG_INT, 31415ULL);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.LONG_INT, 31415L);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_INT, 31415LU);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.LONG_LONG_INT, 31415LL);
+	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_LONG_INT, 31415LLU);
+}
+
 static void test_keywords(void **state)
 {
 	(void) state;
@@ -268,6 +294,11 @@ int main(int argc, char **argv)
 	static const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(
 			test_identifiers,
+			setup,
+			teardown
+		),
+		cmocka_unit_test_setup_teardown(
+			test_integers,
 			setup,
 			teardown
 		),

@@ -7,6 +7,7 @@ tests = {
                 'args' : [
                         files(
                                 'lexer.d/identifiers',
+                                'lexer.d/integers',
                                 'lexer.d/keywords',
                                 'lexer.d/punctuators',
                         ),
@@ -28,6 +29,7 @@ if not get_option('tests').disabled() and cmocka_dep.found()
                         sources      : [
                                 name + '.c',
                                 args.get('sources', [ ]),
+                                jkcc_src,
                         ]
                 )
 
