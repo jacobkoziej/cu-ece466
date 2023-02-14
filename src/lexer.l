@@ -286,10 +286,14 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 
 	/* comments */
-"/*"             BEGIN(SC_COMMENT);
-"//".*           ;
-<SC_COMMENT>.|\n ;
-<SC_COMMENT>"*/" BEGIN(INITIAL);
+"//".* ;
+"/*"   BEGIN(SC_COMMENT);
+
+<SC_COMMENT>{
+[^*]*|\n    ;
+"*"+[^/]|\n ;
+"*"+"/"     BEGIN(INITIAL);
+}
 
 
 	/* catch all */
