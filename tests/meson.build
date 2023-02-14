@@ -12,10 +12,6 @@ tests = {
                                 'lexer.d/punctuators',
                         ),
                 ],
-                'sources' : [
-                        lex_yy_c,
-                        y_tab_c,
-                ],
         },
 }
 
@@ -28,8 +24,9 @@ if not get_option('tests').disabled() and cmocka_dep.found()
                         include_directories : jkcc_inc,
                         sources      : [
                                 name + '.c',
-                                args.get('sources', [ ]),
                                 jkcc_src,
+                                lex_yy_c,
+                                y_tab_c,
                         ]
                 )
 
