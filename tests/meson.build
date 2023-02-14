@@ -6,9 +6,9 @@ tests = {
         'lexer' : {
                 'args' : [
                         files(
-                                'lexer.d/floating',
+                                'lexer.d/floating_constants',
                                 'lexer.d/identifiers',
-                                'lexer.d/integers',
+                                'lexer.d/integer_constants',
                                 'lexer.d/keywords',
                                 'lexer.d/punctuators',
                         ),

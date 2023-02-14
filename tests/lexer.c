@@ -39,7 +39,7 @@ static int teardown(void **state)
 }
 
 
-static void test_floating(void **state)
+static void test_floating_constants(void **state)
 {
 	(void) state;
 
@@ -104,7 +104,7 @@ static void test_identifiers(void **state)
 	assert_string_equal(yytext, "_13\\U0001f60f");
 }
 
-static void test_integers(void **state)
+static void test_integer_constants(void **state)
 {
 	(void) state;
 
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 
 	static const struct CMUnitTest tests[] = {
 		cmocka_unit_test_setup_teardown(
-			test_floating,
+			test_floating_constants,
 			setup,
 			teardown
 		),
@@ -366,7 +366,7 @@ int main(int argc, char **argv)
 			teardown
 		),
 		cmocka_unit_test_setup_teardown(
-			test_integers,
+			test_integer_constants,
 			setup,
 			teardown
 		),
