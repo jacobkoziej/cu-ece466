@@ -6,6 +6,7 @@ tests = {
         'lexer' : {
                 'args' : [
                         files(
+                                'lexer.d/floating',
                                 'lexer.d/identifiers',
                                 'lexer.d/integers',
                                 'lexer.d/keywords',

@@ -39,6 +39,57 @@ static int teardown(void **state)
 }
 
 
+static void test_floating(void **state)
+{
+	(void) state;
+
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 123.456);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 123.);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == .123);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, FLOAT);
+	assert_true(yylval.floating_constant.FLOAT == 128.F);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, LONG_DOUBLE);
+	assert_true(yylval.floating_constant.LONG_DOUBLE == 128.L);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10e10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10E10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10e+10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10e-10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10E+10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 10E-10);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 0x4b1d.abbap123);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 0x4b1d.abbaP123);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 0x4b1d.p0);
+	assert_int_equal(yylex(), FLOATING_CONSTANT);
+	assert_int_equal(yylval.floating_constant.type, DOUBLE);
+	assert_true(yylval.floating_constant.DOUBLE == 0x.4b1dp0);
+}
+
 static void test_identifiers(void **state)
 {
 	(void) state;
@@ -304,6 +355,11 @@ int main(int argc, char **argv)
 	yyin_next = argv + 1;
 
 	static const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(
+			test_floating,
+			setup,
+			teardown
+		),
 		cmocka_unit_test_setup_teardown(
 			test_identifiers,
 			setup,
