@@ -5,7 +5,6 @@
  */
 
 %{
-#include <limits.h>
 #include <stdio.h>
 
 #include <jkcc/lexer.h>
@@ -13,9 +12,9 @@
 #include "y.tab.h"
 
 
-#define M_INTEGER_CONSTANT(token, func, start, end, val, base, min_max_size) {\
+#define M_INTEGER_CONSTANT(token, func, start, end, val, base, type) {\
 	*(end) = '\0';\
-	int ret = (func)((start), NULL, (val), (base), (min_max_size));\
+	int ret = (func)((start), NULL, (val), (base), (type));\
 	BEGIN(INITIAL);\
 	return (ret < 0) ? YYerror : (token);\
 }
@@ -204,7 +203,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		ULONG_MAX
+		UNSIGNED_LONG_INT
 	);
 }
 
@@ -216,7 +215,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 3,
 		&yylval.integer_constant,
 		integer_constant_base,
-		ULLONG_MAX
+		UNSIGNED_LONG_LONG_INT
 	);
 }
 
@@ -228,7 +227,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 1,
 		&yylval.integer_constant,
 		integer_constant_base,
-		LONG_MAX
+		LONG_INT
 	);
 }
 
@@ -240,7 +239,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		ULONG_MAX
+		UNSIGNED_LONG_INT
 	);
 }
 
@@ -252,7 +251,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		LLONG_MAX
+		LONG_LONG_INT
 	);
 }
 
@@ -264,7 +263,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 3,
 		&yylval.integer_constant,
 		integer_constant_base,
-		ULLONG_MAX
+		UNSIGNED_LONG_LONG_INT
 	);
 }
 

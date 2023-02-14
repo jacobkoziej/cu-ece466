@@ -12,11 +12,11 @@
 
 
 int lexer_signed_integer_constant(
-	const char         *start,
-	const char         *end,
-	integer_constant_t *val,
-	int                 base,
-	long long int       min_max_size)
+	const char              *start,
+	const char              *end,
+	integer_constant_t      *val,
+	int                      base,
+	enum integer_constant_e  type)
 {
 	(void) end;
 
@@ -24,19 +24,19 @@ int lexer_signed_integer_constant(
 	long long tmp = strtoll(start, NULL, base);
 	if (errno) goto error;
 
-	if ((min_max_size <= INT_MAX) && (tmp <= INT_MAX)) {
+	if ((type <= INT) && (tmp <= INT_MAX)) {
 		val->type = INT;
 		val->INT = tmp;
 		goto done;
 	}
 
-	if ((min_max_size <= LONG_MAX) && (tmp <= LONG_MAX)) {
+	if ((type <= LONG_INT) && (tmp <= LONG_MAX)) {
 		val->type = LONG_INT;
 		val->LONG_INT = tmp;
 		goto done;
 	}
 
-	if ((min_max_size <= LLONG_MAX) && (tmp <= LLONG_MAX)) {
+	if ((type <= LONG_LONG_INT) && (tmp <= LLONG_MAX)) {
 		val->type = LONG_LONG_INT;
 		val->LONG_LONG_INT = tmp;
 		goto done;
@@ -54,7 +54,7 @@ int lexer_unsigned_integer_constant(
 	const char             *end,
 	integer_constant_t     *val,
 	int                     base,
-	unsigned long long int  min_max_size)
+	enum integer_constant_e type)
 {
 	(void) end;
 
@@ -62,19 +62,19 @@ int lexer_unsigned_integer_constant(
 	unsigned long long int tmp = strtoull(start, NULL, base);
 	if (errno) goto error;
 
-	if ((min_max_size <= UINT_MAX) && (tmp <= UINT_MAX)) {
+	if ((type <= UNSIGNED_INT) && (tmp <= UINT_MAX)) {
 		val->type = UNSIGNED_INT;
 		val->UNSIGNED_INT = tmp;
 		goto done;
 	}
 
-	if ((min_max_size <= ULONG_MAX) && (tmp <= ULONG_MAX)) {
+	if ((type <= UNSIGNED_LONG_INT) && (tmp <= ULONG_MAX)) {
 		val->type = UNSIGNED_LONG_INT;
 		val->UNSIGNED_LONG_INT = tmp;
 		goto done;
 	}
 
-	if ((min_max_size <= ULLONG_MAX) && (tmp <= ULLONG_MAX)) {
+	if ((type <= UNSIGNED_LONG_LONG_INT) && (tmp <= ULLONG_MAX)) {
 		val->type = UNSIGNED_LONG_LONG_INT;
 		val->UNSIGNED_LONG_LONG_INT = tmp;
 		goto done;

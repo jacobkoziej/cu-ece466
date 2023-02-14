@@ -32,17 +32,17 @@ typedef struct integer_constant_s {
 
 
 int lexer_signed_integer_constant(
-	const char         *start,
-	const char         *end,
-	integer_constant_t *val,
-	int                 base,
-	long long int       min_max_size);
+	const char              *start,
+	const char              *end,
+	integer_constant_t      *val,
+	int                      base,
+	enum integer_constant_e  type);
 int lexer_unsigned_integer_constant(
-	const char             *start,
-	const char             *end,
-	integer_constant_t     *val,
-	int                     base,
-	unsigned long long int  min_max_size);
+	const char              *start,
+	const char              *end,
+	integer_constant_t      *val,
+	int                      base,
+	enum integer_constant_e  type);
 
 
 #endif  /* JKCC_LEXER_H */

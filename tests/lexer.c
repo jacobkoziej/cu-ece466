@@ -11,6 +11,8 @@
 
 #include <cmocka.h>
 
+#include <jkcc/lexer.h>
+
 #include "lex.yy.h"
 #include "y.tab.h"
 
@@ -56,24 +58,34 @@ static void test_integers(void **state)
 	(void) state;
 
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, INT);
 	assert_int_equal(yylval.integer_constant.INT, 1859);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, INT);
 	assert_int_equal(yylval.integer_constant.INT, 007);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, INT);
 	assert_int_equal(yylval.integer_constant.INT, 0x4b1d);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, UNSIGNED_INT);
 	assert_int_equal(yylval.integer_constant.UNSIGNED_INT, 31415U);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, UNSIGNED_LONG_INT);
 	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_INT, 31415UL);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, UNSIGNED_LONG_LONG_INT);
 	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_LONG_INT, 31415ULL);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, LONG_INT);
 	assert_int_equal(yylval.integer_constant.LONG_INT, 31415L);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, UNSIGNED_LONG_INT);
 	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_INT, 31415LU);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, LONG_LONG_INT);
 	assert_int_equal(yylval.integer_constant.LONG_LONG_INT, 31415LL);
 	assert_int_equal(yylex(), INTEGER_CONSTANT);
+	assert_int_equal(yylval.integer_constant.type, UNSIGNED_LONG_LONG_INT);
 	assert_int_equal(yylval.integer_constant.UNSIGNED_LONG_LONG_INT, 31415LLU);
 }
 
