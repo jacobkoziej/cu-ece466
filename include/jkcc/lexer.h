@@ -17,6 +17,12 @@ enum integer_constant_e {
 	UNSIGNED_LONG_LONG_INT,
 };
 
+enum floating_constant_e {
+	FLOAT,
+	DOUBLE,
+	LONG_DOUBLE,
+};
+
 
 typedef struct integer_constant_s {
 	enum integer_constant_e type;
@@ -29,6 +35,15 @@ typedef struct integer_constant_s {
 		unsigned long long int UNSIGNED_LONG_LONG_INT;
 	};
 } integer_constant_t;
+
+typedef struct floating_constant_s {
+	enum floating_constant_e type;
+	union {
+		float       FLOAT;
+		double      DOUBLE;
+		long double LONG_DOUBLE;
+	};
+} floating_constant_t;
 
 
 int lexer_signed_integer_constant(
