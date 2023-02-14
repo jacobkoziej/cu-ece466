@@ -11,6 +11,44 @@
 #include <stdlib.h>
 
 
+int lexer_signed_integer_constant(
+	const char         *start,
+	const char         *end,
+	integer_constant_t *val,
+	int                 base,
+	long long int       min_max_size)
+{
+	(void) end;
+
+	errno = 0;
+	long long tmp = strtoll(start, NULL, base);
+	if (errno) goto error;
+
+	if ((min_max_size <= INT_MAX) && (tmp <= INT_MAX)) {
+		val->type = INT;
+		val->INT = tmp;
+		goto done;
+	}
+
+	if ((min_max_size <= LONG_MAX) && (tmp <= LONG_MAX)) {
+		val->type = LONG_INT;
+		val->LONG_INT = tmp;
+		goto done;
+	}
+
+	if ((min_max_size <= LLONG_MAX) && (tmp <= LLONG_MAX)) {
+		val->type = LONG_LONG_INT;
+		val->LONG_LONG_INT = tmp;
+		goto done;
+	}
+
+done:
+	return 0;
+
+error:
+	return -1;
+}
+
 int lexer_unsigned_integer_constant(
 	const char             *start,
 	const char             *end,

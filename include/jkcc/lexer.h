@@ -31,6 +31,12 @@ typedef struct integer_constant_s {
 } integer_constant_t;
 
 
+int lexer_signed_integer_constant(
+	const char         *start,
+	const char         *end,
+	integer_constant_t *val,
+	int                 base,
+	long long int       min_max_size);
 int lexer_unsigned_integer_constant(
 	const char             *start,
 	const char             *end,
