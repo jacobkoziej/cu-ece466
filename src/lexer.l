@@ -58,6 +58,7 @@ IDENTIFIER               {NONDIGIT}({DIGIT}|{IDENTIFIER_NONDIGIT})*
 /* start conditions */
 %x SC_COMMENT
 %x SC_INTEGER_CONSTANT
+%x SC_FLOATING_CONSTANT
 
 %%
 
@@ -281,6 +282,51 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	unput(tmp);
 	BEGIN(INITIAL);
 	return (ret < 0) ? YYerror : INTEGER_CONSTANT;
+}
+}
+
+
+	/* floating constants */
+{FRACTIONAL_CONSTANT}{EXPONENT_PART}?                                                              |
+{DIGIT}+{EXPONENT_PART}                                                                            |
+{HEXADECIMAL_PREFIX}({HEXADECIMAL_FRACTIONAL_CONSTANT}|{HEXADECIMAL_DIGIT}+){BINARY_EXPONENT_PART} {
+	yymore();
+	BEGIN(SC_FLOATING_CONSTANT);
+}
+
+<SC_FLOATING_CONSTANT>{
+{FLOATING_SUFFIX} {
+	char suffix = yytext[yyleng - 1];
+
+	enum floating_constant_e type = ((suffix == 'f') || (suffix == 'F'))
+		? FLOAT
+		: LONG_DOUBLE;
+
+	yytext[yyleng - 1] = '\0';
+
+	int ret = lexer_floating_constant(
+		yytext,
+		NULL,
+		&yylval.floating_constant,
+		type);
+
+	BEGIN(INITIAL);
+	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
+}
+
+.|\n {
+	char tmp = yytext[yyleng - 1];
+	yytext[yyleng - 1] = '\0';
+
+	int ret = lexer_floating_constant(
+		yytext,
+		NULL,
+		&yylval.floating_constant,
+		DOUBLE);
+
+	unput(tmp);
+	BEGIN(INITIAL);
+	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
 }
 }
 
