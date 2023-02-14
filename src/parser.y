@@ -7,12 +7,22 @@
 %{
 #include "lex.yy.h"
 
+#include <jkcc/lexer.h>
+
 
 void yyerror(char const *token)
 {
 	(void) token;
 }
 %}
+
+%code requires {
+#include <jkcc/lexer.h>
+}
+
+%union{
+	integer_constant_t integer_constant;
+}
 
 %token KEYWORD_AUTO
 %token KEYWORD_BREAK
@@ -60,6 +70,8 @@ void yyerror(char const *token)
 %token KEYWORD__THREAD_LOCAL
 
 %token IDENTIFIER
+
+%token <integer_constant> INTEGER_CONSTANT
 
 %token PUNCTUATOR_LBRACKET
 %token PUNCTUATOR_RBRACKET
