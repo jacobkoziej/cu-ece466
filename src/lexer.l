@@ -5,9 +5,23 @@
  */
 
 %{
+#include <limits.h>
 #include <stdio.h>
 
+#include <jkcc/lexer.h>
+
 #include "y.tab.h"
+
+
+#define M_INTEGER_CONSTANT(token, func, start, end, val, base, min_max_size) {\
+	*(end) = '\0';\
+	int ret = (func)((start), NULL, (val), (base), (min_max_size));\
+	BEGIN(INITIAL);\
+	return (ret < 0) ? YYerror : (token);\
+}
+
+
+static int integer_constant_base;
 %}
 
 /* definitions */
@@ -43,11 +57,12 @@ IDENTIFIER_NONDIGIT      {NONDIGIT}|{UNIVERSAL_CHARACTER_NAME}
 IDENTIFIER               {NONDIGIT}({DIGIT}|{IDENTIFIER_NONDIGIT})*
 
 /* start conditions */
-%x COMMENT
+%x SC_COMMENT
+%x SC_INTEGER_CONSTANT
 
 %%
 
-               /* keywords */
+	/* keywords */
 auto           return KEYWORD_AUTO;
 break          return KEYWORD_BREAK;
 case           return KEYWORD_CASE;
@@ -93,7 +108,8 @@ _Noreturn      return KEYWORD__NORETURN;
 _Static_Assert return KEYWORD__STATIC_ASSERT;
 _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
-            /* punctuators */
+
+	/* punctuators */
 "["|"<:"    return PUNCTUATOR_LBRACKET;
 "]"|":>"    return PUNCTUATOR_RBRACKET;
 "("         return PUNCTUATOR_LPARENTHESIS;
@@ -143,13 +159,139 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 "#"|"%:"    return PUNCTUATOR_PREPROCESSOR;
 "##"|"%:%:" return PUNCTUATOR_PREPROCESSOR_PASTING;
 
-             /* identifiers */
+
+	/* identifiers */
 {IDENTIFIER} return IDENTIFIER;
 
-              /* comments */
-"/*"          BEGIN(COMMENT);
-"//".*        ;
-<COMMENT>.|\n ;
-<COMMENT>"*/" BEGIN(INITIAL);
 
+	/* integer constants */
+{DECIMAL_CONSTANT} {
+	integer_constant_base = 10;
+	yymore();
+	BEGIN(SC_INTEGER_CONSTANT);
+}
+
+{OCTAL_CONSTANT} {
+	integer_constant_base = 8;
+	yymore();
+	BEGIN(SC_INTEGER_CONSTANT);
+}
+
+{HEXADECIMAL_CONSTANT} {
+	integer_constant_base = 16;
+	yymore();
+	BEGIN(SC_INTEGER_CONSTANT);
+}
+
+<SC_INTEGER_CONSTANT>{
+{UNSIGNED_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_unsigned_integer_constant,
+		yytext,
+		yytext + yyleng - 1,
+		&yylval.integer_constant,
+		integer_constant_base,
+		0
+	);
+}
+
+{UNSIGNED_SUFFIX}{LONG_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_unsigned_integer_constant,
+		yytext,
+		yytext + yyleng - 2,
+		&yylval.integer_constant,
+		integer_constant_base,
+		ULONG_MAX
+	);
+}
+
+{UNSIGNED_SUFFIX}{LONG_LONG_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_unsigned_integer_constant,
+		yytext,
+		yytext + yyleng - 3,
+		&yylval.integer_constant,
+		integer_constant_base,
+		ULLONG_MAX
+	);
+}
+
+{LONG_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_signed_integer_constant,
+		yytext,
+		yytext + yyleng - 1,
+		&yylval.integer_constant,
+		integer_constant_base,
+		LONG_MAX
+	);
+}
+
+{LONG_SUFFIX}{UNSIGNED_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_unsigned_integer_constant,
+		yytext,
+		yytext + yyleng - 2,
+		&yylval.integer_constant,
+		integer_constant_base,
+		ULONG_MAX
+	);
+}
+
+{LONG_LONG_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_signed_integer_constant,
+		yytext,
+		yytext + yyleng - 2,
+		&yylval.integer_constant,
+		integer_constant_base,
+		LLONG_MAX
+	);
+}
+
+{LONG_LONG_SUFFIX}{UNSIGNED_SUFFIX} {
+	M_INTEGER_CONSTANT(
+		INTEGER_CONSTANT,
+		lexer_unsigned_integer_constant,
+		yytext,
+		yytext + yyleng - 3,
+		&yylval.integer_constant,
+		integer_constant_base,
+		ULLONG_MAX
+	);
+}
+
+.|\n {
+	char tmp = yytext[yyleng - 1];
+	yytext[yyleng - 1] = '\0';
+
+	int ret = lexer_signed_integer_constant(
+		yytext,
+		NULL,
+		&yylval.integer_constant,
+		integer_constant_base,
+		0);
+
+	unput(tmp);
+	BEGIN(INITIAL);
+	return (ret < 0) ? YYerror : INTEGER_CONSTANT;
+}
+}
+
+
+	/* comments */
+"/*"             BEGIN(SC_COMMENT);
+"//".*           ;
+<SC_COMMENT>.|\n ;
+<SC_COMMENT>"*/" BEGIN(INITIAL);
+
+
+	/* catch all */
 .|\n ;
