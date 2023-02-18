@@ -12,11 +12,16 @@
 #include "y.tab.h"
 
 
-#define M_INTEGER_CONSTANT(token, func, start, end, val, base, type) {\
+#define M_INTEGER_CONSTANT(func, start, end, type) {\
 	*(end) = '\0';\
-	int ret = (func)((start), NULL, (val), (base), (type));\
+	int ret = (func)(\
+		(start),\
+		(end),\
+		&yylval.integer_constant,\
+		integer_constant_base,\
+		(type));\
 	BEGIN(INITIAL);\
-	return (ret < 0) ? YYerror : (token);\
+	return (ret < 0) ? YYerror : INTEGER_CONSTANT;\
 }
 
 
@@ -188,78 +193,57 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 <SC_INTEGER_CONSTANT>{
 {UNSIGNED_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_unsigned_integer_constant,
 		yytext,
 		yytext + yyleng - 1,
-		&yylval.integer_constant,
-		integer_constant_base,
 		0);
 }
 
 {UNSIGNED_SUFFIX}{LONG_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_unsigned_integer_constant,
 		yytext,
 		yytext + yyleng - 2,
-		&yylval.integer_constant,
-		integer_constant_base,
 		UNSIGNED_LONG_INT);
 }
 
 {UNSIGNED_SUFFIX}{LONG_LONG_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_unsigned_integer_constant,
 		yytext,
 		yytext + yyleng - 3,
-		&yylval.integer_constant,
-		integer_constant_base,
 		UNSIGNED_LONG_LONG_INT);
 }
 
 {LONG_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_signed_integer_constant,
 		yytext,
 		yytext + yyleng - 1,
-		&yylval.integer_constant,
-		integer_constant_base,
 		LONG_INT);
 }
 
 {LONG_SUFFIX}{UNSIGNED_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_unsigned_integer_constant,
 		yytext,
 		yytext + yyleng - 2,
-		&yylval.integer_constant,
-		integer_constant_base,
 		UNSIGNED_LONG_INT);
 }
 
 {LONG_LONG_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_signed_integer_constant,
 		yytext,
 		yytext + yyleng - 2,
-		&yylval.integer_constant,
-		integer_constant_base,
 		LONG_LONG_INT);
 }
 
 {LONG_LONG_SUFFIX}{UNSIGNED_SUFFIX} {
 	M_INTEGER_CONSTANT(
-		INTEGER_CONSTANT,
 		lexer_unsigned_integer_constant,
 		yytext,
 		yytext + yyleng - 3,
-		&yylval.integer_constant,
-		integer_constant_base,
 		UNSIGNED_LONG_LONG_INT);
 }
 
