@@ -39,6 +39,87 @@ static int teardown(void **state)
 }
 
 
+static void test_character_constants(void **state)
+{
+	(void) state;
+
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'c');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'o');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'o');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'p');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'e');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, 'r');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, WCHAR_T);
+	assert_int_equal(yylval.character_constant.WCHAR_T, L'\x1f60f');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, CHAR16_T);
+	assert_int_equal(yylval.character_constant.CHAR16_T, u'\x267F');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, CHAR32_T);
+	assert_int_equal(yylval.character_constant.CHAR32_T, U'\x1f60f');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '"');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '?');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\'');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\"');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\?');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\\');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\a');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\b');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\f');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\n');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\r');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\t');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\v');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\0');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\60');
+	assert_int_equal(yylex(), CHARACTER_CONSTANT);
+	assert_int_equal(yylval.character_constant.type, UNSIGNED_CHAR);
+	assert_int_equal(yylval.character_constant.UNSIGNED_CHAR, '\100');
+}
+
 static void test_floating_constants(void **state)
 {
 	(void) state;
@@ -355,6 +436,11 @@ int main(int argc, char **argv)
 	yyin_next = argv + 1;
 
 	static const struct CMUnitTest tests[] = {
+		cmocka_unit_test_setup_teardown(
+			test_character_constants,
+			setup,
+			teardown
+		),
 		cmocka_unit_test_setup_teardown(
 			test_floating_constants,
 			setup,
