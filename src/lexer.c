@@ -201,3 +201,37 @@ done:
 error:
 	return -1;
 }
+
+void lexer_utf32_to_utf8(
+	char     *buf,
+	size_t   *bytes,
+	uint32_t  ucn)
+{
+	// inspired by: https://github.com/llvm/llvm-project/blob/2ad0cc9186d4952b3009e1b8c3c606f0b13ea38a/clang/lib/Lex/LiteralSupport.cpp#L739
+
+	size_t bytes_to_write;
+	if      (ucn < 0x80)    bytes_to_write = 1;
+	else if (ucn < 0x800)   bytes_to_write = 2;
+	else if (ucn < 0x10000) bytes_to_write = 3;
+	else                    bytes_to_write = 4;
+
+	static const unsigned byte_mask = 0xbf;
+	static const unsigned byte_mark = 0x80;
+
+	static const uint8_t first_byte_mark[5] = {
+		0x00,
+		0x00,
+		0xc0,
+		0xe0,
+		0xf0,
+	};
+
+	buf += bytes_to_write;
+	for (size_t i = 1; i < bytes_to_write; i++) {
+		*--buf   = ((ucn | byte_mark) & byte_mask);
+		ucn    >>= 6;
+	}
+	*--buf = (ucn | first_byte_mark[bytes_to_write]);
+
+	*bytes = bytes_to_write;
+}

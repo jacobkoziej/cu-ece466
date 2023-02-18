@@ -95,6 +95,10 @@ int lexer_unsigned_integer_constant(
 	integer_constant_t      *val,
 	int                      base,
 	enum integer_constant_e  type);
+void lexer_utf32_to_utf8(
+	char     *buf,
+	size_t   *bytes,
+	uint32_t  ucn);
 
 
 #endif  /* JKCC_LEXER_H */
