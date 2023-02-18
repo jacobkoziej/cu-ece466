@@ -5,9 +5,11 @@
  */
 
 %{
+#include <stdint.h>
 #include <stdio.h>
 
 #include <jkcc/lexer.h>
+#include <jkcc/string.h>
 
 #include "y.tab.h"
 
@@ -75,6 +77,7 @@ DIGIT_SEQUENCE              {DIGIT}+
 HEXADECIMAL_DIGIT_SEQUENCE  {HEXADECIMAL_DIGIT}+
 OCTAL_ESCAPE_SEQUENCE       \\{OCTAL_DIGIT}{1,3}
 HEXADECIMAL_ESCAPE_SEQUENCE \\x{HEXADECIMAL_DIGIT}+
+UNIVERSAL_CHARACTER_NAME    \\(u{HEX_QUAD}|U{HEX_QUAD}{2})
 
 HEXADECIMAL_PREFIX   0[xX]
 UNSIGNED_SUFFIX      [uU]
@@ -90,15 +93,12 @@ HEXADECIMAL_CONSTANT            {HEXADECIMAL_PREFIX}{HEXADECIMAL_DIGIT}*
 FRACTIONAL_CONSTANT             ({DIGIT_SEQUENCE}?\.{DIGIT_SEQUENCE})|({DIGIT_SEQUENCE}\.)
 HEXADECIMAL_FRACTIONAL_CONSTANT ({HEXADECIMAL_DIGIT_SEQUENCE}?\.{HEXADECIMAL_DIGIT_SEQUENCE})|({HEXADECIMAL_DIGIT_SEQUENCE}\.)
 
-UNIVERSAL_CHARACTER_NAME \\(u{HEX_QUAD}|U{HEX_QUAD}{2})
-IDENTIFIER_NONDIGIT      {NONDIGIT}|{UNIVERSAL_CHARACTER_NAME}
-IDENTIFIER               {NONDIGIT}({DIGIT}|{IDENTIFIER_NONDIGIT})*
-
 /* start conditions */
-%x SC_COMMENT
+%x SC_IDENTIFIER
 %x SC_INTEGER_CONSTANT
 %x SC_FLOATING_CONSTANT
 %x SC_CHARACTER_CONSTANT
+%x SC_COMMENT
 
 %%
 
@@ -201,8 +201,64 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 
 	/* identifiers */
-{IDENTIFIER} return IDENTIFIER;
+{NONDIGIT} {
+	if (string_init(&yylval.string, 0) < 0) return YYerror;
 
+	if (string_append(&yylval.string, yytext, yyleng) < 0) return YYerror;
+
+	BEGIN(SC_IDENTIFIER);
+}
+{UNIVERSAL_CHARACTER_NAME} {
+	if (string_init(&yylval.string, 0) < 0) return YYerror;
+
+	uint32_t ucn;
+
+	int ret = lexer_universal_character_name(
+		yytext + 2,
+		yytext + yyleng - 1,
+		&ucn);
+
+	if (ret < 0) return YYerror;
+
+	char   buf[4];
+	size_t bytes;
+
+	lexer_utf32_to_utf8(buf, &bytes, ucn);
+
+	if (string_append(&yylval.string, buf, bytes) < 0) return YYerror;
+
+	BEGIN(SC_IDENTIFIER);
+}
+
+<SC_IDENTIFIER>{
+({DIGIT}|{NONDIGIT})* {
+	if (string_append(&yylval.string, yytext, yyleng) < 0) return YYerror;
+}
+
+{UNIVERSAL_CHARACTER_NAME} {
+	uint32_t ucn;
+
+	int ret = lexer_universal_character_name(
+		yytext + 2,
+		yytext + yyleng - 1,
+		&ucn);
+
+	if (ret < 0) return YYerror;
+
+	char   buf[4];
+	size_t bytes;
+
+	lexer_utf32_to_utf8(buf, &bytes, ucn);
+
+	if (string_append(&yylval.string, buf, bytes) < 0) return YYerror;
+}
+
+.|\n {
+	unput(*yytext);
+	BEGIN(INITIAL);
+	return IDENTIFIER;
+}
+}
 
 	/* integer constants */
 {DECIMAL_CONSTANT} {
