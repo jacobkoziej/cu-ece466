@@ -194,8 +194,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 1,
 		&yylval.integer_constant,
 		integer_constant_base,
-		0
-	);
+		0);
 }
 
 {UNSIGNED_SUFFIX}{LONG_SUFFIX} {
@@ -206,8 +205,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		UNSIGNED_LONG_INT
-	);
+		UNSIGNED_LONG_INT);
 }
 
 {UNSIGNED_SUFFIX}{LONG_LONG_SUFFIX} {
@@ -218,8 +216,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 3,
 		&yylval.integer_constant,
 		integer_constant_base,
-		UNSIGNED_LONG_LONG_INT
-	);
+		UNSIGNED_LONG_LONG_INT);
 }
 
 {LONG_SUFFIX} {
@@ -230,8 +227,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 1,
 		&yylval.integer_constant,
 		integer_constant_base,
-		LONG_INT
-	);
+		LONG_INT);
 }
 
 {LONG_SUFFIX}{UNSIGNED_SUFFIX} {
@@ -242,8 +238,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		UNSIGNED_LONG_INT
-	);
+		UNSIGNED_LONG_INT);
 }
 
 {LONG_LONG_SUFFIX} {
@@ -254,8 +249,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 2,
 		&yylval.integer_constant,
 		integer_constant_base,
-		LONG_LONG_INT
-	);
+		LONG_LONG_INT);
 }
 
 {LONG_LONG_SUFFIX}{UNSIGNED_SUFFIX} {
@@ -266,8 +260,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 3,
 		&yylval.integer_constant,
 		integer_constant_base,
-		UNSIGNED_LONG_LONG_INT
-	);
+		UNSIGNED_LONG_LONG_INT);
 }
 
 .|\n {
