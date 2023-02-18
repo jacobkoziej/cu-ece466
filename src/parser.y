@@ -8,6 +8,7 @@
 #include "lex.yy.h"
 
 #include <jkcc/lexer.h>
+#include <jkcc/string.h>
 
 
 void yyerror(char const *token)
@@ -18,12 +19,14 @@ void yyerror(char const *token)
 
 %code requires {
 #include <jkcc/lexer.h>
+#include <jkcc/string.h>
 }
 
 %union{
 	integer_constant_t    integer_constant;
 	floating_constant_t   floating_constant;
 	character_constant_t  character_constant;
+	string_t              string;
 }
 
 %token KEYWORD_AUTO
@@ -71,7 +74,7 @@ void yyerror(char const *token)
 %token KEYWORD__STATIC_ASSERT
 %token KEYWORD__THREAD_LOCAL
 
-%token IDENTIFIER
+%token <string> IDENTIFIER
 
 %token <integer_constant>   INTEGER_CONSTANT
 %token <floating_constant>  FLOATING_CONSTANT
