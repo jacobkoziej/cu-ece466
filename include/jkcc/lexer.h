@@ -8,6 +8,10 @@
 #define JKCC_LEXER_H
 
 
+#include <uchar.h>
+#include <wchar.h>
+
+
 enum integer_constant_e {
 	INT,
 	UNSIGNED_INT,
@@ -21,6 +25,13 @@ enum floating_constant_e {
 	FLOAT,
 	DOUBLE,
 	LONG_DOUBLE,
+};
+
+enum character_constant_e {
+	UNSIGNED_CHAR,
+	WCHAR_T,
+	CHAR16_T,
+	CHAR32_T,
 };
 
 
@@ -44,6 +55,16 @@ typedef struct floating_constant_s {
 		long double LONG_DOUBLE;
 	};
 } floating_constant_t;
+
+typedef struct character_constant_s {
+	enum character_constant_e type;
+	union {
+		unsigned char UNSIGNED_CHAR;
+		wchar_t       WCHAR_T;
+		char16_t      CHAR16_T;
+		char32_t      CHAR32_T;
+	};
+} character_constant_t;
 
 
 int lexer_floating_constant(
