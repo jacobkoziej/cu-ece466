@@ -24,8 +24,40 @@
 	return (ret < 0) ? YYerror : INTEGER_CONSTANT;\
 }
 
+#define M_CHARACTER_CONSTANT(val) {\
+	yylval.character_constant.type = character_constant_type;\
+	switch (character_constant_type) {\
+		case UNSIGNED_CHAR:\
+			yylval.character_constant.UNSIGNED_CHAR = (val);\
+			break;\
+		case WCHAR_T:\
+			yylval.character_constant.WCHAR_T = (val);\
+			break;\
+		case CHAR16_T:\
+			yylval.character_constant.CHAR16_T = (val);\
+			break;\
+		case CHAR32_T:\
+			yylval.character_constant.CHAR32_T = (val);\
+			break;\
+	}\
+	BEGIN(INITIAL);\
+	return CHARACTER_CONSTANT;\
+}
 
-static int integer_constant_base;
+#define M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(start, end, base) {\
+	*(end) = '\0';\
+	int ret = lexer_character_constant(\
+		(start),\
+		(end),\
+		&yylval.character_constant,\
+		(base),\
+		character_constant_type);\
+	BEGIN(INITIAL);\
+	return (ret < 0) ? YYerror : CHARACTER_CONSTANT;\
+}
+
+static int                       integer_constant_base;
+static enum character_constant_e character_constant_type;
 %}
 
 /* definitions */
@@ -66,6 +98,7 @@ IDENTIFIER               {NONDIGIT}({DIGIT}|{IDENTIFIER_NONDIGIT})*
 %x SC_COMMENT
 %x SC_INTEGER_CONSTANT
 %x SC_FLOATING_CONSTANT
+%x SC_CHARACTER_CONSTANT
 
 %%
 
@@ -306,6 +339,62 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	unput(tmp);
 	BEGIN(INITIAL);
 	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
+}
+}
+
+	/* character constants */
+'	{
+	character_constant_type = UNSIGNED_CHAR;
+	BEGIN(SC_CHARACTER_CONSTANT);
+}
+
+L'	{
+	character_constant_type = WCHAR_T;
+	BEGIN(SC_CHARACTER_CONSTANT);
+}
+
+u'	{
+	character_constant_type = CHAR16_T;
+	BEGIN(SC_CHARACTER_CONSTANT);
+}
+
+U'	{
+	character_constant_type = CHAR32_T;
+	BEGIN(SC_CHARACTER_CONSTANT);
+}
+
+<SC_CHARACTER_CONSTANT>{
+\\''      M_CHARACTER_CONSTANT('\'');
+\\\"'     M_CHARACTER_CONSTANT('\"');
+\\\?'     M_CHARACTER_CONSTANT('\?');
+\\\\'     M_CHARACTER_CONSTANT('\\');
+\\a'      M_CHARACTER_CONSTANT('\a');
+\\b'      M_CHARACTER_CONSTANT('\b');
+\\f'      M_CHARACTER_CONSTANT('\f');
+\\n'      M_CHARACTER_CONSTANT('\n');
+\\r'      M_CHARACTER_CONSTANT('\r');
+\\t'      M_CHARACTER_CONSTANT('\t');
+\\v'      M_CHARACTER_CONSTANT('\v');
+{C_CHAR}' M_CHARACTER_CONSTANT(*yytext);
+
+{OCTAL_ESCAPE_SEQUENCE}' {
+	M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(
+		yytext + 1,
+		yytext + yyleng - 1,
+		8);
+}
+
+{HEXADECIMAL_ESCAPE_SEQUENCE}' {
+	M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(
+		yytext + 2,
+		yytext + yyleng - 1,
+		16);
+}
+
+.|\n {
+	unput(*yytext);
+	BEGIN(INITIAL);
+	return YYerror;
 }
 }
 
