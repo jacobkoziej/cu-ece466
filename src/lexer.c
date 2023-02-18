@@ -8,6 +8,7 @@
 
 #include <errno.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 
@@ -132,6 +133,31 @@ int lexer_signed_integer_constant(
 	}
 
 done:
+	return 0;
+
+error:
+	return -1;
+}
+
+int lexer_universal_character_name(
+	const char *start,
+	const char *end,
+	uint32_t   *val)
+{
+	(void) end;
+
+	errno = 0;
+	unsigned long long int tmp = strtoull(start, NULL, 16);
+	if (errno) goto error;
+
+	if (tmp < 0x00a0)
+		if ((tmp != 0x0024) && (tmp != 0x0040) && (tmp != 0x0060))
+			goto error;
+
+	if ((tmp >= 0xd800) && (tmp <= 0xdfff)) goto error;
+
+	*val = tmp;
+
 	return 0;
 
 error:

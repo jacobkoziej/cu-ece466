@@ -8,6 +8,7 @@
 #define JKCC_LEXER_H
 
 
+#include <stdint.h>
 #include <uchar.h>
 #include <wchar.h>
 
@@ -84,6 +85,10 @@ int lexer_signed_integer_constant(
 	integer_constant_t      *val,
 	int                      base,
 	enum integer_constant_e  type);
+int lexer_universal_character_name(
+	const char *start,
+	const char *end,
+	uint32_t   *val);
 int lexer_unsigned_integer_constant(
 	const char              *start,
 	const char              *end,
