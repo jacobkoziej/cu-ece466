@@ -175,14 +175,16 @@ static void test_identifiers(void **state)
 {
 	(void) state;
 
-	assert_int_equal(yylex(),   IDENTIFIER);
-	assert_string_equal(yytext, "_start");
-	assert_int_equal(yylex(),   IDENTIFIER);
-	assert_string_equal(yytext, "__func__");
-	assert_int_equal(yylex(),   IDENTIFIER);
-	assert_string_equal(yytext, "ascii\\u3164unicode");
-	assert_int_equal(yylex(),   IDENTIFIER);
-	assert_string_equal(yytext, "_13\\U0001f60f");
+	assert_int_equal(yylex(), IDENTIFIER);
+	assert_string_equal(yylval.string.head, "_start");
+	assert_int_equal(yylex(), IDENTIFIER);
+	assert_string_equal(yylval.string.head, "__func__");
+	assert_int_equal(yylex(), IDENTIFIER);
+	assert_string_equal(yylval.string.head, "ascii\u3164unicode");
+	assert_int_equal(yylex(), IDENTIFIER);
+	assert_string_equal(yylval.string.head, "_13\U0001f60f");
+	assert_int_equal(yylex(), IDENTIFIER);
+	assert_string_equal(yylval.string.head, "\U0001f60f");
 }
 
 static void test_integer_constants(void **state)
