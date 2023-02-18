@@ -58,9 +58,11 @@
 	return (ret < 0) ? YYerror : CHARACTER_CONSTANT;\
 }
 
+
 static int                       integer_constant_base;
 static enum character_constant_e character_constant_type;
 %}
+
 
 /* definitions */
 SIGN              [\+-]
@@ -93,12 +95,14 @@ HEXADECIMAL_CONSTANT            {HEXADECIMAL_PREFIX}{HEXADECIMAL_DIGIT}*
 FRACTIONAL_CONSTANT             ({DIGIT_SEQUENCE}?\.{DIGIT_SEQUENCE})|({DIGIT_SEQUENCE}\.)
 HEXADECIMAL_FRACTIONAL_CONSTANT ({HEXADECIMAL_DIGIT_SEQUENCE}?\.{HEXADECIMAL_DIGIT_SEQUENCE})|({HEXADECIMAL_DIGIT_SEQUENCE}\.)
 
+
 /* start conditions */
 %x SC_IDENTIFIER
 %x SC_INTEGER_CONSTANT
 %x SC_FLOATING_CONSTANT
 %x SC_CHARACTER_CONSTANT
 %x SC_COMMENT
+
 
 %%
 
@@ -208,6 +212,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	BEGIN(SC_IDENTIFIER);
 }
+
 {UNIVERSAL_CHARACTER_NAME} {
 	if (string_init(&yylval.string, 0) < 0) return YYerror;
 
@@ -259,6 +264,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	return IDENTIFIER;
 }
 }
+
 
 	/* integer constants */
 {DECIMAL_CONSTANT} {
@@ -397,6 +403,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
 }
 }
+
 
 	/* character constants */
 '	{
