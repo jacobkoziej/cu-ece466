@@ -67,6 +67,12 @@ typedef struct character_constant_s {
 } character_constant_t;
 
 
+int lexer_character_constant(
+	const char                *start,
+	const char                *end,
+	character_constant_t      *val,
+	int                        base,
+	enum character_constant_e  type);
 int lexer_floating_constant(
 	const char               *start,
 	const char               *end,

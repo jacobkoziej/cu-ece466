@@ -11,6 +11,47 @@
 #include <stdlib.h>
 
 
+int lexer_character_constant(
+	const char                *start,
+	const char                *end,
+	character_constant_t      *val,
+	int                        base,
+	enum character_constant_e  type)
+{
+	(void) end;
+
+	errno = 0;
+	unsigned long long int tmp = strtoull(start, NULL, base);
+	if (errno) goto error;
+
+	val->type = type;
+	switch (type) {
+		case UNSIGNED_CHAR:
+			val->UNSIGNED_CHAR = tmp;
+			break;
+
+		case WCHAR_T:
+			val->WCHAR_T = tmp;
+			break;
+
+		case CHAR16_T:
+			val->CHAR16_T = tmp;
+			break;
+
+		case CHAR32_T:
+			val->CHAR32_T = tmp;
+			break;
+
+		default:
+			goto error;
+	}
+
+	return 0;
+
+error:
+	return -1;
+}
+
 int lexer_floating_constant(
 	const char               *start,
 	const char               *end,
