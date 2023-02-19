@@ -116,6 +116,12 @@ HEXADECIMAL_FRACTIONAL_CONSTANT ({HEXADECIMAL_DIGIT_SEQUENCE}?\.{HEXADECIMAL_DIG
 
 %%
 
+
+%{
+	(void) input;
+%}
+
+
 	/* keywords */
 auto           return KEYWORD_AUTO;
 break          return KEYWORD_BREAK;
