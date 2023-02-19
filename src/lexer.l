@@ -5,8 +5,12 @@
  */
 
 %{
+#include <errno.h>
+#include <limits.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <jkcc/lexer.h>
 #include <jkcc/string.h>
@@ -58,6 +62,11 @@
 	return (ret < 0) ? YYerror : CHARACTER_CONSTANT;\
 }
 
+#define M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE(val) {\
+	if (string_append(&yylval.string_literal.string, (val), 1) < 0)\
+		return YYerror;\
+}
+
 
 static int                       integer_constant_base;
 static enum character_constant_e character_constant_type;
@@ -101,6 +110,7 @@ HEXADECIMAL_FRACTIONAL_CONSTANT ({HEXADECIMAL_DIGIT_SEQUENCE}?\.{HEXADECIMAL_DIG
 %x SC_INTEGER_CONSTANT
 %x SC_FLOATING_CONSTANT
 %x SC_CHARACTER_CONSTANT
+%x SC_STRING_LITERAL
 %x SC_COMMENT
 
 
@@ -452,6 +462,127 @@ U'	{
 		yytext + 2,
 		yytext + yyleng - 1,
 		16);
+}
+
+.|\n {
+	unput(*yytext);
+	BEGIN(INITIAL);
+	return YYerror;
+}
+}
+
+
+	/* string literals */
+\" {
+	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+
+	yylval.string_literal.type = STRING_CHAR;
+	BEGIN(SC_STRING_LITERAL);
+}
+
+u8\" {
+	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+
+	yylval.string_literal.type = STRING_UTF_8;
+	BEGIN(SC_STRING_LITERAL);
+}
+
+u\" {
+	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+
+	yylval.string_literal.type = STRING_CHAR16_T;
+	BEGIN(SC_STRING_LITERAL);
+}
+
+U\" {
+	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+
+	yylval.string_literal.type = STRING_CHAR32_T;
+	BEGIN(SC_STRING_LITERAL);
+}
+
+L\" {
+	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+
+	yylval.string_literal.type = STRING_WCHAR_T;
+	BEGIN(SC_STRING_LITERAL);
+}
+
+<SC_STRING_LITERAL>{
+\\'      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\'");
+\\\"     M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\"");
+\\\?     M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\?");
+\\\\     M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\\");
+\\a      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\a");
+\\b      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\b");
+\\f      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\f");
+\\n      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\n");
+\\r      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\r");
+\\t      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\t");
+\\v      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\v");
+
+{S_CHAR}+ {
+	if (string_append(&yylval.string_literal.string, yytext, yyleng) < 0)
+		return YYerror;
+}
+
+{OCTAL_ESCAPE_SEQUENCE} {
+	errno = 0;
+	unsigned long long int tmp = strtoull(yytext + 1, NULL, 8);
+	if (errno) return YYerror;
+
+	char   buf[2];
+	size_t pos = 0;
+
+	if (tmp > UCHAR_MAX) buf[pos++] = tmp >> 8;
+	buf[pos] = tmp;
+
+	if (string_append(&yylval.string_literal.string, buf, pos + 1) < 0)
+		return YYerror;
+}
+
+{HEXADECIMAL_ESCAPE_SEQUENCE} {
+	char *start = yytext + 2;
+
+	char tmp;
+	char byte;
+
+	// deal with nibble
+	if ((yyleng - 2) % 2) {
+		tmp = start[1];
+		start[1] = '\0';
+
+		errno = 0;
+		byte = strtoull(start, NULL, 16);
+		if (errno) return YYerror;
+		printf("%u\n", byte);
+
+		if (string_append(&yylval.string_literal.string, &byte, 1) < 0)
+			return YYerror;
+
+		start[1] = tmp;
+		++start;
+	}
+
+	while (*start) {
+		tmp = start[2];
+		start[2] = '\0';
+
+		errno = 0;
+		byte = strtoull(start, NULL, 16);
+		if (errno) return YYerror;
+
+		if (string_append(&yylval.string_literal.string, &byte, 1) < 0)
+			return YYerror;
+
+		start[2] = tmp;
+		start += 2;
+	}
+}
+
+\" {
+	BEGIN(INITIAL);
+	return STRING_LITERAL;
 }
 
 .|\n {
