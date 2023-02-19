@@ -12,6 +12,7 @@ tests = {
                                 'lexer.d/integer_constants',
                                 'lexer.d/keywords',
                                 'lexer.d/punctuators',
+                                'lexer.d/string_literals',
                         ),
                 ],
         },

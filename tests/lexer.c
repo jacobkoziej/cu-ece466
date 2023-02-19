@@ -430,6 +430,81 @@ static void test_punctuators(void **state)
 	assert_string_equal(yytext, "%:%:");
 }
 
+static void test_string_literals(void **state)
+{
+	(void) state;
+
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "i love the cooper");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_UTF_8);
+	assert_string_equal(yylval.string_literal.string.head, "i love the cooper");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR16_T);
+	assert_string_equal(yylval.string_literal.string.head, "i love the cooper");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR32_T);
+	assert_string_equal(yylval.string_literal.string.head, "i love the cooper");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_WCHAR_T);
+	assert_string_equal(yylval.string_literal.string.head, "i love the cooper");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "'");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "?");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\'");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\"");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\?");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\\");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\a");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\b");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\f");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\n");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\r");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\t");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\v");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\0");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\60");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\100");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\xf");
+	assert_int_equal(yylex(), STRING_LITERAL);
+	assert_int_equal(yylval.string_literal.type, STRING_CHAR);
+	assert_string_equal(yylval.string_literal.string.head, "\xff");
+}
+
 
 int main(int argc, char **argv)
 {
@@ -465,6 +540,11 @@ int main(int argc, char **argv)
 		),
 		cmocka_unit_test_setup_teardown(
 			test_punctuators,
+			setup,
+			teardown
+		),
+		cmocka_unit_test_setup_teardown(
+			test_string_literals,
 			setup,
 			teardown
 		),
