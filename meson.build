@@ -13,3 +13,21 @@ project(
         ],
         meson_version : '>=1.0.0',
 )
+add_global_arguments('-D_DEFAULT_SOURCE', language : 'c')
+
+
+# dependencies
+cmocka_dep = dependency(
+        'cmocka',
+        required : get_option('tests'),
+)
+
+
+# programs
+bison = find_program('bison')
+flex  = find_program('flex')
+
+
+subdir('include')
+subdir('src')
+subdir('tests')
