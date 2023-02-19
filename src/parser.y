@@ -23,10 +23,11 @@ void yyerror(char const *token)
 }
 
 %union{
+	string_t              string;
 	integer_constant_t    integer_constant;
 	floating_constant_t   floating_constant;
 	character_constant_t  character_constant;
-	string_t              string;
+	string_literal_t      string_literal;
 }
 
 %token KEYWORD_AUTO
@@ -79,6 +80,8 @@ void yyerror(char const *token)
 %token <integer_constant>   INTEGER_CONSTANT
 %token <floating_constant>  FLOATING_CONSTANT
 %token <character_constant> CHARACTER_CONSTANT
+
+%token <string_literal> STRING_LITERAL
 
 %token PUNCTUATOR_LBRACKET
 %token PUNCTUATOR_RBRACKET
