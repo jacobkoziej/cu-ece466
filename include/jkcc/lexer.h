@@ -12,6 +12,8 @@
 #include <uchar.h>
 #include <wchar.h>
 
+#include <jkcc/string.h>
+
 
 enum integer_constant_e {
 	INT,
@@ -33,6 +35,14 @@ enum character_constant_e {
 	WCHAR_T,
 	CHAR16_T,
 	CHAR32_T,
+};
+
+enum string_literal_e {
+	STRING_CHAR,
+	STRING_UTF_8,
+	STRING_CHAR16_T,
+	STRING_CHAR32_T,
+	STRING_WCHAR_T,
 };
 
 
@@ -66,6 +76,11 @@ typedef struct character_constant_s {
 		char32_t      CHAR32_T;
 	};
 } character_constant_t;
+
+typedef struct string_literal_s {
+	enum string_literal_e type;
+	string_t              string;
+} string_literal_t;
 
 
 int lexer_character_constant(
