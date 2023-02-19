@@ -416,22 +416,22 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 
 	/* character constants */
-'	{
+' {
 	character_constant_type = UNSIGNED_CHAR;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
-L'	{
+L' {
 	character_constant_type = WCHAR_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
-u'	{
+u' {
 	character_constant_type = CHAR16_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
-U'	{
+U' {
 	character_constant_type = CHAR32_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
