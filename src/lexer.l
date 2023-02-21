@@ -4,6 +4,11 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
+%option 8bit
+%option noyywrap
+%option yylineno
+
+
 %{
 #include <errno.h>
 #include <limits.h>
