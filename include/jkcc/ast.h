@@ -8,4 +8,9 @@
 #define JKCC_AST_H
 
 
+typedef enum ast_e {
+	AST_NODES_TOTAL,
+} ast_t;
+
+
 #endif  /* JKCC_AST_H */
