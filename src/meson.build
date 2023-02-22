@@ -30,6 +30,7 @@ lex_yy_c = custom_target(
 
 
 jkcc_src = files(
+        'jkcc.c',
         'lexer.c',
         'string.c',
 )
@@ -39,7 +40,7 @@ executable(
         'jkcc',
         include_directories : jkcc_inc,
         sources : [
-                'jkcc.c',
+                'main.c',
                 jkcc_src,
                 lex_yy_c,
                 y_tab_c,
