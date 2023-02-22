@@ -13,5 +13,9 @@ typedef struct jkcc_config_s {
 	unsigned ansi_sgr_stderr : 1;
 } jkcc_config_t;
 
+typedef struct jkcc_s {
+	jkcc_config_t config;
+} jkcc_t;
+
 
 #endif  /* JKCC_JKCC_H */
