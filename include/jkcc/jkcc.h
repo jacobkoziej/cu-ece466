@@ -8,4 +8,10 @@
 #define JKCC_JKCC_H
 
 
+typedef struct jkcc_config_s {
+	unsigned ansi_sgr_stdout : 1;
+	unsigned ansi_sgr_stderr : 1;
+} jkcc_config_t;
+
+
 #endif  /* JKCC_JKCC_H */
