@@ -37,8 +37,9 @@ static const struct argp_option options[] = {
 };
 
 static const struct argp argp = {
-	.options = options,
-	.parser  = parse_opt,
+	.options  = options,
+	.parser   = parse_opt,
+	.args_doc = "[FILE]...",
 };
 
 static jkcc_t jkcc;
