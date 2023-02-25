@@ -4,10 +4,4 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#include <stdlib.h>
-
-
-int main(void)
-{
-	return EXIT_SUCCESS;
-}
+#include <jkcc/jkcc.h>

@@ -26,6 +26,7 @@ cmocka_dep = dependency(
 # programs
 bison = find_program('bison')
 flex  = find_program('flex')
+git   = find_program('git', required : false)
 
 
 subdir('include')

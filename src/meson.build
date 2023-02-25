@@ -2,6 +2,22 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
+vcs_tag_cmd = git.found() ? [
+        git,
+        'describe',
+        '--always',
+        '--broken',
+        '--dirty',
+        '--tags'
+] : ''
+
+vcs_tag_h = vcs_tag(
+        command : vcs_tag_cmd,
+        input   : 'vcs-tag.h.in',
+        output  : 'vcs-tag.h',
+)
+
+
 y_tab_c = custom_target(
         'y.tab.c',
         input  : 'parser.y',
@@ -30,6 +46,7 @@ lex_yy_c = custom_target(
 
 
 jkcc_src = files(
+        'jkcc.c',
         'lexer.c',
         'string.c',
 )
@@ -39,8 +56,9 @@ executable(
         'jkcc',
         include_directories : jkcc_inc,
         sources : [
-                'jkcc.c',
+                'main.c',
                 jkcc_src,
+                vcs_tag_h,
                 lex_yy_c,
                 y_tab_c,
         ],
