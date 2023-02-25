@@ -8,13 +8,18 @@
 #define JKCC_JKCC_H
 
 
+#include <stddef.h>
+
+
 typedef struct jkcc_config_s {
 	unsigned ansi_sgr_stdout : 1;
 	unsigned ansi_sgr_stderr : 1;
 } jkcc_config_t;
 
 typedef struct jkcc_s {
-	jkcc_config_t config;
+	const char    **file;
+	size_t          file_count;
+	jkcc_config_t   config;
 } jkcc_t;
 
 
