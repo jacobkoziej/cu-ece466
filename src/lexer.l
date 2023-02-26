@@ -5,6 +5,7 @@
  */
 
 %option 8bit
+%option noinput
 %option noyywrap
 %option yylineno
 
@@ -120,11 +121,6 @@ HEXADECIMAL_FRACTIONAL_CONSTANT ({HEXADECIMAL_DIGIT_SEQUENCE}?\.{HEXADECIMAL_DIG
 
 
 %%
-
-
-%{
-	(void) input;
-%}
 
 
 	/* keywords */
