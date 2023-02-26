@@ -564,7 +564,6 @@ L\" {
 		errno = 0;
 		byte = strtoull(start, NULL, 16);
 		if (errno) return YYerror;
-		printf("%u\n", byte);
 
 		if (string_append(&yylval->string_literal.string, &byte, 1) < 0)
 			return YYerror;
