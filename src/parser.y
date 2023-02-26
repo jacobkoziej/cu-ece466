@@ -153,4 +153,35 @@ typedef void* yyscan_t;
 %%
 
 
-todo: // TODO: add rules
+primary_expression:
+  identifier
+| constant
+| string_literal
+| PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS
+| generic_selection
+;
+
+
+identifier:
+  %empty
+;
+
+
+constant:
+  %empty
+;
+
+
+string_literal:
+  %empty
+;
+
+
+expression:
+  %empty
+;
+
+
+generic_selection:
+  %empty
+;
