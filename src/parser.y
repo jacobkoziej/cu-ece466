@@ -17,18 +17,21 @@ void yyerror(char const *token)
 }
 %}
 
+
 %code requires {
 #include <jkcc/lexer.h>
 #include <jkcc/string.h>
 }
 
+
 %union{
-	string_t              string;
-	integer_constant_t    integer_constant;
-	floating_constant_t   floating_constant;
-	character_constant_t  character_constant;
-	string_literal_t      string_literal;
+	string_t             string;
+	integer_constant_t   integer_constant;
+	floating_constant_t  floating_constant;
+	character_constant_t character_constant;
+	string_literal_t     string_literal;
 }
+
 
 %token KEYWORD_AUTO
 %token KEYWORD_BREAK
@@ -132,6 +135,8 @@ void yyerror(char const *token)
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
+
 %%
+
 
 todo: // TODO: add rules
