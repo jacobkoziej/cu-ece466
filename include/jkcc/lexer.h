@@ -82,6 +82,11 @@ typedef struct string_literal_s {
 	string_t              string;
 } string_literal_t;
 
+typedef struct yyextra_s {
+	int                       integer_constant_base;
+	enum character_constant_e character_constant_type;
+} yyextra_t;
+
 
 int lexer_character_constant(
 	const char                *start,

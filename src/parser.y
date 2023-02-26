@@ -4,21 +4,35 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
+%define api.pure full
+%locations
+
+
 %{
+#include "y.tab.h"
 #include "lex.yy.h"
 
 #include <jkcc/lexer.h>
 #include <jkcc/string.h>
 
 
-void yyerror(char const *token)
+void yyerror(YYLTYPE* yyloc, yyscan_t scanner, char const *token)
 {
+	(void) yyloc;
+	(void) scanner;
 	(void) token;
 }
 %}
 
 
+%param {yyscan_t scanner}
+
+
 %code requires {
+// handle reentrant flex-bison cyclic dependency
+typedef void* yyscan_t;
+
+
 #include <jkcc/lexer.h>
 #include <jkcc/string.h>
 }

@@ -5,9 +5,13 @@
  */
 
 %option 8bit
+%option bison-bridge
+%option bison-locations
 %option noinput
 %option noyywrap
+%option reentrant
 %option yylineno
+%option extra-type="yyextra_t*"
 
 
 %{
@@ -29,27 +33,27 @@
 	int ret = (func)(\
 		(start),\
 		(end),\
-		&yylval.integer_constant,\
-		integer_constant_base,\
+		&yylval->integer_constant,\
+		yyextra->integer_constant_base,\
 		(type));\
 	BEGIN(INITIAL);\
 	return (ret < 0) ? YYerror : INTEGER_CONSTANT;\
 }
 
 #define M_CHARACTER_CONSTANT(val) {\
-	yylval.character_constant.type = character_constant_type;\
-	switch (character_constant_type) {\
+	yylval->character_constant.type = yyextra->character_constant_type;\
+	switch (yyextra->character_constant_type) {\
 		case UNSIGNED_CHAR:\
-			yylval.character_constant.UNSIGNED_CHAR = (val);\
+			yylval->character_constant.UNSIGNED_CHAR = (val);\
 			break;\
 		case WCHAR_T:\
-			yylval.character_constant.WCHAR_T = (val);\
+			yylval->character_constant.WCHAR_T = (val);\
 			break;\
 		case CHAR16_T:\
-			yylval.character_constant.CHAR16_T = (val);\
+			yylval->character_constant.CHAR16_T = (val);\
 			break;\
 		case CHAR32_T:\
-			yylval.character_constant.CHAR32_T = (val);\
+			yylval->character_constant.CHAR32_T = (val);\
 			break;\
 	}\
 	BEGIN(INITIAL);\
@@ -61,21 +65,19 @@
 	int ret = lexer_character_constant(\
 		(start),\
 		(end),\
-		&yylval.character_constant,\
+		&yylval->character_constant,\
 		(base),\
-		character_constant_type);\
+		yyextra->character_constant_type);\
 	BEGIN(INITIAL);\
 	return (ret < 0) ? YYerror : CHARACTER_CONSTANT;\
 }
 
 #define M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE(val) {\
-	if (string_append(&yylval.string_literal.string, (val), 1) < 0)\
+	if (string_append(&yylval->string_literal.string, (val), 1) < 0)\
 		return YYerror;\
 }
 
 
-static int                       integer_constant_base;
-static enum character_constant_e character_constant_type;
 %}
 
 
@@ -223,15 +225,15 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	/* identifiers */
 {NONDIGIT} {
-	if (string_init(&yylval.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string, 0) < 0) return YYerror;
 
-	if (string_append(&yylval.string, yytext, yyleng) < 0) return YYerror;
+	if (string_append(&yylval->string, yytext, yyleng) < 0) return YYerror;
 
 	BEGIN(SC_IDENTIFIER);
 }
 
 {UNIVERSAL_CHARACTER_NAME} {
-	if (string_init(&yylval.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string, 0) < 0) return YYerror;
 
 	uint32_t ucn;
 
@@ -247,14 +249,14 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	lexer_utf32_to_utf8(buf, &bytes, ucn);
 
-	if (string_append(&yylval.string, buf, bytes) < 0) return YYerror;
+	if (string_append(&yylval->string, buf, bytes) < 0) return YYerror;
 
 	BEGIN(SC_IDENTIFIER);
 }
 
 <SC_IDENTIFIER>{
 ({DIGIT}|{NONDIGIT})* {
-	if (string_append(&yylval.string, yytext, yyleng) < 0) return YYerror;
+	if (string_append(&yylval->string, yytext, yyleng) < 0) return YYerror;
 }
 
 {UNIVERSAL_CHARACTER_NAME} {
@@ -272,7 +274,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	lexer_utf32_to_utf8(buf, &bytes, ucn);
 
-	if (string_append(&yylval.string, buf, bytes) < 0) return YYerror;
+	if (string_append(&yylval->string, buf, bytes) < 0) return YYerror;
 }
 
 .|\n {
@@ -285,19 +287,19 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	/* integer constants */
 {DECIMAL_CONSTANT} {
-	integer_constant_base = 10;
+	yyextra->integer_constant_base = 10;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
 
 {OCTAL_CONSTANT} {
-	integer_constant_base = 8;
+	yyextra->integer_constant_base = 8;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
 
 {HEXADECIMAL_CONSTANT} {
-	integer_constant_base = 16;
+	yyextra->integer_constant_base = 16;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
@@ -366,8 +368,8 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	int ret = lexer_signed_integer_constant(
 		yytext,
 		NULL,
-		&yylval.integer_constant,
-		integer_constant_base,
+		&yylval->integer_constant,
+		yyextra->integer_constant_base,
 		0);
 
 	unput(tmp);
@@ -398,7 +400,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	int ret = lexer_floating_constant(
 		yytext,
 		NULL,
-		&yylval.floating_constant,
+		&yylval->floating_constant,
 		type);
 
 	BEGIN(INITIAL);
@@ -412,7 +414,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	int ret = lexer_floating_constant(
 		yytext,
 		NULL,
-		&yylval.floating_constant,
+		&yylval->floating_constant,
 		DOUBLE);
 
 	unput(tmp);
@@ -424,22 +426,22 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	/* character constants */
 ' {
-	character_constant_type = UNSIGNED_CHAR;
+	yyextra->character_constant_type = UNSIGNED_CHAR;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 L' {
-	character_constant_type = WCHAR_T;
+	yyextra->character_constant_type = WCHAR_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 u' {
-	character_constant_type = CHAR16_T;
+	yyextra->character_constant_type = CHAR16_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 U' {
-	character_constant_type = CHAR32_T;
+	yyextra->character_constant_type = CHAR32_T;
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
@@ -481,37 +483,37 @@ U' {
 
 	/* string literals */
 \" {
-	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
 
-	yylval.string_literal.type = STRING_CHAR;
+	yylval->string_literal.type = STRING_CHAR;
 	BEGIN(SC_STRING_LITERAL);
 }
 
 u8\" {
-	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
 
-	yylval.string_literal.type = STRING_UTF_8;
+	yylval->string_literal.type = STRING_UTF_8;
 	BEGIN(SC_STRING_LITERAL);
 }
 
 u\" {
-	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
 
-	yylval.string_literal.type = STRING_CHAR16_T;
+	yylval->string_literal.type = STRING_CHAR16_T;
 	BEGIN(SC_STRING_LITERAL);
 }
 
 U\" {
-	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
 
-	yylval.string_literal.type = STRING_CHAR32_T;
+	yylval->string_literal.type = STRING_CHAR32_T;
 	BEGIN(SC_STRING_LITERAL);
 }
 
 L\" {
-	if (string_init(&yylval.string_literal.string, 0) < 0) return YYerror;
+	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
 
-	yylval.string_literal.type = STRING_WCHAR_T;
+	yylval->string_literal.type = STRING_WCHAR_T;
 	BEGIN(SC_STRING_LITERAL);
 }
 
@@ -529,7 +531,7 @@ L\" {
 \\v      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\v");
 
 {S_CHAR}+ {
-	if (string_append(&yylval.string_literal.string, yytext, yyleng) < 0)
+	if (string_append(&yylval->string_literal.string, yytext, yyleng) < 0)
 		return YYerror;
 }
 
@@ -544,7 +546,7 @@ L\" {
 	if (tmp > UCHAR_MAX) buf[pos++] = tmp >> 8;
 	buf[pos] = tmp;
 
-	if (string_append(&yylval.string_literal.string, buf, pos + 1) < 0)
+	if (string_append(&yylval->string_literal.string, buf, pos + 1) < 0)
 		return YYerror;
 }
 
@@ -564,7 +566,7 @@ L\" {
 		if (errno) return YYerror;
 		printf("%u\n", byte);
 
-		if (string_append(&yylval.string_literal.string, &byte, 1) < 0)
+		if (string_append(&yylval->string_literal.string, &byte, 1) < 0)
 			return YYerror;
 
 		start[1] = tmp;
@@ -579,7 +581,7 @@ L\" {
 		byte = strtoull(start, NULL, 16);
 		if (errno) return YYerror;
 
-		if (string_append(&yylval.string_literal.string, &byte, 1) < 0)
+		if (string_append(&yylval->string_literal.string, &byte, 1) < 0)
 			return YYerror;
 
 		start[2] = tmp;
