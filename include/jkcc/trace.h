@@ -8,11 +8,13 @@
 #define JKCC_TRACE_H
 
 
+#include <stdbool.h>
 #include <stdio.h>
 
 
 typedef struct trace_s {
 	FILE *stream;
+	bool  ansi_sgr;
 	int   level;
 } trace_t;
 
