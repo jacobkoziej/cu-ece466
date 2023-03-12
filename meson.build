@@ -8,7 +8,7 @@ project(
         version : 'v0.0.0',
         license : 'GPL-3.0-or-later',
         default_options : [
-                'c_std=c17',
+                'c_std=c11',
                 'warning_level=3',
         ],
         meson_version : '>=1.0.0',
