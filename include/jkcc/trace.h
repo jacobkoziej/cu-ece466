@@ -12,6 +12,12 @@
 #include <stdio.h>
 
 
+#define JKCC_TRACE_LEVEL_NONE   0
+#define JKCC_TRACE_LEVEL_LOW    1
+#define JKCC_TRACE_LEVEL_MEDIUM 2
+#define JKCC_TRACE_LEVEL_HIGH   3
+
+
 typedef struct trace_s {
 	FILE *stream;
 	bool  ansi_sgr;
