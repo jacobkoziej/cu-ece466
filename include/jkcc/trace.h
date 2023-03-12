@@ -8,4 +8,13 @@
 #define JKCC_TRACE_H
 
 
+#include <stdio.h>
+
+
+typedef struct trace_s {
+	FILE *stream;
+	int   level;
+} trace_t;
+
+
 #endif  /* JKCC_TRACE_H */
