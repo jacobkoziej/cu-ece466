@@ -3,6 +3,12 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 option(
+        'trace',
+        type        : 'boolean',
+        description : 'enable tracing at runtime',
+)
+
+option(
         'tests',
         type        : 'feature',
         value       : 'auto',
