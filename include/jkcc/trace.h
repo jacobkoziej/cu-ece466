@@ -27,6 +27,17 @@
 			__VA_ARGS__); \
 }
 
+#define TRACE_ARGS(trace, format, ...) { \
+	if ((trace)->level)              \
+		trace_args(              \
+			trace,           \
+			__FILE__,        \
+			__func__,        \
+			format,          \
+			#__VA_ARGS__,    \
+			__VA_ARGS__);    \
+}
+
 
 typedef struct trace_s {
 	FILE *stream;
