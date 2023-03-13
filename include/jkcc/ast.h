@@ -25,4 +25,7 @@ typedef struct ast_identifier_s {
 } ast_identifier_t;
 
 
+ast_t *ast_identifier_init(string_t *identifier, location_t *location);
+
+
 #endif  /* JKCC_AST_H */
