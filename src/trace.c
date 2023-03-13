@@ -5,6 +5,7 @@
  */
 
 #include <jkcc/trace.h>
+#include <jkcc/private/trace.h>
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -15,43 +16,6 @@
 
 #include <jkcc/ansi-esc.h>
 #include <jkcc/string.h>
-
-
-#define TRACE_ARGS_DELIM " ,\t\n"
-
-
-static void print_time(trace_t *trace)
-{
-	time_t now = time(NULL);
-
-	struct tm tm;
-	localtime_r(&now, &tm);
-
-	char buf[sizeof("yyyy-hh-mmThh:mm:ss-hhmm")];
-	strftime(buf, sizeof(buf), "%FT%T%z", &tm);
-
-	if (trace->ansi_sgr)
-		fprintf(
-				trace->stream,
-				ANSI_CSI
-				ANSI_SGR_BOLD
-				";"
-				ANSI_SGR_BRIGHT_FOREGROUND
-				ANSI_SGR_BLACK
-				ANSI_SGR
-				"%s"
-				ANSI_CSI
-				ANSI_SGR_FOREGROUND
-				ANSI_SGR_WHITE
-				ANSI_SGR
-				":"
-				ANSI_CSI
-				ANSI_SGR_RESET
-				ANSI_SGR,
-				buf);
-	else
-		fprintf(trace->stream, "%s:", buf);
-}
 
 
 void trace_args(
@@ -233,4 +197,38 @@ void trace_printf(
 	va_end(ap);
 
 	fprintf(trace->stream, "\n");
+}
+
+
+static void print_time(trace_t *trace)
+{
+	time_t now = time(NULL);
+
+	struct tm tm;
+	localtime_r(&now, &tm);
+
+	char buf[sizeof(ISO_8601_2000_FORMAT)];
+	strftime(buf, sizeof(buf), "%FT%T%z", &tm);
+
+	if (trace->ansi_sgr)
+		fprintf(
+				trace->stream,
+				ANSI_CSI
+				ANSI_SGR_BOLD
+				";"
+				ANSI_SGR_BRIGHT_FOREGROUND
+				ANSI_SGR_BLACK
+				ANSI_SGR
+				"%s"
+				ANSI_CSI
+				ANSI_SGR_FOREGROUND
+				ANSI_SGR_WHITE
+				ANSI_SGR
+				":"
+				ANSI_CSI
+				ANSI_SGR_RESET
+				ANSI_SGR,
+				buf);
+	else
+		fprintf(trace->stream, "%s:", buf);
 }

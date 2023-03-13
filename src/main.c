@@ -4,8 +4,9 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
+#include <jkcc/private/main.h>
+
 #include <argp.h>
-#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,13 +16,6 @@
 #include <jkcc/jkcc.h>
 #include <jkcc/trace.h>
 #include <jkcc/version.h>
-
-
-#define KEY_COLOR 257
-#define KEY_TRACE 258
-
-
-static error_t parse_opt(int key, char *arg, struct argp_state *state);
 
 
 const char *argp_program_version     = JKCC_VERSION;
@@ -49,6 +43,37 @@ static const struct argp argp = {
 	.parser   = parse_opt,
 	.args_doc = "[FILE]...",
 };
+
+
+int main(int argc, char **argv)
+{
+	static jkcc_t jkcc;
+
+	// automatic config
+	jkcc.config.ansi_sgr_stdout = isatty(STDOUT_FILENO);
+	jkcc.config.ansi_sgr_stderr = isatty(STDERR_FILENO);
+
+	const char *JKCC_TRACE = getenv("JKCC_TRACE");
+	if (JKCC_TRACE) {
+		int level = atoi(JKCC_TRACE);
+
+		if (level > JKCC_TRACE_LEVEL_HIGH)
+			level = JKCC_TRACE_LEVEL_HIGH;
+
+		if (level < JKCC_TRACE_LEVEL_NONE)
+			level = JKCC_TRACE_LEVEL_NONE;
+
+		jkcc.config.trace = 1;
+
+		jkcc.trace.stream   = stderr;
+		jkcc.trace.ansi_sgr = jkcc.config.ansi_sgr_stderr;
+		jkcc.trace.level    = level;
+	}
+
+	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
+
+	return EXIT_SUCCESS;
+}
 
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
@@ -123,35 +148,4 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 	}
 
 	return 0;
-}
-
-
-int main(int argc, char **argv)
-{
-	static jkcc_t jkcc;
-
-	// automatic config
-	jkcc.config.ansi_sgr_stdout = isatty(STDOUT_FILENO);
-	jkcc.config.ansi_sgr_stderr = isatty(STDERR_FILENO);
-
-	const char *JKCC_TRACE = getenv("JKCC_TRACE");
-	if (JKCC_TRACE) {
-		int level = atoi(JKCC_TRACE);
-
-		if (level > JKCC_TRACE_LEVEL_HIGH)
-			level = JKCC_TRACE_LEVEL_HIGH;
-
-		if (level < JKCC_TRACE_LEVEL_NONE)
-			level = JKCC_TRACE_LEVEL_NONE;
-
-		jkcc.config.trace = 1;
-
-		jkcc.trace.stream   = stderr;
-		jkcc.trace.ansi_sgr = jkcc.config.ansi_sgr_stderr;
-		jkcc.trace.level    = level;
-	}
-
-	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
-
-	return EXIT_SUCCESS;
 }
