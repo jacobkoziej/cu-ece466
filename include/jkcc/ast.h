@@ -8,9 +8,21 @@
 #define JKCC_AST_H
 
 
+#include <jkcc/parser.h>
+#include <jkcc/string.h>
+
+
 typedef enum ast_e {
+	AST_IDENTIFIER,
 	AST_NODES_TOTAL,
 } ast_t;
+
+
+typedef struct ast_identifier_s {
+	string_t   identifier;
+	location_t location;
+	ast_t      ast;
+} ast_identifier_t;
 
 
 #endif  /* JKCC_AST_H */
