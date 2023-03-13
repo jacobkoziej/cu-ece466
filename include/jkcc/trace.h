@@ -25,4 +25,13 @@ typedef struct trace_s {
 } trace_t;
 
 
+void trace_printf(
+	trace_t    *trace,
+	const char *file,
+	const char *func,
+	const int   line,
+	const char *format,
+	...);
+
+
 #endif  /* JKCC_TRACE_H */
