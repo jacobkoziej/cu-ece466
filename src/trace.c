@@ -100,4 +100,6 @@ void trace_printf(
 	vfprintf(trace->stream, format, ap);
 
 	va_end(ap);
+
+	fprintf(trace->stream, "\n");
 }
