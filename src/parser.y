@@ -16,6 +16,22 @@
 #include <jkcc/string.h>
 
 
+#define YYLLOC_DEFAULT(cur, rhs, n) {\
+	if (n) {\
+		(cur).start_offset = YYRHSLOC(rhs, 1).start_offset;\
+		(cur).start_offset = YYRHSLOC(rhs, 1).start_line;\
+		(cur).start_offset = YYRHSLOC(rhs, 1).start_column;\
+		(cur).end_offset   = YYRHSLOC(rhs, n).end_offset;\
+		(cur).end_offset   = YYRHSLOC(rhs, n).end_line;\
+		(cur).end_offset   = YYRHSLOC(rhs, n).end_column;\
+	} else {\
+		(cur).start_offset = (cur).end_offset = YYRHSLOC(rhs, 0).end_offset;\
+		(cur).start_line   = (cur).end_line   = YYRHSLOC(rhs, 0).end_line;\
+		(cur).start_column = (cur).end_column = YYRHSLOC(rhs, 0).end_column;\
+	}\
+}
+
+
 void yyerror(YYLTYPE* yyloc, yyscan_t scanner, char const *token)
 {
 	(void) yyloc;
@@ -29,12 +45,16 @@ void yyerror(YYLTYPE* yyloc, yyscan_t scanner, char const *token)
 
 
 %code requires {
+#include <jkcc/lexer.h>
+#include <jkcc/parser.h>
+#include <jkcc/string.h>
+
+
+#define YYLTYPE location_t
+
+
 // handle reentrant flex-bison cyclic dependency
 typedef void* yyscan_t;
-
-
-#include <jkcc/lexer.h>
-#include <jkcc/string.h>
 }
 
 

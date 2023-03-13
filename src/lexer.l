@@ -28,6 +28,24 @@
 #include "y.tab.h"
 
 
+#define UNPUT(x) {\
+	if ((x) == '\n') yylloc->end_line -= 1;\
+	yylloc->end_offset -= 1;\
+	yylloc->end_column -= 1;\
+	unput(x);\
+}
+
+#define YY_USER_ACTION {\
+	if (YY_START == INITIAL) {\
+		yylloc->start_offset = yylloc->end_offset;\
+		yylloc->start_line   = yylloc->end_line;\
+		yylloc->start_column = yylloc->end_column;\
+	}\
+	yylloc->end_offset += yyleng;\
+	yylloc->end_line    = yylineno;\
+	yylloc->end_column += yyleng;\
+}
+
 #define M_INTEGER_CONSTANT(func, start, end, type) {\
 	*(end) = '\0';\
 	int ret = (func)(\
@@ -76,8 +94,6 @@
 	if (string_append(&yylval->string_literal.string, (val), 1) < 0)\
 		return YYerror;\
 }
-
-
 %}
 
 
@@ -278,7 +294,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 }
 
 .|\n {
-	unput(*yytext);
+	UNPUT(*yytext);
 	BEGIN(INITIAL);
 	return IDENTIFIER;
 }
@@ -372,7 +388,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yyextra->integer_constant_base,
 		0);
 
-	unput(tmp);
+	UNPUT(tmp);
 	BEGIN(INITIAL);
 	return (ret < 0) ? YYerror : INTEGER_CONSTANT;
 }
@@ -417,7 +433,7 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		&yylval->floating_constant,
 		DOUBLE);
 
-	unput(tmp);
+	UNPUT(tmp);
 	BEGIN(INITIAL);
 	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
 }
@@ -474,7 +490,7 @@ U' {
 }
 
 .|\n {
-	unput(*yytext);
+	UNPUT(*yytext);
 	BEGIN(INITIAL);
 	return YYerror;
 }
@@ -594,7 +610,7 @@ L\" {
 }
 
 .|\n {
-	unput(*yytext);
+	UNPUT(*yytext);
 	BEGIN(INITIAL);
 	return YYerror;
 }
