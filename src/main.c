@@ -14,8 +14,7 @@
 
 #include <jkcc/jkcc.h>
 #include <jkcc/trace.h>
-
-#include "vcs-tag.h"
+#include <jkcc/version.h>
 
 
 #define KEY_COLOR 257
@@ -25,7 +24,7 @@
 static error_t parse_opt(int key, char *arg, struct argp_state *state);
 
 
-const char *argp_program_version     = VCS_TAG;
+const char *argp_program_version     = JKCC_VERSION;
 const char *argp_program_bug_address = "<jacobkoziej@gmail.com>";
 
 static const struct argp_option options[] = {

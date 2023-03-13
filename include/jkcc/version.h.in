@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+/*
+ * version.h -- jkcc version
+ * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
+ */
+
+#ifndef JKCC_VERSION_H
+#define JKCC_VERSION_H
+
+
+#define JKCC_VERSION "@VCS_TAG@"
+
+
+#endif  /* JKCC_VERSION_H */
