@@ -18,7 +18,7 @@
 #define JKCC_TRACE_LEVEL_HIGH   3
 
 #define TRACE_PRINTF(trace, ...) {    \
-	if ((*(trace)).level)         \
+	if ((trace)->level)           \
 		trace_printf(         \
 			trace,        \
 			__FILE__,     \
