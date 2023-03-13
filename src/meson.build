@@ -51,6 +51,7 @@ jkcc_src = files(
         'lexer.c',
         'parser.c',
         'string.c',
+        'trace.c',
 )
 
 
