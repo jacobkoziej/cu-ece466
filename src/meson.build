@@ -21,11 +21,15 @@ vcs_tag_h = vcs_tag(
 y_tab_c = custom_target(
         'y.tab.c',
         input  : 'parser.y',
-        output : ['y.tab.c', 'y.tab.h'],
+        output : ['y.tab.c', 'y.tab.h', 'y.output'],
         command : [
                 bison,
+                '--color=yes',
                 '--header=@OUTPUT1@',
                 '--output=@OUTPUT0@',
+                '--report-file=@OUTPUT2@',
+                '--report=all',
+                '--warnings=all',
                 '@INPUT0@',
         ],
 )
