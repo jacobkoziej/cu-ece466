@@ -17,6 +17,16 @@
 #define JKCC_TRACE_LEVEL_MEDIUM 2
 #define JKCC_TRACE_LEVEL_HIGH   3
 
+#define TRACE_PRINTF(trace, ...) {    \
+	if ((*(trace)).level)         \
+		trace_printf(         \
+			trace,        \
+			__FILE__,     \
+			__func__,     \
+			__LINE__,     \
+			__VA_ARGS__); \
+}
+
 
 typedef struct trace_s {
 	FILE *stream;
