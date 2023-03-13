@@ -35,6 +35,13 @@ typedef struct trace_s {
 } trace_t;
 
 
+void trace_args(
+	trace_t    *trace,
+	const char *file,
+	const char *func,
+	const char *args,
+	const char *format,
+	...);
 void trace_printf(
 	trace_t    *trace,
 	const char *file,
