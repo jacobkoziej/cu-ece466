@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+/*
+ * config.h -- jkcc build configuration
+ * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
+ */
+
+#ifndef JKCC_CONFIG_H
+#define JKCC_CONFIG_H
+
+
+#mesondefine JKCC_CONFIG_OPTION_TRACE
+
+
+#endif  /* JKCC_CONFIG_H */
