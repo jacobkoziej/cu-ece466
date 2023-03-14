@@ -10,6 +10,11 @@
 #include <stdlib.h>
 
 
+void vector_free(vector_t *vector)
+{
+	free(vector->buf);
+}
+
 int vector_init(vector_t *vector, size_t element_size, size_t size)
 {
 	if (!element_size) return -1;

@@ -22,7 +22,8 @@ typedef struct vector_s {
 } vector_t;
 
 
-int vector_init(vector_t *vector, size_t element_size, size_t size);
+void vector_free(vector_t *vector);
+int  vector_init(vector_t *vector, size_t element_size, size_t size);
 
 
 #endif  /* JCC_VECTOR_H */
