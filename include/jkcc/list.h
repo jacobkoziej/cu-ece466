@@ -8,4 +8,10 @@
 #define JKCC_LIST_H
 
 
+typedef struct list_s {
+	struct list_s *prev;
+	struct list_s *next;
+} list_t;
+
+
 #endif  /* JCC_LIST_H */
