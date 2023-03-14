@@ -40,6 +40,9 @@ void string_free(string_t *string)
 
 int string_init(string_t *string, size_t size)
 {
+	// ensure size is even
+	size &= ~((size_t) 1);
+
 	if (!size) size = STRING_DEFAULT_SIZE;
 
 	char *tmp = calloc(size, sizeof(*tmp));

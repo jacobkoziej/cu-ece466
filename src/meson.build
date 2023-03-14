@@ -40,6 +40,7 @@ jkcc_src = files(
         'parser.c',
         'string.c',
         'trace.c',
+        'vector.c',
 )
 
 
