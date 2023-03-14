@@ -11,12 +11,18 @@
 #include <stddef.h>
 
 
+#define VECTOR_DEFAULT_SIZE 64
+
+
 typedef struct vector_s {
 	void   *buf;
 	size_t  use;
 	size_t  size;
 	size_t  element_size;
 } vector_t;
+
+
+int vector_init(vector_t *vector, size_t element_size, size_t size);
 
 
 #endif  /* JCC_VECTOR_H */
