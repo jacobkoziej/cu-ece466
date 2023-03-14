@@ -212,23 +212,23 @@ static void print_time(trace_t *trace)
 
 	if (trace->ansi_sgr)
 		fprintf(
-				trace->stream,
-				ANSI_CSI
-				ANSI_SGR_BOLD
-				";"
-				ANSI_SGR_BRIGHT_FOREGROUND
-				ANSI_SGR_BLACK
-				ANSI_SGR
-				"%s"
-				ANSI_CSI
-				ANSI_SGR_FOREGROUND
-				ANSI_SGR_WHITE
-				ANSI_SGR
-				":"
-				ANSI_CSI
-				ANSI_SGR_RESET
-				ANSI_SGR,
-				buf);
+			trace->stream,
+			ANSI_CSI
+			ANSI_SGR_BOLD
+			";"
+			ANSI_SGR_BRIGHT_FOREGROUND
+			ANSI_SGR_BLACK
+			ANSI_SGR
+			"%s"
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_WHITE
+			ANSI_SGR
+			":"
+			ANSI_CSI
+			ANSI_SGR_RESET
+			ANSI_SGR,
+			buf);
 	else
 		fprintf(trace->stream, "%s:", buf);
 }
