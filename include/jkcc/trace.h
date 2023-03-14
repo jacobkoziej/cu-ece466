@@ -17,6 +17,17 @@
 #define JKCC_TRACE_LEVEL_MEDIUM 2
 #define JKCC_TRACE_LEVEL_HIGH   3
 
+#define TRACE_ARGS(trace, format, ...) {               \
+	if ((trace)->level >= JKCC_TRACE_LEVEL_MEDIUM) \
+		trace_args(                            \
+			trace,                         \
+			__FILE__,                      \
+			__func__,                      \
+			format,                        \
+			#__VA_ARGS__,                  \
+			__VA_ARGS__);                  \
+}
+
 #define TRACE_PRINTF(trace, ...) {                  \
 	if ((trace)->level >= JKCC_TRACE_LEVEL_LOW) \
 		trace_printf(                       \
@@ -27,15 +38,14 @@
 			__VA_ARGS__);               \
 }
 
-#define TRACE_ARGS(trace, format, ...) {               \
-	if ((trace)->level >= JKCC_TRACE_LEVEL_MEDIUM) \
-		trace_args(                            \
-			trace,                         \
-			__FILE__,                      \
-			__func__,                      \
-			format,                        \
-			#__VA_ARGS__,                  \
-			__VA_ARGS__);                  \
+#define TRACE_RULE(trace, rule, match) {            \
+	if ((trace)->level >= JKCC_TRACE_LEVEL_LOW) \
+		trace_rule(                         \
+			trace,                      \
+			__FILE__,                   \
+			__func__,                   \
+			rule,                       \
+			match);                     \
 }
 
 
