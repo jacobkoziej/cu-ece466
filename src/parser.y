@@ -170,6 +170,9 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
 
+%destructor { string_free(&$$.string); } <string_literal>
+
+
 %%
 
 
