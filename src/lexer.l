@@ -29,21 +29,21 @@
 
 
 #define UNPUT(x) {\
-	if ((x) == '\n') yylloc->end_line -= 1;\
-	yylloc->end_offset -= 1;\
-	yylloc->end_column -= 1;\
+	if ((x) == '\n') yylloc->end.line -= 1;\
+	yylloc->end.offset -= 1;\
+	yylloc->end.column -= 1;\
 	unput(x);\
 }
 
 #define YY_USER_ACTION {\
 	if (YY_START == INITIAL) {\
-		yylloc->start_offset = yylloc->end_offset;\
-		yylloc->start_line   = yylloc->end_line;\
-		yylloc->start_column = yylloc->end_column;\
+		yylloc->start.offset = yylloc->end.offset;\
+		yylloc->start.line   = yylloc->end.line;\
+		yylloc->start.column = yylloc->end.column;\
 	}\
-	yylloc->end_offset += yyleng;\
-	yylloc->end_line    = yylineno;\
-	yylloc->end_column += yyleng;\
+	yylloc->end.offset += yyleng;\
+	yylloc->end.line    = yylineno;\
+	yylloc->end.column += yyleng;\
 }
 
 #define M_INTEGER_CONSTANT(func, start, end, type) {\

@@ -18,23 +18,23 @@
 
 #define YYLLOC_DEFAULT(cur, rhs, n) {\
 	if (n) {\
-		(cur).start_offset = YYRHSLOC(rhs, 1).start_offset;\
-		(cur).start_offset = YYRHSLOC(rhs, 1).start_line;\
-		(cur).start_offset = YYRHSLOC(rhs, 1).start_column;\
-		(cur).end_offset   = YYRHSLOC(rhs, n).end_offset;\
-		(cur).end_offset   = YYRHSLOC(rhs, n).end_line;\
-		(cur).end_offset   = YYRHSLOC(rhs, n).end_column;\
+		(cur).start.offset = YYRHSLOC(rhs, 1).start.offset;\
+		(cur).start.offset = YYRHSLOC(rhs, 1).start.line;\
+		(cur).start.offset = YYRHSLOC(rhs, 1).start.column;\
+		(cur).end.offset   = YYRHSLOC(rhs, n).end.offset;\
+		(cur).end.offset   = YYRHSLOC(rhs, n).end.line;\
+		(cur).end.offset   = YYRHSLOC(rhs, n).end.column;\
 	} else {\
-		(cur).start_offset = (cur).end_offset = YYRHSLOC(rhs, 0).end_offset;\
-		(cur).start_line   = (cur).end_line   = YYRHSLOC(rhs, 0).end_line;\
-		(cur).start_column = (cur).end_column = YYRHSLOC(rhs, 0).end_column;\
+		(cur).start.offset = (cur).end.offset = YYRHSLOC(rhs, 0).end.offset;\
+		(cur).start.line   = (cur).end.line   = YYRHSLOC(rhs, 0).end.line;\
+		(cur).start.column = (cur).end.column = YYRHSLOC(rhs, 0).end.column;\
 	}\
 }
 
 
-void yyerror(YYLTYPE* yyloc, yyscan_t scanner, char const *token)
+void yyerror(YYLTYPE* yylloc, yyscan_t scanner, char const *token)
 {
-	(void) yyloc;
+	(void) yylloc;
 	(void) scanner;
 	(void) token;
 }

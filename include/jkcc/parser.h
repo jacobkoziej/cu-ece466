@@ -12,12 +12,16 @@
 
 
 typedef struct location_s {
-	off_t start_offset;
-	int   start_line;
-	int   start_column;
-	off_t end_offset;
-	int   end_line;
-	int   end_column;
+	struct {
+		off_t offset;
+		int   line;
+		int   column;
+	} start;
+	struct {
+		off_t offset;
+		int   line;
+		int   column;
+	} end;
 } location_t;
 
 
