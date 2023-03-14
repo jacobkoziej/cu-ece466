@@ -8,11 +8,21 @@
 #include <jkcc/private/ast.h>
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
+
+
+void (*fprint_ast_node[AST_NODES_TOTAL])(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t        level,
+	uint_fast8_t  flags) = {
+	fprint_ast_identifier,
+};
 
 
 ast_t *ast_identifier_init(string_t *identifier, location_t *location)

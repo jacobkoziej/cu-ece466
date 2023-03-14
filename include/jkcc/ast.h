@@ -8,6 +8,9 @@
 #define JKCC_AST_H
 
 
+#include <stdint.h>
+#include <stdio.h>
+
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
 
@@ -27,6 +30,13 @@ typedef struct ast_identifier_s {
 	location_t location;
 	ast_t      ast;
 } ast_identifier_t;
+
+
+extern void (*fprint_ast_node[AST_NODES_TOTAL])(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t       level,
+	uint_fast8_t flags);
 
 
 ast_t *ast_identifier_init(string_t *identifier, location_t *location);
