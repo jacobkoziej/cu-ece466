@@ -10,8 +10,11 @@
 
 #include <sys/types.h>
 
+#include <jkcc/lexer.h>
+
 
 typedef struct location_s {
+	file_t *file;
 	struct {
 		off_t offset;
 		int   line;

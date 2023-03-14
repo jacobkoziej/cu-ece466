@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <jkcc/lexer.h>
 #include <jkcc/string.h>
@@ -44,6 +45,11 @@
 	yylloc->end.offset += yyleng;\
 	yylloc->end.line    = yylineno;\
 	yylloc->end.column += yyleng;\
+}
+
+#define YY_USER_INIT {\
+	memset(yylloc, 0, sizeof(*yylloc));\
+	yylloc->file = yyextra->file;\
 }
 
 #define M_INTEGER_CONSTANT(func, start, end, type) {\
