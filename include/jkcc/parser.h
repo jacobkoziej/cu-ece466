@@ -8,4 +8,14 @@
 #define JKCC_PARSER_H
 
 
+#include <jkcc/ast.h>
+#include <jkcc/vector.h>
+
+
+typedef struct parse_s {
+	ast_t    *ast;
+	vector_t  file;
+} parse_t;
+
+
 #endif  /* JKCC_PARSER_H */
