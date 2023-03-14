@@ -18,6 +18,8 @@
 #define AST_PRINT_NO_INDENT_INITIAL   (1 << 0)
 #define AST_PRINT_NO_TRAILING_NEWLINE (1 << 1)
 
+#define AST_NODE_FREE(ast) ast_node_free[*ast](ast);
+
 #define FPRINT_AST_NODE(stream, ast, level, flags) fprint_ast_node[*ast]( \
 	stream,                                                           \
 	ast,                                                              \
