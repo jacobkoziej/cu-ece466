@@ -32,7 +32,7 @@
 }
 
 
-void yyerror(YYLTYPE* yylloc, yyscan_t scanner, char const *token)
+static void yyerror(YYLTYPE* yylloc, yyscan_t scanner, char const *token)
 {
 	(void) yylloc;
 	(void) scanner;
