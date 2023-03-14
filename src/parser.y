@@ -47,7 +47,6 @@ static void yyerror(YYLTYPE* yylloc, yyscan_t scanner, char const *token)
 
 %code requires {
 #include <jkcc/lexer.h>
-#include <jkcc/parser.h>
 #include <jkcc/string.h>
 
 

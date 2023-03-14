@@ -15,7 +15,6 @@
 #include <string.h>
 
 #include <jkcc/lexer.h>
-#include <jkcc/parser.h>
 
 
 #define INDENT(stream, level) if (level) {              \

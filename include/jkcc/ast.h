@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/parser.h>
+#include <jkcc/lexer.h>
 #include <jkcc/string.h>
 
 

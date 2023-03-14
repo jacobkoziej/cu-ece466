@@ -8,24 +8,4 @@
 #define JKCC_PARSER_H
 
 
-#include <sys/types.h>
-
-#include <jkcc/lexer.h>
-
-
-typedef struct location_s {
-	file_t *file;
-	struct {
-		off_t offset;
-		int   line;
-		int   column;
-	} start;
-	struct {
-		off_t offset;
-		int   line;
-		int   column;
-	} end;
-} location_t;
-
-
 #endif  /* JKCC_PARSER_H */

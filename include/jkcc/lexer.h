@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/types.h>
 #include <uchar.h>
 #include <wchar.h>
 
@@ -53,6 +54,20 @@ typedef struct file_s {
 	list_t      list;
 	size_t      refs;
 } file_t;
+
+typedef struct location_s {
+	file_t *file;
+	struct {
+		off_t offset;
+		int   line;
+		int   column;
+	} start;
+	struct {
+		off_t offset;
+		int   line;
+		int   column;
+	} end;
+} location_t;
 
 typedef struct integer_constant_s {
 	enum integer_constant_e type;
