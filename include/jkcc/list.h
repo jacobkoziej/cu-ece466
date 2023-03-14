@@ -8,6 +8,14 @@
 #define JKCC_LIST_H
 
 
+#include <stddef.h>
+#include <stdint.h>
+
+
+#define OFFSETOF_LIST(list, type, member) \
+	((type*) (((uintptr_t) list) - offsetof(type, member)))
+
+
 typedef struct list_s {
 	struct list_s *prev;
 	struct list_s *next;
