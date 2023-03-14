@@ -22,12 +22,17 @@ static FILE       *yyin;
 static yyscan_t    yyscanner;
 static YYSTYPE     yylval;
 static YYLTYPE     yylloc;
-static yyextra_t   yyextra_data;
+static file_t      yyfile;
+static yyextra_t   yyextra_data = {
+	.file = &yyfile,
+};
 
 
 static int setup(void **state)
 {
 	(void) state;
+
+	yyfile.path = *yyin_next;
 
 	yylex_init(&yyscanner);
 	yylex_init_extra(&yyextra_data, yyscanner);

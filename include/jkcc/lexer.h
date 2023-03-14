@@ -91,8 +91,9 @@ typedef struct string_literal_s {
 } string_literal_t;
 
 typedef struct yyextra_s {
-	int                       integer_constant_base;
-	enum character_constant_e character_constant_type;
+	file_t                    *file;
+	int                        integer_constant_base;
+	enum character_constant_e  character_constant_type;
 } yyextra_t;
 
 
