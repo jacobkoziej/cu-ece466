@@ -38,6 +38,8 @@ typedef struct ast_identifier_s {
 } ast_identifier_t;
 
 
+extern void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast);
+
 extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 	FILE         *stream,
 	const ast_t  *ast,

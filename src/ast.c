@@ -16,6 +16,10 @@
 #include <jkcc/string.h>
 
 
+void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
+	ast_identifier_free,
+};
+
 void (*fprint_ast_node[AST_NODES_TOTAL])(
 	FILE         *stream,
 	const ast_t  *ast,
