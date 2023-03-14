@@ -8,10 +8,12 @@
 #define JKCC_LEXER_H
 
 
+#include <stddef.h>
 #include <stdint.h>
 #include <uchar.h>
 #include <wchar.h>
 
+#include <jkcc/list.h>
 #include <jkcc/string.h>
 
 
@@ -45,6 +47,12 @@ enum string_literal_e {
 	STRING_WCHAR_T,
 };
 
+
+typedef struct file_s {
+	const char *path;
+	list_t      list;
+	size_t      refs;
+} file_t;
 
 typedef struct integer_constant_s {
 	enum integer_constant_e type;
