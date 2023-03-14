@@ -15,6 +15,7 @@
 #define KEY_TRACE 258
 
 
+static void    cleanup(void);
 static error_t parse_opt(int key, char *arg, struct argp_state *state);
 
 

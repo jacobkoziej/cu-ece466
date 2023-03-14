@@ -14,7 +14,9 @@
 #include <unistd.h>
 
 #include <jkcc/jkcc.h>
+#include <jkcc/parser.h>
 #include <jkcc/trace.h>
+#include <jkcc/vector.h>
 #include <jkcc/version.h>
 
 
@@ -44,10 +46,12 @@ static const struct argp argp = {
 	.args_doc = "[FILE]...",
 };
 
+static jkcc_t jkcc;
+
 
 int main(int argc, char **argv)
 {
-	static jkcc_t jkcc;
+	atexit(cleanup);
 
 	// automatic config
 	jkcc.config.ansi_sgr_stdout = isatty(STDOUT_FILENO);
@@ -72,9 +76,49 @@ int main(int argc, char **argv)
 
 	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
 
+	parse_t *translation_unit;
+
+	if (vector_init(&jkcc.translation_unit, sizeof(*translation_unit), 0))
+		return EXIT_FAILURE;
+
+	const char *path      = NULL;
+	size_t      processed = 0;
+
+	if (!jkcc.file_count) goto parse_stdin;
+
+	while (processed < jkcc.file_count) {
+		path = jkcc.file[processed];
+
+parse_stdin:
+		translation_unit = parse(path);
+		if (!translation_unit) goto error;
+
+		if (vector_append(&jkcc.translation_unit, translation_unit))
+			goto error;
+
+		++processed;
+	}
+
 	return EXIT_SUCCESS;
+
+error:
+	parse_free(translation_unit);
+
+	return EXIT_FAILURE;
 }
 
+
+static void cleanup(void)
+{
+	if (jkcc.translation_unit.buf) {
+		parse_t **translation_unit = jkcc.translation_unit.buf;
+
+		for (size_t i = 0; i < jkcc.translation_unit.use; i++)
+			parse_free(translation_unit[i]);
+
+		vector_free(&jkcc.translation_unit);
+	}
+}
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {

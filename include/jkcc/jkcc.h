@@ -11,6 +11,7 @@
 #include <stddef.h>
 
 #include <jkcc/trace.h>
+#include <jkcc/vector.h>
 
 
 typedef struct jkcc_config_s {
@@ -22,6 +23,7 @@ typedef struct jkcc_config_s {
 typedef struct jkcc_s {
 	const char    **file;
 	size_t          file_count;
+	vector_t        translation_unit;  // parse_t*
 	trace_t         trace;
 	jkcc_config_t   config;
 } jkcc_t;
