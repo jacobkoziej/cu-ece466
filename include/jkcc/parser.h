@@ -18,4 +18,7 @@ typedef struct parse_s {
 } parse_t;
 
 
+parse_t *parse(const char *path);
+
+
 #endif  /* JKCC_PARSER_H */

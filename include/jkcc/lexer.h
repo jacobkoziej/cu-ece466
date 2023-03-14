@@ -16,6 +16,7 @@
 
 #include <jkcc/list.h>
 #include <jkcc/string.h>
+#include <jkcc/vector.h>
 
 
 enum integer_constant_e {
@@ -50,9 +51,9 @@ enum string_literal_e {
 
 
 typedef struct file_s {
-	const char *path;
-	list_t      list;
-	size_t      refs;
+	char   *path;
+	list_t  list;
+	size_t  refs;
 } file_t;
 
 typedef struct location_s {
@@ -107,6 +108,7 @@ typedef struct string_literal_s {
 
 typedef struct yyextra_s {
 	file_t                    *file;
+	vector_t                  *file_allocated;
 	int                        integer_constant_base;
 	enum character_constant_e  character_constant_type;
 } yyextra_t;

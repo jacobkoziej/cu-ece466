@@ -13,6 +13,7 @@
 #include "lex.yy.h"
 
 #include <jkcc/lexer.h>
+#include <jkcc/parser.h>
 #include <jkcc/string.h>
 
 
@@ -33,20 +34,27 @@
 }
 
 
-static void yyerror(YYLTYPE* yylloc, yyscan_t scanner, char const *token)
+static void yyerror(
+	YYLTYPE     *yylloc,
+	yyscan_t     scanner,
+	parse_t     *out,
+	char const  *token)
 {
 	(void) yylloc;
 	(void) scanner;
+	(void) out;
 	(void) token;
 }
 %}
 
 
 %param {yyscan_t scanner}
+%parse-param {parse_t *out}
 
 
 %code requires {
 #include <jkcc/lexer.h>
+#include <jkcc/parser.h>
 #include <jkcc/string.h>
 
 
