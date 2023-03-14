@@ -14,11 +14,12 @@
 
 typedef struct parse_s {
 	ast_t    *ast;
-	vector_t  file;
+	vector_t  file;  // file_t*
 } parse_t;
 
 
 parse_t *parse(const char *path);
+void     parse_free(parse_t *translation_unit);
 
 
 #endif  /* JKCC_PARSER_H */

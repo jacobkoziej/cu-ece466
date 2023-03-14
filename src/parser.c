@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <jkcc/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/vector.h>
 
@@ -85,4 +86,18 @@ error:
 	free(out);
 
 	return NULL;
+}
+
+void parse_free(parse_t *translation_unit)
+{
+	AST_NODE_FREE(translation_unit->ast);
+
+	file_t **file = translation_unit->file.buf;
+
+	for (size_t i = 0; i < translation_unit->file.use; i++) {
+		free(file[i]->path);
+		free(file[i]);
+	}
+
+	free(translation_unit);
 }
