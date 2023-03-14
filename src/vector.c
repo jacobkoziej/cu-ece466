@@ -42,6 +42,9 @@ int vector_init(vector_t *vector, size_t element_size, size_t size)
 {
 	if (!element_size) return -1;
 
+	// ensure size is even
+	size &= ~((size_t) 1);
+
 	if (!size) size = VECTOR_DEFAULT_SIZE;
 
 	vector->use          = 0;
