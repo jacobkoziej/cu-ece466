@@ -12,6 +12,10 @@
 #include <jkcc/string.h>
 
 
+#define AST_PRINT_NO_INDENT_INITIAL   (1 << 0)
+#define AST_PRINT_NO_TRAILING_NEWLINE (1 << 1)
+
+
 typedef enum ast_e {
 	AST_IDENTIFIER,
 	AST_NODES_TOTAL,
