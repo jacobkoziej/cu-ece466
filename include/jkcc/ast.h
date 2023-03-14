@@ -46,6 +46,7 @@ extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 
 
 ast_t *ast_identifier_init(string_t *identifier, location_t *location);
+void   ast_identifier_free(ast_t *ast);
 
 
 #endif  /* JKCC_AST_H */
