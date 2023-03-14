@@ -30,3 +30,14 @@ int vector_init(vector_t *vector, size_t element_size, size_t size)
 
 	return 0;
 }
+
+int vector_resize(vector_t *vector, size_t size)
+{
+	vector_t *tmp = realloc(vector->buf, size * vector->element_size);
+	if (!tmp) return -1;
+
+	vector->buf  = tmp;
+	vector->size = size;
+
+	return 0;
+}
