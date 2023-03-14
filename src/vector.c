@@ -7,8 +7,31 @@
 #include <jkcc/vector.h>
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
+
+int vector_append(vector_t *vector, void *element)
+{
+	if (vector->use + 1 > vector->size) {
+		size_t new_size = vector->size * 2;
+
+		// overflow
+		if (new_size / 2 != vector->size) return -1;
+
+		if (vector_resize(vector, new_size)) return -1;
+	}
+
+	void *dst = (void*) (((uintptr_t) vector->buf) +
+		(vector->use * vector->element_size));
+
+	memcpy(dst, element, vector->element_size);
+
+	++vector->use;
+
+	return 0;
+}
 
 void vector_free(vector_t *vector)
 {
