@@ -199,6 +199,77 @@ void trace_printf(
 	fprintf(trace->stream, "\n");
 }
 
+void trace_rule(
+	trace_t    *trace,
+	const char *file,
+	const char *func,
+	const char *rule,
+	const char *match)
+{
+	if (trace->level >= JKCC_TRACE_LEVEL_HIGH)
+		print_time(trace);
+
+	if (trace->ansi_sgr)
+		fprintf(
+			trace->stream,
+			ANSI_CSI
+			ANSI_SGR_BOLD
+			";"
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_GREEN
+			ANSI_SGR
+			"%s"
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_WHITE
+			ANSI_SGR
+			":"
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_CYAN
+			ANSI_SGR
+			"%s"
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_WHITE
+			ANSI_SGR
+			": "
+			ANSI_CSI
+			ANSI_SGR_RESET
+			ANSI_SGR
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_MAGENTA
+			ANSI_SGR
+			"%s"
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_WHITE
+			ANSI_SGR
+			": "
+			ANSI_CSI
+			ANSI_SGR_FOREGROUND
+			ANSI_SGR_BLUE
+			ANSI_SGR
+			"%s\n"
+			ANSI_CSI
+			ANSI_SGR_RESET
+			ANSI_SGR
+			ANSI_CSI,
+			file,
+			func,
+			rule,
+			match);
+	else
+		fprintf(
+			trace->stream,
+			"%s:%s: %s: %s\n",
+			file,
+			func,
+			rule,
+			match);
+}
+
 
 static void print_time(trace_t *trace)
 {

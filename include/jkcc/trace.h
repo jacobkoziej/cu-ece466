@@ -60,6 +60,12 @@ void trace_printf(
 	const int   line,
 	const char *format,
 	...);
+void trace_rule(
+	trace_t    *trace,
+	const char *file,
+	const char *func,
+	const char *rule,
+	const char *match);
 
 
 #endif  /* JKCC_TRACE_H */
