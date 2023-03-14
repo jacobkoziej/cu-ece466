@@ -23,6 +23,14 @@
 	fwrite(buf, sizeof(*buf), sizeof(buf), stream); \
 }
 
+#define OFFSETOF_AST_NODE(node, type) ((type*) (((uintptr_t) node) - offsetof(type, ast)))
+
+
+static void fprint_ast_identifier(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t        level,
+	uint_fast8_t  flags);
 
 static void fprint_location(
 	FILE             *stream,

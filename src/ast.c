@@ -29,6 +29,41 @@ ast_t *ast_identifier_init(string_t *identifier, location_t *location)
 }
 
 
+static void fprint_ast_identifier(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t        level,
+	uint_fast8_t  flags)
+{
+	ast_identifier_t *node = OFFSETOF_AST_NODE(ast, ast_identifier_t);
+
+	if (!(flags & AST_PRINT_NO_INDENT_INITIAL))
+		INDENT(stream, level);
+
+	fprintf(stream, "{\n");
+
+	++level;
+
+	INDENT(stream, level);
+	fprintf(stream, "\"identifier\" : \"%s\",\n", node->identifier.head);
+
+	INDENT(stream, level);
+	fprintf(stream, "\"location\" : ");
+	fprint_location(
+		stream,
+		&node->location,
+		level,
+		AST_PRINT_NO_INDENT_INITIAL);
+
+	--level;
+
+	INDENT(stream, level);
+	fprintf(stream, "}");
+
+	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE))
+		fprintf(stream, "\n");
+}
+
 static void fprint_location(
 	FILE             *stream,
 	const location_t *location,
