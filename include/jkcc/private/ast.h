@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <jkcc/lexer.h>
 #include <jkcc/parser.h>
 
 
@@ -31,7 +32,11 @@ static void fprint_ast_identifier(
 	const ast_t  *ast,
 	size_t        level,
 	uint_fast8_t  flags);
-
+static void fprint_file(
+	FILE             *stream,
+	const file_t     *file,
+	size_t            level,
+	uint_fast8_t      flags);
 static void fprint_location(
 	FILE             *stream,
 	const location_t *location,

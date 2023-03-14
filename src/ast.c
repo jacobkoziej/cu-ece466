@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <jkcc/lexer.h>
+#include <jkcc/list.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
 
@@ -86,6 +88,56 @@ static void fprint_ast_identifier(
 		fprintf(stream, "\n");
 }
 
+static void fprint_file(
+	FILE             *stream,
+	const file_t     *file,
+	size_t            level,
+	uint_fast8_t      flags)
+{
+	if (!(flags & AST_PRINT_NO_INDENT_INITIAL))
+		INDENT(stream, level);
+
+	fprintf(stream, "{\n");
+
+	++level;
+
+	INDENT(stream, level);
+	fprintf(stream, "\"path\" : [\n");
+
+	++level;
+
+	const list_t *tail = &file->list;
+	const file_t *cur  = file;
+
+	while (tail->prev) {
+		cur = OFFSETOF_LIST(tail, file_t, list);
+
+		INDENT(stream, level);
+		fprintf(stream, "\"%s\",\n", cur->path);
+
+		tail = tail->prev;
+	}
+
+	INDENT(stream, level);
+	fprintf(stream, "\"%s\"\n", cur->path);
+
+	--level;
+
+	INDENT(stream, level);
+	fprintf(stream, "],\n");
+
+	INDENT(stream, level);
+	fprintf(stream, "\"refs\" : %lu\n", file->refs);
+
+	--level;
+
+	INDENT(stream, level);
+	fprintf(stream, "}");
+
+	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE))
+		fprintf(stream, "\n");
+}
+
 static void fprint_location(
 	FILE             *stream,
 	const location_t *location,
@@ -98,6 +150,15 @@ static void fprint_location(
 	fprintf(stream, "{\n");
 
 	++level;
+
+	INDENT(stream, level);
+	fprintf(stream, "\"file\" : ");
+	fprint_file(
+		stream,
+		location->file,
+		level,
+		AST_PRINT_NO_INDENT_INITIAL | AST_PRINT_NO_TRAILING_NEWLINE);
+	fprintf(stream, ",\n");
 
 	INDENT(stream, level);
 	fprintf(stream, "\"start\" : {\n");
