@@ -30,7 +30,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	uint_fast8_t  flags) = {
 	fprint_ast_floating_constant,
 	fprint_ast_identifier,
-	fprint_ast_integer_consant,
+	fprint_ast_integer_constant,
 };
 
 

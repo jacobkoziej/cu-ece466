@@ -37,7 +37,7 @@ void ast_integer_constant_free(ast_t *ast)
 	free(node);
 }
 
-void fprint_ast_integer_consant(
+void fprint_ast_integer_constant(
 	FILE         *stream,
 	const ast_t  *ast,
 	size_t        level,

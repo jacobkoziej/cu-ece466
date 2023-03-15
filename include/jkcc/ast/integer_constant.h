@@ -29,11 +29,11 @@ ast_t *ast_integer_constant_init(
 	location_t         *location);
 void ast_integer_constant_free(
 	ast_t              *ast);
-void fprint_ast_integer_consant(
-	FILE         *stream,
-	const ast_t  *ast,
-	size_t        level,
-	uint_fast8_t  flags);
+void fprint_ast_integer_constant(
+	FILE               *stream,
+	const ast_t        *ast,
+	size_t              level,
+	uint_fast8_t        flags);
 
 
 #endif  /* JKCC_AST_INTEGER_CONSTANT_H */
