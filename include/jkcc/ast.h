@@ -32,6 +32,7 @@ typedef enum ast_e {
 	AST_FLOATING_CONSTANT,
 	AST_IDENTIFIER,
 	AST_INTEGER_CONSTANT,
+	AST_STRING_LITERAL,
 	AST_NODES_TOTAL,
 } ast_t;
 
@@ -61,6 +62,7 @@ void fprint_location(
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/integer_constant.h>
+#include <jkcc/ast/string_literal.h>
 
 
 #endif  /* JKCC_AST_H */

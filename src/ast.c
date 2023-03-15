@@ -22,6 +22,7 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_floating_constant_free,
 	ast_identifier_free,
 	ast_integer_constant_free,
+	ast_string_literal_free,
 };
 
 void (*fprint_ast_node[AST_NODES_TOTAL])(
@@ -33,6 +34,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	fprint_ast_floating_constant,
 	fprint_ast_identifier,
 	fprint_ast_integer_constant,
+	fprint_ast_string_literal,
 };
 
 

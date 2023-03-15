@@ -7,4 +7,5 @@ jkcc_src += files(
         'floating_constant.c',
         'identifier.c',
         'integer_constant.c',
+        'string_literal.c',
 )

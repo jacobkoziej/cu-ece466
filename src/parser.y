@@ -190,6 +190,7 @@ typedef void* yyscan_t;
 %nterm <ast> integer_constant
 %nterm <ast> floating_constant
 %nterm <ast> character_constant
+%nterm <ast> string_literal
 
 
 %destructor {
@@ -263,9 +264,14 @@ character_constant: CHARACTER_CONSTANT {
 }
 
 
-string_literal:
-  %empty
-;
+string_literal: STRING_LITERAL {
+	TRACE("string_literal", "STRING_LITERAL");
+
+	$string_literal = ast_string_literal_init(
+		&$STRING_LITERAL,
+		&@STRING_LITERAL);
+	if (!$string_literal) YYNOMEM;
+}
 
 
 expression:
