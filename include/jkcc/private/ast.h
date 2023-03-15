@@ -11,7 +11,7 @@
 #include <jkcc/ast.h>
 
 #include <stddef.h>
-#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -59,6 +59,17 @@
                                                       \
 	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE)) \
 		fprintf(stream, "\n");
+
+#define FPRINT_AST_NODE_FINISH                \
+	INDENT(stream, level);                \
+	fprintf(stream, "\"location\" : ");   \
+	fprint_location(                      \
+		stream,                       \
+		&node->location,              \
+		level,                        \
+		AST_PRINT_NO_INDENT_INITIAL); \
+                                              \
+	FPRINT_AST_FINISH;
 
 
 #endif  /* JKCC_PRIVATE_AST_H */

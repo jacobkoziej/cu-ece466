@@ -50,13 +50,5 @@ void fprint_ast_identifier(
 		"\"identifier\" : \"%s\",\n",
 		node->identifier.text.head);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"location\" : ");
-	fprint_location(
-		stream,
-		&node->location,
-		level,
-		AST_PRINT_NO_INDENT_INITIAL);
-
-	FPRINT_AST_FINISH;
+	FPRINT_AST_NODE_FINISH;
 }

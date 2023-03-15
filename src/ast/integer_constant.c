@@ -83,8 +83,8 @@ void fprint_ast_integer_consant(
 	INDENT(stream, level);
 	fprintf(
 		stream,
-		"\"value\" : \"%s\"\n",
+		"\"value\" : \"%s\",\n",
 		node->integer_constant.text.head);
 
-	FPRINT_AST_FINISH;
+	FPRINT_AST_NODE_FINISH;
 }
