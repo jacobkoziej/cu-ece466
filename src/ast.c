@@ -33,22 +33,17 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 
 ast_t *ast_identifier_init(identifier_t *identifier, location_t *location)
 {
-	ast_identifier_t *node = malloc(sizeof(*node));
-	if (!node) return NULL;
+	AST_INIT(ast_identifier_t);
 
-	memcpy(&node->identifier, identifier, sizeof(*identifier));
-	memcpy(&node->location, location, sizeof(*location));
+	node->identifier = *identifier;
+	node->location   = *location;
 
-	node->ast = AST_IDENTIFIER;
-
-	return &node->ast;
+	AST_RETURN(AST_IDENTIFIER);
 }
 
 void ast_identifier_free(ast_t *ast)
 {
-	if (!ast) return;
-
-	ast_identifier_t *node = OFFSETOF_AST_NODE(ast, ast_identifier_t);
+	AST_FREE(ast_identifier_t);
 
 	string_free(&node->identifier.IDENTIFIER);
 	string_free(&node->identifier.text);
@@ -62,14 +57,7 @@ static void fprint_ast_identifier(
 	size_t        level,
 	uint_fast8_t  flags)
 {
-	ast_identifier_t *node = OFFSETOF_AST_NODE(ast, ast_identifier_t);
-
-	if (!(flags & AST_PRINT_NO_INDENT_INITIAL))
-		INDENT(stream, level);
-
-	fprintf(stream, "{\n");
-
-	++level;
+	FPRINT_AST_NODE_BEGIN(ast_identifier_t);
 
 	INDENT(stream, level);
 	fprintf(
@@ -85,13 +73,7 @@ static void fprint_ast_identifier(
 		level,
 		AST_PRINT_NO_INDENT_INITIAL);
 
-	--level;
-
-	INDENT(stream, level);
-	fprintf(stream, "}");
-
-	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE))
-		fprintf(stream, "\n");
+	FPRINT_AST_FINISH;
 }
 
 static void fprint_file(
@@ -100,12 +82,7 @@ static void fprint_file(
 	size_t            level,
 	uint_fast8_t      flags)
 {
-	if (!(flags & AST_PRINT_NO_INDENT_INITIAL))
-		INDENT(stream, level);
-
-	fprintf(stream, "{\n");
-
-	++level;
+	FPRINT_AST_BEGIN;
 
 	INDENT(stream, level);
 	fprintf(stream, "\"path\" : [\n");
@@ -135,13 +112,7 @@ static void fprint_file(
 	INDENT(stream, level);
 	fprintf(stream, "\"refs\" : %lu\n", file->refs);
 
-	--level;
-
-	INDENT(stream, level);
-	fprintf(stream, "}");
-
-	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE))
-		fprintf(stream, "\n");
+	FPRINT_AST_FINISH;
 }
 
 static void fprint_location(
@@ -150,12 +121,7 @@ static void fprint_location(
 	size_t            level,
 	uint_fast8_t      flags)
 {
-	if (!(flags & AST_PRINT_NO_INDENT_INITIAL))
-		INDENT(stream, level);
-
-	fprintf(stream, "{\n");
-
-	++level;
+	FPRINT_AST_BEGIN;
 
 	INDENT(stream, level);
 	fprintf(stream, "\"file\" : ");
@@ -200,11 +166,5 @@ static void fprint_location(
 	INDENT(stream, level);
 	fprintf(stream, "}\n");
 
-	--level;
-
-	INDENT(stream, level);
-	fprintf(stream, "}");
-
-	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE))
-		fprintf(stream, "\n");
+	FPRINT_AST_FINISH;
 }
