@@ -64,21 +64,61 @@
 	return YYerror;                                      \
 }
 
-#define M_INTEGER_CONSTANT(func, start, end, type) {   \
-	*(end) = '\0';                                 \
-                                                       \
-	int ret = (func)(                              \
-		start,                                 \
-		end,                                   \
-		&yylval->integer_constant,             \
-		yyextra->integer_constant_base,        \
-		type);                                 \
-                                                       \
-	BEGIN(INITIAL);                                \
-	return (ret < 0) ? YYerror : INTEGER_CONSTANT; \
+#define M_INTEGER_CONSTANT_ERROR {                           \
+	if (yylval->integer_constant.text.head)              \
+		string_free(&yylval->integer_constant.text); \
+                                                             \
+	return YYerror;                                      \
+}
+
+#define M_INTEGER_CONSTANT(func, start, end, type) {                       \
+	memset(                                                            \
+		&yylval->integer_constant,                                 \
+		0,                                                         \
+		sizeof(yylval->integer_constant));                         \
+                                                                           \
+	if (string_init(&yylval->integer_constant.text, 0))                \
+		M_INTEGER_CONSTANT_ERROR;                                  \
+	if (string_append(&yylval->integer_constant.text, yytext, yyleng)) \
+		M_INTEGER_CONSTANT_ERROR;                                  \
+                                                                           \
+	*(end) = '\0';                                                     \
+                                                                           \
+	int ret = (func)(                                                  \
+		start,                                                     \
+		end,                                                       \
+		&yylval->integer_constant,                                 \
+		yyextra->integer_constant_base,                            \
+		type);                                                     \
+                                                                           \
+	if (ret < 0) M_INTEGER_CONSTANT_ERROR;                             \
+                                                                           \
+	BEGIN(INITIAL);                                                    \
+	return INTEGER_CONSTANT;                                           \
+}
+
+#define M_CHARACTER_CONSTANT_ERROR {                           \
+	if (yylval->character_constant.text.head)              \
+		string_free(&yylval->character_constant.text); \
+                                                               \
+	return YYerror;                                        \
 }
 
 #define M_CHARACTER_CONSTANT(val) {                                         \
+	memset(                                                             \
+		&yylval->character_constant,                                \
+		0,                                                          \
+		sizeof(yylval->character_constant));                        \
+                                                                            \
+	if (string_init(&yylval->character_constant.text, 0))               \
+		M_CHARACTER_CONSTANT_ERROR;                                 \
+                                                                            \
+	if (string_append(                                                  \
+		&yylval->character_constant.text,                           \
+		yytext,                                                     \
+		yyleng))                                                    \
+		M_CHARACTER_CONSTANT_ERROR;                                 \
+                                                                            \
 	yylval->character_constant.type = yyextra->character_constant_type; \
                                                                             \
 	switch (yyextra->character_constant_type) {                         \
@@ -104,6 +144,20 @@
 }
 
 #define M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(start, end, base) { \
+	memset(                                                  \
+		&yylval->character_constant,                     \
+		0,                                               \
+		sizeof(yylval->character_constant));             \
+                                                                 \
+	if (string_init(&yylval->character_constant.text, 0))    \
+		M_CHARACTER_CONSTANT_ERROR;                      \
+                                                                 \
+	if (string_append(                                       \
+		&yylval->character_constant.text,                \
+		yytext,                                          \
+		yyleng))                                         \
+		M_CHARACTER_CONSTANT_ERROR;                      \
+                                                                 \
 	*(end) = '\0';                                           \
                                                                  \
 	int ret = lexer_character_constant(                      \
@@ -113,13 +167,48 @@
 		base,                                            \
 		yyextra->character_constant_type);               \
                                                                  \
+	if (ret < 0) M_CHARACTER_CONSTANT_ERROR;                 \
+                                                                 \
 	BEGIN(INITIAL);                                          \
-	return (ret < 0) ? YYerror : CHARACTER_CONSTANT;         \
+	return CHARACTER_CONSTANT;                               \
 }
 
-#define M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE(val) {                 \
-	if (string_append(&yylval->string_literal.string, val, 1) < 0) \
-		return YYerror;                                        \
+#define M_STRING_LITERAL_ERROR {                             \
+	if (yylval->string_literal.string.head)              \
+		string_free(&yylval->string_literal.string); \
+	if (yylval->string_literal.text.head)                \
+		string_free(&yylval->string_literal.text);   \
+                                                             \
+	return YYerror;                                      \
+}
+
+#define M_STRING_LITERAL(TYPE) {                                            \
+	memset(&yylval->string_literal, 0, sizeof(yylval->string_literal)); \
+                                                                            \
+	if (string_init(&yylval->string_literal.string, 0))                 \
+		M_STRING_LITERAL_ERROR;                                     \
+	if (string_init(&yylval->string_literal.text, 0))                   \
+		M_STRING_LITERAL_ERROR;                                     \
+                                                                            \
+	if (string_append(&yylval->string_literal.text, yytext, yyleng))    \
+		M_STRING_LITERAL_ERROR;                                     \
+                                                                            \
+	yylval->string_literal.type = TYPE;                                 \
+	BEGIN(SC_STRING_LITERAL);                                           \
+}
+
+#define M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE(val) {                   \
+	if (string_append(&yylval->string_literal.string, val, 1))       \
+		M_STRING_LITERAL_ERROR;                                  \
+	if (string_append(&yylval->string_literal.text, yytext, yyleng)) \
+		M_STRING_LITERAL_ERROR;                                  \
+}
+
+#define M_FLOATING_CONSTANT_ERROR {                           \
+	if (yylval->floating_constant.text.head)              \
+		string_free(&yylval->floating_constant.text); \
+                                                              \
+	return YYerror;                                       \
 }
 %}
 
@@ -428,6 +517,11 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	char tmp = yytext[yyleng - 1];
 	yytext[yyleng - 1] = '\0';
 
+	if (string_init(&yylval->integer_constant.text, 0))
+		M_INTEGER_CONSTANT_ERROR;
+	if (string_append(&yylval->integer_constant.text, yytext, yyleng - 1))
+		M_INTEGER_CONSTANT_ERROR;
+
 	int ret = lexer_signed_integer_constant(
 		yytext,
 		NULL,
@@ -435,9 +529,11 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yyextra->integer_constant_base,
 		0);
 
+	if (ret < 0) M_INTEGER_CONSTANT_ERROR;
+
 	UNPUT(tmp);
 	BEGIN(INITIAL);
-	return (ret < 0) ? YYerror : INTEGER_CONSTANT;
+	return INTEGER_CONSTANT;
 }
 }
 
@@ -452,6 +548,16 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 <SC_FLOATING_CONSTANT>{
 {FLOATING_SUFFIX} {
+	memset(
+		&yylval->floating_constant,
+		0,
+		sizeof(yylval->floating_constant));
+
+	if (string_init(&yylval->floating_constant.text, 0))
+		M_FLOATING_CONSTANT_ERROR;
+	if (string_append(&yylval->floating_constant.text, yytext, yyleng))
+		M_FLOATING_CONSTANT_ERROR;
+
 	char suffix = yytext[yyleng - 1];
 
 	enum floating_constant_e type = ((suffix == 'f') || (suffix == 'F'))
@@ -466,13 +572,25 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		&yylval->floating_constant,
 		type);
 
+	if (ret < 0) M_FLOATING_CONSTANT_ERROR;
+
 	BEGIN(INITIAL);
-	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
+	return FLOATING_CONSTANT;
 }
 
 .|\n {
+	memset(
+		&yylval->floating_constant,
+		0,
+		sizeof(yylval->floating_constant));
+
 	char tmp = yytext[yyleng - 1];
 	yytext[yyleng - 1] = '\0';
+
+	if (string_init(&yylval->floating_constant.text, 0))
+		M_FLOATING_CONSTANT_ERROR;
+	if (string_append(&yylval->floating_constant.text, yytext, yyleng - 1))
+		M_FLOATING_CONSTANT_ERROR;
 
 	int ret = lexer_floating_constant(
 		yytext,
@@ -480,9 +598,11 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		&yylval->floating_constant,
 		DOUBLE);
 
+	if (ret < 0) M_FLOATING_CONSTANT_ERROR;
+
 	UNPUT(tmp);
 	BEGIN(INITIAL);
-	return (ret < 0) ? YYerror : FLOATING_CONSTANT;
+	return FLOATING_CONSTANT;
 }
 }
 
@@ -490,21 +610,25 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 	/* character constants */
 ' {
 	yyextra->character_constant_type = UNSIGNED_CHAR;
+	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 L' {
 	yyextra->character_constant_type = WCHAR_T;
+	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 u' {
 	yyextra->character_constant_type = CHAR16_T;
+	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 U' {
 	yyextra->character_constant_type = CHAR32_T;
+	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
@@ -520,18 +644,18 @@ U' {
 \\r'      M_CHARACTER_CONSTANT('\r');
 \\t'      M_CHARACTER_CONSTANT('\t');
 \\v'      M_CHARACTER_CONSTANT('\v');
-{C_CHAR}' M_CHARACTER_CONSTANT(*yytext);
+{C_CHAR}' M_CHARACTER_CONSTANT(yytext[(yyextra->character_constant_type == UNSIGNED_CHAR) ? 1 : 2]);
 
 {OCTAL_ESCAPE_SEQUENCE}' {
 	M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(
-		yytext + 1,
+		yytext + ((yyextra->character_constant_type == UNSIGNED_CHAR) ? 2 : 3),
 		yytext + yyleng - 1,
 		8);
 }
 
 {HEXADECIMAL_ESCAPE_SEQUENCE}' {
 	M_CHARACTER_CONSTANT_ESCAPE_SEQUENCE(
-		yytext + 2,
+		yytext + ((yyextra->character_constant_type == UNSIGNED_CHAR) ? 3 : 4),
 		yytext + yyleng - 1,
 		16);
 }
@@ -545,40 +669,11 @@ U' {
 
 
 	/* string literals */
-\" {
-	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
-
-	yylval->string_literal.type = STRING_CHAR;
-	BEGIN(SC_STRING_LITERAL);
-}
-
-u8\" {
-	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
-
-	yylval->string_literal.type = STRING_UTF_8;
-	BEGIN(SC_STRING_LITERAL);
-}
-
-u\" {
-	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
-
-	yylval->string_literal.type = STRING_CHAR16_T;
-	BEGIN(SC_STRING_LITERAL);
-}
-
-U\" {
-	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
-
-	yylval->string_literal.type = STRING_CHAR32_T;
-	BEGIN(SC_STRING_LITERAL);
-}
-
-L\" {
-	if (string_init(&yylval->string_literal.string, 0) < 0) return YYerror;
-
-	yylval->string_literal.type = STRING_WCHAR_T;
-	BEGIN(SC_STRING_LITERAL);
-}
+\"   M_STRING_LITERAL(STRING_CHAR);
+u8\" M_STRING_LITERAL(STRING_UTF_8);
+u\"  M_STRING_LITERAL(STRING_CHAR16_T);
+U\"  M_STRING_LITERAL(STRING_CHAR32_T);
+L\"  M_STRING_LITERAL(STRING_WCHAR_T);
 
 <SC_STRING_LITERAL>{
 \\'      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\'");
@@ -594,11 +689,16 @@ L\" {
 \\v      M_STRING_LITERAL_SIMPLE_ESCAPE_SEQUENCE("\v");
 
 {S_CHAR}+ {
-	if (string_append(&yylval->string_literal.string, yytext, yyleng) < 0)
-		return YYerror;
+	if (string_append(&yylval->string_literal.string, yytext, yyleng))
+		M_STRING_LITERAL_ERROR;
+	if (string_append(&yylval->string_literal.text, yytext, yyleng))
+		M_STRING_LITERAL_ERROR;
 }
 
 {OCTAL_ESCAPE_SEQUENCE} {
+	if (string_append(&yylval->string_literal.text, yytext, yyleng))
+		M_STRING_LITERAL_ERROR;
+
 	errno = 0;
 	unsigned long long int tmp = strtoull(yytext + 1, NULL, 8);
 	if (errno) return YYerror;
@@ -609,49 +709,31 @@ L\" {
 	if (tmp > UCHAR_MAX) buf[pos++] = tmp >> 8;
 	buf[pos] = tmp;
 
-	if (string_append(&yylval->string_literal.string, buf, pos + 1) < 0)
-		return YYerror;
+	if (string_append(&yylval->string_literal.string, buf, pos + 1))
+		M_STRING_LITERAL_ERROR;
 }
 
 {HEXADECIMAL_ESCAPE_SEQUENCE} {
+	if (string_append(&yylval->string_literal.text, yytext, yyleng))
+		M_STRING_LITERAL_ERROR;
+
 	char *start = yytext + 2;
 
-	char tmp;
-	char byte;
+	// hex sequence out of range
+	if (strlen(start) > 2) M_STRING_LITERAL_ERROR;
 
-	// deal with nibble
-	if ((yyleng - 2) % 2) {
-		tmp = start[1];
-		start[1] = '\0';
+	errno = 0;
+	char byte = strtoull(start, NULL, 16);
+	if (errno) M_STRING_LITERAL_ERROR;
 
-		errno = 0;
-		byte = strtoull(start, NULL, 16);
-		if (errno) return YYerror;
-
-		if (string_append(&yylval->string_literal.string, &byte, 1) < 0)
-			return YYerror;
-
-		start[1] = tmp;
-		++start;
-	}
-
-	while (*start) {
-		tmp = start[2];
-		start[2] = '\0';
-
-		errno = 0;
-		byte = strtoull(start, NULL, 16);
-		if (errno) return YYerror;
-
-		if (string_append(&yylval->string_literal.string, &byte, 1) < 0)
-			return YYerror;
-
-		start[2] = tmp;
-		start += 2;
-	}
+	if (string_append(&yylval->string_literal.string, &byte, 1))
+		M_STRING_LITERAL_ERROR;
 }
 
 \" {
+	if (string_append(&yylval->string_literal.text, yytext, yyleng))
+		M_STRING_LITERAL_ERROR;
+
 	BEGIN(INITIAL);
 	return STRING_LITERAL;
 }

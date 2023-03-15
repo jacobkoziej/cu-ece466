@@ -85,6 +85,7 @@ typedef struct integer_constant_s {
 		long long int          LONG_LONG_INT;
 		unsigned long long int UNSIGNED_LONG_LONG_INT;
 	};
+	string_t text;
 } integer_constant_t;
 
 typedef struct floating_constant_s {
@@ -94,6 +95,7 @@ typedef struct floating_constant_s {
 		double      DOUBLE;
 		long double LONG_DOUBLE;
 	};
+	string_t text;
 } floating_constant_t;
 
 typedef struct character_constant_s {
@@ -104,11 +106,13 @@ typedef struct character_constant_s {
 		char16_t      CHAR16_T;
 		char32_t      CHAR32_T;
 	};
+	string_t text;
 } character_constant_t;
 
 typedef struct string_literal_s {
 	enum string_literal_e type;
 	string_t              string;
+	string_t              text;
 } string_literal_t;
 
 typedef struct yyextra_s {
