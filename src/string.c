@@ -35,6 +35,8 @@ error:
 
 void string_free(string_t *string)
 {
+	if (!string) return;
+
 	free(string->head);
 }
 

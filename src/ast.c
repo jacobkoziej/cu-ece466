@@ -46,6 +46,8 @@ ast_t *ast_identifier_init(identifier_t *identifier, location_t *location)
 
 void ast_identifier_free(ast_t *ast)
 {
+	if (!ast) return;
+
 	ast_identifier_t *node = OFFSETOF_AST_NODE(ast, ast_identifier_t);
 
 	string_free(&node->identifier.IDENTIFIER);

@@ -35,6 +35,8 @@ int vector_append(vector_t *vector, void *element)
 
 void vector_free(vector_t *vector)
 {
+	if (!vector) return;
+
 	free(vector->buf);
 }
 

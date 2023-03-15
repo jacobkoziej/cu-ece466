@@ -90,6 +90,8 @@ error:
 
 void translation_unit_free(translation_unit_t *translation_unit)
 {
+	if (!translation_unit) return;
+
 	AST_NODE_FREE(translation_unit->ast);
 
 	file_t **file = translation_unit->file.buf;

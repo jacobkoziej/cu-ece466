@@ -55,20 +55,17 @@
 	yylloc->file = yyextra->file;       \
 }
 
-#define M_IDENTIFIER_ERROR {                                 \
-	if (yylval->identifier.IDENTIFIER.head)              \
-		string_free(&yylval->identifier.IDENTIFIER); \
-	if (yylval->identifier.text.head)                    \
-		string_free(&yylval->identifier.text);       \
-                                                             \
-	return YYerror;                                      \
+#define M_IDENTIFIER_ERROR {                         \
+	string_free(&yylval->identifier.IDENTIFIER); \
+	string_free(&yylval->identifier.text);       \
+                                                     \
+	return YYerror;                              \
 }
 
-#define M_INTEGER_CONSTANT_ERROR {                           \
-	if (yylval->integer_constant.text.head)              \
-		string_free(&yylval->integer_constant.text); \
-                                                             \
-	return YYerror;                                      \
+#define M_INTEGER_CONSTANT_ERROR {                   \
+	string_free(&yylval->integer_constant.text); \
+                                                     \
+	return YYerror;                              \
 }
 
 #define M_INTEGER_CONSTANT(func, start, end, type) {                       \
@@ -97,11 +94,10 @@
 	return INTEGER_CONSTANT;                                           \
 }
 
-#define M_CHARACTER_CONSTANT_ERROR {                           \
-	if (yylval->character_constant.text.head)              \
-		string_free(&yylval->character_constant.text); \
-                                                               \
-	return YYerror;                                        \
+#define M_CHARACTER_CONSTANT_ERROR {                   \
+	string_free(&yylval->character_constant.text); \
+                                                       \
+	return YYerror;                                \
 }
 
 #define M_CHARACTER_CONSTANT(val) {                                         \
@@ -173,13 +169,11 @@
 	return CHARACTER_CONSTANT;                               \
 }
 
-#define M_STRING_LITERAL_ERROR {                             \
-	if (yylval->string_literal.string.head)              \
-		string_free(&yylval->string_literal.string); \
-	if (yylval->string_literal.text.head)                \
-		string_free(&yylval->string_literal.text);   \
-                                                             \
-	return YYerror;                                      \
+#define M_STRING_LITERAL_ERROR {                     \
+	string_free(&yylval->string_literal.string); \
+	string_free(&yylval->string_literal.text);   \
+                                                     \
+	return YYerror;                              \
 }
 
 #define M_STRING_LITERAL(TYPE) {                                            \
@@ -204,11 +198,10 @@
 		M_STRING_LITERAL_ERROR;                                  \
 }
 
-#define M_FLOATING_CONSTANT_ERROR {                           \
-	if (yylval->floating_constant.text.head)              \
-		string_free(&yylval->floating_constant.text); \
-                                                              \
-	return YYerror;                                       \
+#define M_FLOATING_CONSTANT_ERROR {                   \
+	string_free(&yylval->floating_constant.text); \
+                                                      \
+	return YYerror;                               \
 }
 %}
 
