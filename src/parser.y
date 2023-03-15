@@ -67,7 +67,7 @@ typedef void* yyscan_t;
 
 
 %union{
-	string_t             string;
+	identifier_t         identifier;
 	integer_constant_t   integer_constant;
 	floating_constant_t  floating_constant;
 	character_constant_t character_constant;
@@ -120,7 +120,7 @@ typedef void* yyscan_t;
 %token KEYWORD__STATIC_ASSERT
 %token KEYWORD__THREAD_LOCAL
 
-%token <string> IDENTIFIER
+%token <identifier> IDENTIFIER
 
 %token <integer_constant>   INTEGER_CONSTANT
 %token <floating_constant>  FLOATING_CONSTANT
@@ -178,7 +178,10 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
 
-%destructor { string_free(&$$.string); } <string_literal>
+%destructor {
+	string_free(&$$.IDENTIFIER);
+	string_free(&$$.text);
+} <identifier>
 
 
 %%

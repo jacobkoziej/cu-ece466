@@ -191,15 +191,20 @@ static void test_identifiers(void **state)
 	(void) state;
 
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), IDENTIFIER);
-	assert_string_equal(yylval.string.head, "_start");
+	assert_string_equal(yylval.identifier.IDENTIFIER.head, "_start");
+	assert_string_equal(yylval.identifier.text.head, "_start");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), IDENTIFIER);
-	assert_string_equal(yylval.string.head, "__func__");
+	assert_string_equal(yylval.identifier.IDENTIFIER.head, "__func__");
+	assert_string_equal(yylval.identifier.text.head, "__func__");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), IDENTIFIER);
-	assert_string_equal(yylval.string.head, "ascii\u3164unicode");
+	assert_string_equal(yylval.identifier.IDENTIFIER.head, "ascii\u3164unicode");
+	assert_string_equal(yylval.identifier.text.head, "ascii\\u3164unicode");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), IDENTIFIER);
-	assert_string_equal(yylval.string.head, "_13\U0001f60f");
+	assert_string_equal(yylval.identifier.IDENTIFIER.head, "_13\U0001f60f");
+	assert_string_equal(yylval.identifier.text.head, "_13\\U0001f60f");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), IDENTIFIER);
-	assert_string_equal(yylval.string.head, "\U0001f60f");
+	assert_string_equal(yylval.identifier.IDENTIFIER.head, "\U0001f60f");
+	assert_string_equal(yylval.identifier.text.head, "\\U0001f60f");
 }
 
 static void test_integer_constants(void **state)

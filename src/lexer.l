@@ -55,6 +55,15 @@
 	yylloc->file = yyextra->file;       \
 }
 
+#define M_IDENTIFIER_ERROR {                                 \
+	if (yylval->identifier.IDENTIFIER.head)              \
+		string_free(&yylval->identifier.IDENTIFIER); \
+	if (yylval->identifier.text.head)                    \
+		string_free(&yylval->identifier.text);       \
+                                                             \
+	return YYerror;                                      \
+}
+
 #define M_INTEGER_CONSTANT(func, start, end, type) {   \
 	*(end) = '\0';                                 \
                                                        \
@@ -259,15 +268,26 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 
 	/* identifiers */
 {NONDIGIT} {
-	if (string_init(&yylval->string, 0) < 0) return YYerror;
+	memset(&yylval->identifier, 0, sizeof(yylval->identifier));
 
-	if (string_append(&yylval->string, yytext, yyleng) < 0) return YYerror;
+	if (string_init(&yylval->identifier.IDENTIFIER, 0)) M_IDENTIFIER_ERROR;
+	if (string_init(&yylval->identifier.text, 0))       M_IDENTIFIER_ERROR;
+
+	if (string_append(&yylval->identifier.IDENTIFIER, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
+	if (string_append(&yylval->identifier.text, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
 
 	BEGIN(SC_IDENTIFIER);
 }
 
 {UNIVERSAL_CHARACTER_NAME} {
-	if (string_init(&yylval->string, 0) < 0) return YYerror;
+	memset(&yylval->identifier, 0, sizeof(yylval->identifier));
+
+	if (string_init(&yylval->identifier.IDENTIFIER, 0))
+		M_IDENTIFIER_ERROR;
+	if (string_init(&yylval->identifier.text, 0))
+		M_IDENTIFIER_ERROR;
 
 	uint32_t ucn;
 
@@ -276,21 +296,27 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 1,
 		&ucn);
 
-	if (ret < 0) return YYerror;
+	if (ret < 0) M_IDENTIFIER_ERROR;
 
 	char   buf[4];
 	size_t bytes;
 
 	lexer_utf32_to_utf8(buf, &bytes, ucn);
 
-	if (string_append(&yylval->string, buf, bytes) < 0) return YYerror;
+	if (string_append(&yylval->identifier.IDENTIFIER, buf, bytes))
+		M_IDENTIFIER_ERROR;
+	if (string_append(&yylval->identifier.text, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
 
 	BEGIN(SC_IDENTIFIER);
 }
 
 <SC_IDENTIFIER>{
 ({DIGIT}|{NONDIGIT})* {
-	if (string_append(&yylval->string, yytext, yyleng) < 0) return YYerror;
+	if (string_append(&yylval->identifier.IDENTIFIER, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
+	if (string_append(&yylval->identifier.text, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
 }
 
 {UNIVERSAL_CHARACTER_NAME} {
@@ -301,14 +327,17 @@ _Thread_Local  return KEYWORD__THREAD_LOCAL;
 		yytext + yyleng - 1,
 		&ucn);
 
-	if (ret < 0) return YYerror;
+	if (ret < 0) M_IDENTIFIER_ERROR;
 
 	char   buf[4];
 	size_t bytes;
 
 	lexer_utf32_to_utf8(buf, &bytes, ucn);
 
-	if (string_append(&yylval->string, buf, bytes) < 0) return YYerror;
+	if (string_append(&yylval->identifier.IDENTIFIER, buf, bytes))
+		M_IDENTIFIER_ERROR;
+	if (string_append(&yylval->identifier.text, yytext, yyleng))
+		M_IDENTIFIER_ERROR;
 }
 
 .|\n {

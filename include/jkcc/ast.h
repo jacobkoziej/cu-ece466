@@ -34,9 +34,9 @@ typedef enum ast_e {
 
 
 typedef struct ast_identifier_s {
-	string_t   identifier;
-	location_t location;
-	ast_t      ast;
+	identifier_t identifier;
+	location_t   location;
+	ast_t        ast;
 } ast_identifier_t;
 
 
@@ -49,7 +49,7 @@ extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 	uint_fast8_t flags);
 
 
-ast_t *ast_identifier_init(string_t *identifier, location_t *location);
+ast_t *ast_identifier_init(identifier_t *identifier, location_t *location);
 void   ast_identifier_free(ast_t *ast);
 
 

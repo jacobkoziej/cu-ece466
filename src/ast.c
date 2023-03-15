@@ -31,7 +31,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 };
 
 
-ast_t *ast_identifier_init(string_t *identifier, location_t *location)
+ast_t *ast_identifier_init(identifier_t *identifier, location_t *location)
 {
 	ast_identifier_t *node = malloc(sizeof(*node));
 	if (!node) return NULL;
@@ -48,7 +48,8 @@ void ast_identifier_free(ast_t *ast)
 {
 	ast_identifier_t *node = OFFSETOF_AST_NODE(ast, ast_identifier_t);
 
-	string_free(&node->identifier);
+	string_free(&node->identifier.IDENTIFIER);
+	string_free(&node->identifier.text);
 	free(node);
 }
 
@@ -69,7 +70,10 @@ static void fprint_ast_identifier(
 	++level;
 
 	INDENT(stream, level);
-	fprintf(stream, "\"identifier\" : \"%s\",\n", node->identifier.head);
+	fprintf(
+		stream,
+		"\"identifier\" : \"%s\",\n",
+		node->identifier.text.head);
 
 	INDENT(stream, level);
 	fprintf(stream, "\"location\" : ");
