@@ -28,6 +28,7 @@
 
 
 typedef enum ast_e {
+	AST_FLOATING_CONSTANT,
 	AST_IDENTIFIER,
 	AST_INTEGER_CONSTANT,
 	AST_NODES_TOTAL,
@@ -55,6 +56,7 @@ void fprint_location(
 	uint_fast8_t      flags);
 
 
+#include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/integer_constant.h>
 
