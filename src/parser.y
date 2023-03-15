@@ -221,6 +221,7 @@ identifier: IDENTIFIER {
 constant:
   integer_constant
 | floating_constant
+// | enumeration_constant
 ;
 
 
@@ -242,6 +243,12 @@ floating_constant: FLOATING_CONSTANT {
 		&@FLOATING_CONSTANT);
 	if (!$floating_constant) YYNOMEM;
 }
+
+
+/* TODO: add support for enum's
+enumeration_constant: IDENTIFIER {
+}
+*/
 
 
 string_literal:
