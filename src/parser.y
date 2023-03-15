@@ -12,10 +12,14 @@
 #include "y.tab.h"
 #include "lex.yy.h"
 
+#include <jkcc/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
+#include <jkcc/trace.h>
 
+
+#define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
 #define YYLLOC_DEFAULT(cur, rhs, n) {\
 	if (n) {\
@@ -56,6 +60,7 @@ static void yyerror(
 
 
 %code requires {
+#include <jkcc/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
@@ -70,11 +75,12 @@ typedef void* yyscan_t;
 
 
 %union{
-	identifier_t         identifier;
-	integer_constant_t   integer_constant;
-	floating_constant_t  floating_constant;
-	character_constant_t character_constant;
-	string_literal_t     string_literal;
+	identifier_t          identifier;
+	integer_constant_t    integer_constant;
+	floating_constant_t   floating_constant;
+	character_constant_t  character_constant;
+	string_literal_t      string_literal;
+	ast_t                *ast;
 }
 
 
@@ -180,11 +186,14 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
+%nterm <ast> identifier
+
 
 %destructor {
 	string_free(&$$.IDENTIFIER);
 	string_free(&$$.text);
 } <identifier>
+%destructor { AST_NODE_FREE($$); } <ast>
 
 
 %%
@@ -199,9 +208,12 @@ primary_expression:
 ;
 
 
-identifier:
-  %empty
-;
+identifier: IDENTIFIER {
+	TRACE("identifier", "IDENTIFIER");
+
+	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
+	if (!$identifier) YYNOMEM;
+}
 
 
 constant:
