@@ -100,5 +100,7 @@ void translation_unit_free(translation_unit_t *translation_unit)
 		free(file[i]);
 	}
 
+	vector_free(&translation_unit->file);
+
 	free(translation_unit);
 }
