@@ -110,7 +110,7 @@ typedef struct character_constant_s {
 } character_constant_t;
 
 typedef struct string_literal_s {
-	enum string_literal_e type;
+	enum string_literal_e encoding;
 	string_t              string;
 	string_t              text;
 } string_literal_t;

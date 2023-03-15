@@ -189,7 +189,7 @@
 	if (string_append(&yylval->string_literal.text, yytext, yyleng))    \
 		M_STRING_LITERAL_ERROR;                                     \
                                                                             \
-	yylval->string_literal.type = TYPE;                                 \
+	yylval->string_literal.encoding = TYPE;                             \
 	BEGIN(SC_STRING_LITERAL);                                           \
 }
 
