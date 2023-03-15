@@ -9,17 +9,23 @@
 
 
 #include <jkcc/ast.h>
+#include <jkcc/trace.h>
 #include <jkcc/vector.h>
 
 
-typedef struct parse_s {
+typedef struct parser_s {
+	const char *path;
+	trace_t    *trace;
+} parser_t;
+
+typedef struct translation_unit_s {
 	ast_t    *ast;
 	vector_t  file;  // file_t*
-} parse_t;
+} translation_unit_t;
 
 
-parse_t *parse(const char *path);
-void     parse_free(parse_t *translation_unit);
+translation_unit_t *parse(parser_t *parser);
+void                translation_unit_free(translation_unit_t *translation_unit);
 
 
 #endif  /* JKCC_PARSER_H */

@@ -76,21 +76,24 @@ int main(int argc, char **argv)
 
 	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
 
-	parse_t *translation_unit;
+	translation_unit_t *translation_unit;
 
 	if (vector_init(&jkcc.translation_unit, sizeof(*translation_unit), 0))
 		return EXIT_FAILURE;
 
-	const char *path      = NULL;
-	size_t      processed = 0;
+	parser_t parser = {
+		.path  = NULL,
+		.trace = &jkcc.trace,
+	};
+	size_t processed = 0;
 
 	if (!jkcc.file_count) goto parse_stdin;
 
 	while (processed < jkcc.file_count) {
-		path = jkcc.file[processed];
+		parser.path = jkcc.file[processed];
 
 parse_stdin:
-		translation_unit = parse(path);
+		translation_unit = parse(&parser);
 		if (!translation_unit) goto error;
 
 		if (vector_append(&jkcc.translation_unit, translation_unit))
@@ -102,7 +105,7 @@ parse_stdin:
 	return EXIT_SUCCESS;
 
 error:
-	parse_free(translation_unit);
+	translation_unit_free(translation_unit);
 
 	return EXIT_FAILURE;
 }
@@ -111,10 +114,11 @@ error:
 static void cleanup(void)
 {
 	if (jkcc.translation_unit.buf) {
-		parse_t **translation_unit = jkcc.translation_unit.buf;
+		translation_unit_t **translation_unit =
+			jkcc.translation_unit.buf;
 
 		for (size_t i = 0; i < jkcc.translation_unit.use; i++)
-			parse_free(translation_unit[i]);
+			translation_unit_free(translation_unit[i]);
 
 		vector_free(&jkcc.translation_unit);
 	}

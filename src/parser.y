@@ -35,21 +35,24 @@
 
 
 static void yyerror(
-	YYLTYPE     *yylloc,
-	yyscan_t     scanner,
-	parse_t     *out,
-	char const  *token)
+	YYLTYPE            *yylloc,
+	yyscan_t            scanner,
+	parser_t           *parser,
+	translation_unit_t *translation_unit,
+	char const         *token)
 {
 	(void) yylloc;
 	(void) scanner;
-	(void) out;
+	(void) parser;
+	(void) translation_unit;
 	(void) token;
 }
 %}
 
 
 %param {yyscan_t scanner}
-%parse-param {parse_t *out}
+%parse-param {parser_t *parser}
+%parse-param {translation_unit_t *translation_unit}
 
 
 %code requires {

@@ -18,35 +18,35 @@
 #include "lex.yy.h"
 
 
-parse_t *parse(const char *path)
+translation_unit_t *parse(parser_t *parser)
 {
-	parse_t  *out;
-	file_t   *file;
-	yyscan_t  yyscanner = NULL;
-	FILE     *stream    = NULL;
+	translation_unit_t *translation_unit;
+	file_t             *file;
+	yyscan_t            yyscanner = NULL;
+	FILE               *stream    = NULL;
 
-	out = calloc(1, sizeof(*out));
-	if (!out) return NULL;
+	translation_unit = calloc(1, sizeof(*translation_unit));
+	if (!translation_unit) return NULL;
 
-	if (vector_init(&out->file, sizeof(*file), 0)) goto error;
+	if (vector_init(&translation_unit->file, sizeof(*file), 0)) goto error;
 
 	file = calloc(1, sizeof(*file));
 	if (!file) goto error;
 
-	file->path = strdup((path) ? path : "/dev/stdin");
+	file->path = strdup((parser->path) ? parser->path : "/dev/stdin");
 	if (!file->path) goto error;
 
-	if (vector_append(&out->file, file)) goto error;
+	if (vector_append(&translation_unit->file, file)) goto error;
 
 	// avoid a double free in error recovery
 	file = NULL;
 
-	stream = (path) ? fopen(path, "r") : stdin;
+	stream = (parser->path) ? fopen(parser->path, "r") : stdin;
 	if (!stream) goto error;
 
 	yyextra_t yyextra_data = {
 		.file           = file,
-		.file_allocated = &out->file,
+		.file_allocated = &translation_unit->file,
 	};
 
 	if (yylex_init(&yyscanner)) goto error;
@@ -54,13 +54,13 @@ parse_t *parse(const char *path)
 
 	yyrestart(stream, yyscanner);
 
-	if (yyparse(yyscanner, out)) goto error;
+	if (yyparse(yyscanner, parser, translation_unit)) goto error;
 
 	yylex_destroy(yyscanner);
 
 	if (stream != stdin) fclose(stream);
 
-	return out;
+	return translation_unit;
 
 error:
 	if (yyscanner) yylex_destroy(yyscanner);
@@ -72,23 +72,23 @@ error:
 		free(file);
 	}
 
-	if (out->file.buf) {
-		file_t **file = out->file.buf;
+	if (translation_unit->file.buf) {
+		file_t **file = translation_unit->file.buf;
 
-		for (size_t i = 0; i < out->file.use; i++) {
+		for (size_t i = 0; i < translation_unit->file.use; i++) {
 			free(file[i]->path);
 			free(file[i]);
 		}
 
-		vector_free(&out->file);
+		vector_free(&translation_unit->file);
 	}
 
-	free(out);
+	free(translation_unit);
 
 	return NULL;
 }
 
-void parse_free(parse_t *translation_unit)
+void translation_unit_free(translation_unit_t *translation_unit)
 {
 	AST_NODE_FREE(translation_unit->ast);
 
