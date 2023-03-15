@@ -189,6 +189,7 @@ typedef void* yyscan_t;
 %nterm <ast> identifier
 %nterm <ast> integer_constant
 %nterm <ast> floating_constant
+%nterm <ast> character_constant
 
 
 %destructor {
@@ -222,6 +223,7 @@ constant:
   integer_constant
 | floating_constant
 // | enumeration_constant
+| character_constant
 ;
 
 
@@ -249,6 +251,16 @@ floating_constant: FLOATING_CONSTANT {
 enumeration_constant: IDENTIFIER {
 }
 */
+
+
+character_constant: CHARACTER_CONSTANT {
+	TRACE("character_constant", "CHARACTER_CONSTANT");
+
+	$character_constant = ast_character_constant_init(
+		&$CHARACTER_CONSTANT,
+		&@CHARACTER_CONSTANT);
+	if (!$character_constant) YYNOMEM;
+}
 
 
 string_literal:
