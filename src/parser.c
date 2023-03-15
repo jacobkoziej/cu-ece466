@@ -45,7 +45,7 @@ translation_unit_t *parse(parser_t *parser)
 	if (!stream) goto error;
 
 	yyextra_t yyextra_data = {
-		.file           = file,
+		.file           = *(file_t**) translation_unit->file.buf,
 		.file_allocated = &translation_unit->file,
 	};
 
