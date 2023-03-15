@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
 	translation_unit_t *translation_unit;
 
-	if (vector_init(&jkcc.translation_unit, sizeof(*translation_unit), 0))
+	if (vector_init(&jkcc.translation_unit, sizeof(translation_unit), 0))
 		return EXIT_FAILURE;
 
 	parser_t parser = {
@@ -96,7 +96,7 @@ parse_stdin:
 		translation_unit = parse(&parser);
 		if (!translation_unit) goto error;
 
-		if (vector_append(&jkcc.translation_unit, translation_unit))
+		if (vector_append(&jkcc.translation_unit, &translation_unit))
 			goto error;
 
 		++processed;
@@ -105,8 +105,6 @@ parse_stdin:
 	return EXIT_SUCCESS;
 
 error:
-	translation_unit_free(translation_unit);
-
 	return EXIT_FAILURE;
 }
 

@@ -28,7 +28,7 @@ translation_unit_t *parse(parser_t *parser)
 	translation_unit = calloc(1, sizeof(*translation_unit));
 	if (!translation_unit) return NULL;
 
-	if (vector_init(&translation_unit->file, sizeof(*file), 0)) goto error;
+	if (vector_init(&translation_unit->file, sizeof(file), 0)) goto error;
 
 	file = calloc(1, sizeof(*file));
 	if (!file) goto error;
@@ -36,7 +36,7 @@ translation_unit_t *parse(parser_t *parser)
 	file->path = strdup((parser->path) ? parser->path : "/dev/stdin");
 	if (!file->path) goto error;
 
-	if (vector_append(&translation_unit->file, file)) goto error;
+	if (vector_append(&translation_unit->file, &file)) goto error;
 
 	// avoid a double free in error recovery
 	file = NULL;
