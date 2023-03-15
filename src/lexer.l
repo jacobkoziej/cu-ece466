@@ -751,4 +751,5 @@ L\"  M_STRING_LITERAL(STRING_WCHAR_T);
 
 
 	/* catch all */
-.|\n ;
+\n     ;
+[^ \t] return YYerror;
