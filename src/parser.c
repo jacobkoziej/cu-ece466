@@ -49,8 +49,7 @@ translation_unit_t *parse(parser_t *parser)
 		.file_allocated = &translation_unit->file,
 	};
 
-	if (yylex_init(&yyscanner)) goto error;
-	if (yylex_init_extra(&yyextra_data, yyscanner)) goto error;
+	if (yylex_init_extra(&yyextra_data, &yyscanner)) goto error;
 
 	yyrestart(stream, yyscanner);
 

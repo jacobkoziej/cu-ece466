@@ -34,8 +34,7 @@ static int setup(void **state)
 
 	yyfile.path = *yyin_next;
 
-	yylex_init(&yyscanner);
-	yylex_init_extra(&yyextra_data, yyscanner);
+	yylex_init_extra(&yyextra_data, &yyscanner);
 
 	yyin = fopen(*yyin_next++, "r");
 	yyrestart(yyin, yyscanner);
