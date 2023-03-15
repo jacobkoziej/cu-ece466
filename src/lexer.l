@@ -52,7 +52,9 @@
 
 #define YY_USER_INIT {                      \
 	memset(yylloc, 0, sizeof(*yylloc)); \
-	yylloc->file = yyextra->file;       \
+	yylloc->file       = yyextra->file; \
+	yylloc->end.line   = 1;             \
+	yylloc->end.column = 1;             \
 }
 
 #define M_IDENTIFIER_ERROR {                         \
