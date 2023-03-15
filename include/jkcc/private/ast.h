@@ -66,6 +66,11 @@ static void fprint_ast_identifier(
 	const ast_t  *ast,
 	size_t        level,
 	uint_fast8_t  flags);
+static void fprint_ast_integer_consant(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t        level,
+	uint_fast8_t  flags);
 static void fprint_file(
 	FILE             *stream,
 	const file_t     *file,

@@ -20,6 +20,7 @@
 
 void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_identifier_free,
+	ast_integer_constant_free,
 };
 
 void (*fprint_ast_node[AST_NODES_TOTAL])(
@@ -28,6 +29,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	size_t        level,
 	uint_fast8_t  flags) = {
 	fprint_ast_identifier,
+	fprint_ast_integer_consant,
 };
 
 
@@ -41,12 +43,32 @@ ast_t *ast_identifier_init(identifier_t *identifier, location_t *location)
 	AST_RETURN(AST_IDENTIFIER);
 }
 
+ast_t *ast_integer_constant_init(
+	integer_constant_t *integer_constant,
+	location_t         *location)
+{
+	AST_INIT(ast_integer_constant_t);
+
+	node->integer_constant = *integer_constant;
+	node->location         = *location;
+
+	AST_RETURN(AST_INTEGER_CONSTANT);
+}
+
 void ast_identifier_free(ast_t *ast)
 {
 	AST_FREE(ast_identifier_t);
 
 	string_free(&node->identifier.IDENTIFIER);
 	string_free(&node->identifier.text);
+	free(node);
+}
+
+void ast_integer_constant_free(ast_t *ast)
+{
+	AST_FREE(ast_integer_constant_t);
+
+	string_free(&node->integer_constant.text);
 	free(node);
 }
 
@@ -72,6 +94,58 @@ static void fprint_ast_identifier(
 		&node->location,
 		level,
 		AST_PRINT_NO_INDENT_INITIAL);
+
+	FPRINT_AST_FINISH;
+}
+
+static void fprint_ast_integer_consant(
+	FILE         *stream,
+	const ast_t  *ast,
+	size_t        level,
+	uint_fast8_t  flags)
+{
+	FPRINT_AST_NODE_BEGIN(ast_integer_constant_t);
+
+	INDENT(stream, level);
+	fprintf(stream, "\"type\"  : \"");
+
+	const char *type;
+	switch (node->integer_constant.type) {
+		case INT:
+			type = "int";
+			break;
+
+		case UNSIGNED_INT:
+			type = "unsigned int";
+			break;
+
+		case LONG_INT:
+			type = "long int";
+			break;
+
+		case UNSIGNED_LONG_INT:
+			type = "unsigned long int";
+			break;
+
+		case LONG_LONG_INT:
+			type = "long long int";
+			break;
+
+		case UNSIGNED_LONG_LONG_INT:
+			type = "unsigned long long int";
+			break;
+
+		default:
+			type = "(unknown)";
+	}
+
+	fprintf(stream, "%s\",\n", type);
+
+	INDENT(stream, level);
+	fprintf(
+		stream,
+		"\"value\" : \"%s\"\n",
+		node->integer_constant.text.head);
 
 	FPRINT_AST_FINISH;
 }

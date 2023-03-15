@@ -187,6 +187,7 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
 %nterm <ast> identifier
+%nterm <ast> integer_constant
 
 
 %destructor {
@@ -217,8 +218,18 @@ identifier: IDENTIFIER {
 
 
 constant:
-  %empty
+  integer_constant
 ;
+
+
+integer_constant: INTEGER_CONSTANT {
+	TRACE("integer_consant", "INTEGER_CONSTANT");
+
+	$integer_constant = ast_integer_constant_init(
+		&$INTEGER_CONSTANT,
+		&@INTEGER_CONSTANT);
+	if (!$integer_constant) YYNOMEM;
+}
 
 
 string_literal:

@@ -29,6 +29,7 @@
 
 typedef enum ast_e {
 	AST_IDENTIFIER,
+	AST_INTEGER_CONSTANT,
 	AST_NODES_TOTAL,
 } ast_t;
 
@@ -38,6 +39,12 @@ typedef struct ast_identifier_s {
 	location_t   location;
 	ast_t        ast;
 } ast_identifier_t;
+
+typedef struct ast_integer_constant_s {
+	integer_constant_t integer_constant;
+	location_t         location;
+	ast_t              ast;
+} ast_integer_constant_t;
 
 
 extern void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast);
@@ -49,8 +56,15 @@ extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 	uint_fast8_t flags);
 
 
-ast_t *ast_identifier_init(identifier_t *identifier, location_t *location);
-void   ast_identifier_free(ast_t *ast);
+ast_t *ast_identifier_init(
+	identifier_t *identifier,
+	location_t   *location);
+ast_t *ast_integer_constant_init(
+	integer_constant_t *integer_constant,
+	location_t         *location);
+
+void ast_identifier_free(ast_t *ast);
+void ast_integer_constant_free(ast_t *ast);
 
 
 #endif  /* JKCC_AST_H */
