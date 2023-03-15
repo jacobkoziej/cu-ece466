@@ -12,6 +12,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <jkcc/lexer.h>
@@ -58,29 +59,6 @@
                                                       \
 	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE)) \
 		fprintf(stream, "\n");
-
-
-
-static void fprint_ast_identifier(
-	FILE         *stream,
-	const ast_t  *ast,
-	size_t        level,
-	uint_fast8_t  flags);
-static void fprint_ast_integer_consant(
-	FILE         *stream,
-	const ast_t  *ast,
-	size_t        level,
-	uint_fast8_t  flags);
-static void fprint_file(
-	FILE             *stream,
-	const file_t     *file,
-	size_t            level,
-	uint_fast8_t      flags);
-static void fprint_location(
-	FILE             *stream,
-	const location_t *location,
-	size_t            level,
-	uint_fast8_t      flags);
 
 
 #endif  /* JKCC_PRIVATE_AST_H */

@@ -44,6 +44,9 @@ jkcc_src = files(
 )
 
 
+subdir('ast')
+
+
 executable(
         'jkcc',
         include_directories : jkcc_inc,

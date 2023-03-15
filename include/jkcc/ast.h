@@ -34,19 +34,6 @@ typedef enum ast_e {
 } ast_t;
 
 
-typedef struct ast_identifier_s {
-	identifier_t identifier;
-	location_t   location;
-	ast_t        ast;
-} ast_identifier_t;
-
-typedef struct ast_integer_constant_s {
-	integer_constant_t integer_constant;
-	location_t         location;
-	ast_t              ast;
-} ast_integer_constant_t;
-
-
 extern void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast);
 
 extern void (*fprint_ast_node[AST_NODES_TOTAL])(
@@ -56,15 +43,20 @@ extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 	uint_fast8_t flags);
 
 
-ast_t *ast_identifier_init(
-	identifier_t *identifier,
-	location_t   *location);
-ast_t *ast_integer_constant_init(
-	integer_constant_t *integer_constant,
-	location_t         *location);
+void fprint_file(
+	FILE             *stream,
+	const file_t     *file,
+	size_t            level,
+	uint_fast8_t      flags);
+void fprint_location(
+	FILE             *stream,
+	const location_t *location,
+	size_t            level,
+	uint_fast8_t      flags);
 
-void ast_identifier_free(ast_t *ast);
-void ast_integer_constant_free(ast_t *ast);
+
+#include <jkcc/ast/identifier.h>
+#include <jkcc/ast/integer_constant.h>
 
 
 #endif  /* JKCC_AST_H */
