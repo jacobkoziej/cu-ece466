@@ -70,6 +70,11 @@ typedef struct location_s {
 	} end;
 } location_t;
 
+typedef struct identifier_s {
+	string_t IDENTIFIER;
+	string_t text;
+} identifier_t;
+
 typedef struct integer_constant_s {
 	enum integer_constant_e type;
 	union {
