@@ -9,4 +9,5 @@ jkcc_src += files(
         'identifier.c',
         'integer_constant.c',
         'string_literal.c',
+        'unary_operator.c',
 )

@@ -191,6 +191,7 @@ typedef void* yyscan_t;
 %nterm <ast> floating_constant
 %nterm <ast> character_constant
 %nterm <ast> string_literal
+%nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 
 
@@ -282,6 +283,58 @@ expression:
 
 generic_selection:
   %empty
+;
+
+
+unary_operator:
+  PUNCTUATOR_AMPERSAND {
+	TRACE("unary_operator", "PUNCTUATOR_AMPERSAND");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_AMPERSAND,
+		&@PUNCTUATOR_AMPERSAND);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_ASTERISK {
+	TRACE("unary_operator", "PUNCTUATOR_ASTERISK");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_ASTERISK,
+		&@PUNCTUATOR_ASTERISK);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_PLUS {
+	TRACE("unary_operator", "PUNCTUATOR_PLUS");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_PLUS,
+		&@PUNCTUATOR_PLUS);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_MINUS {
+	TRACE("unary_operator", "PUNCTUATOR_MINUS");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_MINUS,
+		&@PUNCTUATOR_MINUS);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_UNARY_COMPLEMENT {
+	TRACE("unary_operator", "PUNCTUATOR_UNARY_COMPLEMENT");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_UNARY_COMPLEMENT,
+		&@PUNCTUATOR_UNARY_COMPLEMENT);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_LOGICAL_NOT {
+	TRACE("unary_operator", "PUNCTUATOR_LOGICAL_NOT");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_LOGICAL_NOT,
+		&@PUNCTUATOR_LOGICAL_NOT);
+	if (!$unary_operator) YYNOMEM;
+}
 ;
 
 
