@@ -26,6 +26,7 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_storage_class_specifier_free,
 	ast_string_literal_free,
 	ast_type_qualifier_free,
+	ast_type_specifier_free,
 	ast_unary_operator_free,
 };
 
@@ -42,6 +43,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	fprint_ast_storage_class_specifier,
 	fprint_ast_string_literal,
 	fprint_ast_type_qualifier,
+	fprint_ast_type_specifier,
 	fprint_ast_unary_operator,
 };
 

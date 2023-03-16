@@ -11,5 +11,6 @@ jkcc_src += files(
         'storage_class_specifier.c',
         'string_literal.c',
         'type_qualifier.c',
+        'type_specifier.c',
         'unary_operator.c',
 )

@@ -194,6 +194,7 @@ typedef void* yyscan_t;
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
+%nterm <ast> type_specifier
 %nterm <ast> type_qualifier
 
 
@@ -481,6 +482,104 @@ storage_class_specifier:
 		&@KEYWORD_REGISTER);
 	if (!$storage_class_specifier) YYNOMEM;
 }
+;
+
+
+type_specifier:
+  KEYWORD_VOID {
+	TRACE("type_specifier", "KEYWORD_VOID");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_VOID,
+		NULL,
+		&@KEYWORD_VOID);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_CHAR {
+	TRACE("type_specifier", "KEYWORD_CHAR");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_CHAR,
+		NULL,
+		&@KEYWORD_CHAR);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_SHORT {
+	TRACE("type_specifier", "KEYWORD_SHORT");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_SHORT,
+		NULL,
+		&@KEYWORD_SHORT);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_INT {
+	TRACE("type_specifier", "KEYWORD_INT");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_INT,
+		NULL,
+		&@KEYWORD_INT);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_LONG {
+	TRACE("type_specifier", "KEYWORD_LONG");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_LONG,
+		NULL,
+		&@KEYWORD_LONG);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_FLOAT {
+	TRACE("type_specifier", "KEYWORD_FLOAT");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_FLOAT,
+		NULL,
+		&@KEYWORD_FLOAT);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_DOUBLE {
+	TRACE("type_specifier", "KEYWORD_DOUBLE");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_DOUBLE,
+		NULL,
+		&@KEYWORD_DOUBLE);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD_UNSIGNED {
+	TRACE("type_specifier", "KEYWORD_UNSIGNED");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_UNSIGNED,
+		NULL,
+		&@KEYWORD_UNSIGNED);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD__BOOL {
+	TRACE("type_specifier", "KEYWORD__BOOL");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD__BOOL,
+		NULL,
+		&@KEYWORD__BOOL);
+	if (!$type_specifier) YYNOMEM;
+}
+| KEYWORD__COMPLEX {
+	TRACE("type_specifier", "KEYWORD__COMPLEX");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD__COMPLEX,
+		NULL,
+		&@KEYWORD__COMPLEX);
+	if (!$type_specifier) YYNOMEM;
+}
+// | atomic_type_specifier
+// | struct_or_union_specifier
+// | enum_specifier
+// | typedef_name
 ;
 
 
