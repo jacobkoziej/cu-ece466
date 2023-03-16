@@ -8,6 +8,7 @@ jkcc_src += files(
         'floating_constant.c',
         'identifier.c',
         'integer_constant.c',
+        'storage_class_specifier.c',
         'string_literal.c',
         'unary_operator.c',
 )

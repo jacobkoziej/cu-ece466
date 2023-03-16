@@ -193,6 +193,7 @@ typedef void* yyscan_t;
 %nterm <ast> string_literal
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
+%nterm <ast> storage_class_specifier
 
 
 %destructor {
@@ -426,5 +427,57 @@ assignment_operator:
 		PUNCTUATOR_COMPOUND_OR,
 		&@PUNCTUATOR_COMPOUND_OR);
 	if (!$assignment_operator) YYNOMEM;
+}
+;
+
+
+storage_class_specifier:
+  KEYWORD_TYPEDEF {
+	TRACE("storage_class_specifier", "KEYWORD_TYPEDEF");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD_TYPEDEF,
+		&@KEYWORD_TYPEDEF);
+	if (!$storage_class_specifier) YYNOMEM;
+}
+| KEYWORD_EXTERN {
+	TRACE("storage_class_specifier", "KEYWORD_EXTERN");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD_EXTERN,
+		&@KEYWORD_EXTERN);
+	if (!$storage_class_specifier) YYNOMEM;
+}
+| KEYWORD_STATIC {
+	TRACE("storage_class_specifier", "KEYWORD_STATIC");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD_STATIC,
+		&@KEYWORD_STATIC);
+	if (!$storage_class_specifier) YYNOMEM;
+}
+| KEYWORD__THREAD_LOCAL {
+	TRACE("storage_class_specifier", "KEYWORD__THREAD_LOCAL");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD__THREAD_LOCAL,
+		&@KEYWORD__THREAD_LOCAL);
+	if (!$storage_class_specifier) YYNOMEM;
+}
+| KEYWORD_AUTO {
+	TRACE("storage_class_specifier", "KEYWORD_AUTO");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD_AUTO,
+		&@KEYWORD_AUTO);
+	if (!$storage_class_specifier) YYNOMEM;
+}
+| KEYWORD_REGISTER {
+	TRACE("storage_class_specifier", "KEYWORD_REGISTER");
+
+	$storage_class_specifier = ast_storage_class_specifier_init(
+		KEYWORD_REGISTER,
+		&@KEYWORD_REGISTER);
+	if (!$storage_class_specifier) YYNOMEM;
 }
 ;
