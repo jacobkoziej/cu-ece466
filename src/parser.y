@@ -197,6 +197,7 @@ typedef void* yyscan_t;
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
 %nterm <ast> type_qualifier
+%nterm <ast> type_qualifier_list
 
 
 %destructor {
@@ -616,5 +617,26 @@ type_qualifier:
 		KEYWORD__ATOMIC,
 		&@KEYWORD__ATOMIC);
 	if (!$type_qualifier) YYNOMEM;
+}
+;
+
+
+type_qualifier_list:
+  type_qualifier {
+	TRACE("type_qualifier_list", "type_qualifier");
+
+	$type_qualifier_list = ast_type_qualifier_list_init(
+		$type_qualifier,
+		&@type_qualifier);
+	if (!$type_qualifier_list) YYNOMEM;
+}
+| type_qualifier_list[list] type_qualifier {
+	TRACE("type_qualifier_list", "type_qualifier_list type_qualifier");
+
+	$$ = ast_type_qualifier_list_append(
+		$list,
+		$type_qualifier,
+		&@type_qualifier);
+	if (!$$) YYNOMEM;
 }
 ;

@@ -36,6 +36,7 @@ typedef enum ast_e {
 	AST_STORAGE_CLASS_SPECIFIER,
 	AST_STRING_LITERAL,
 	AST_TYPE_QUALIFIER,
+	AST_TYPE_QUALIFIER_LIST,
 	AST_TYPE_SPECIFIER,
 	AST_UNARY_OPERATOR,
 	AST_NODES_TOTAL,
@@ -71,6 +72,7 @@ void fprint_location(
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>
 #include <jkcc/ast/type_qualifier.h>
+#include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>
 #include <jkcc/ast/unary_operator.h>
 
