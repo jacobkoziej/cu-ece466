@@ -191,6 +191,7 @@ typedef void* yyscan_t;
 %nterm <ast> floating_constant
 %nterm <ast> character_constant
 %nterm <ast> string_literal
+%nterm <ast> assignment_operator
 
 
 %destructor {
@@ -281,4 +282,96 @@ expression:
 
 generic_selection:
   %empty
+;
+
+
+assignment_operator:
+  PUNCTUATOR_ASSIGNMENT {
+	TRACE("assignment_operator", "PUNCTUATOR_ASSIGNMENT");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_ASSIGNMENT,
+		&@PUNCTUATOR_ASSIGNMENT);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_MULTIPLICATION {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_MULTIPLICATION");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_MULTIPLICATION,
+		&@PUNCTUATOR_COMPOUND_MULTIPLICATION);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_DIVISION {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_DIVISION");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_DIVISION,
+		&@PUNCTUATOR_COMPOUND_DIVISION);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_MODULO {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_MODULO");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_MODULO,
+		&@PUNCTUATOR_COMPOUND_MODULO);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_ADDITION {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_ADDITION");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_ADDITION,
+		&@PUNCTUATOR_COMPOUND_ADDITION);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_SUBTRACTION {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_SUBTRACTION");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_SUBTRACTION,
+		&@PUNCTUATOR_COMPOUND_SUBTRACTION);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_LBITSHIFT {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_LBITSHIFT");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_LBITSHIFT,
+		&@PUNCTUATOR_COMPOUND_LBITSHIFT);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_RBITSHIFT {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_RBITSHIFT");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_RBITSHIFT,
+		&@PUNCTUATOR_COMPOUND_RBITSHIFT);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_AND {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_AND");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_AND,
+		&@PUNCTUATOR_COMPOUND_AND);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_XOR {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_XOR");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_XOR,
+		&@PUNCTUATOR_COMPOUND_XOR);
+	if (!$assignment_operator) YYNOMEM;
+}
+| PUNCTUATOR_COMPOUND_OR {
+	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_OR");
+
+	$assignment_operator = ast_assignment_operator_init(
+		PUNCTUATOR_COMPOUND_OR,
+		&@PUNCTUATOR_COMPOUND_OR);
+	if (!$assignment_operator) YYNOMEM;
+}
 ;
