@@ -23,6 +23,7 @@
 
 #define YYLLOC_DEFAULT(cur, rhs, n) {\
 	if (n) {\
+		(cur).file = YYRHSLOC(rhs, 1).file;\
 		(cur).start.offset = YYRHSLOC(rhs, 1).start.offset;\
 		(cur).start.offset = YYRHSLOC(rhs, 1).start.line;\
 		(cur).start.offset = YYRHSLOC(rhs, 1).start.column;\
