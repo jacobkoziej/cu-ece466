@@ -381,9 +381,9 @@ static void test_keywords(void **state)
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), KEYWORD__NORETURN);
 	assert_string_equal(yyget_text(yyscanner), "_Noreturn");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), KEYWORD__STATIC_ASSERT);
-	assert_string_equal(yyget_text(yyscanner), "_Static_Assert");
+	assert_string_equal(yyget_text(yyscanner), "_Static_assert");
 	assert_int_equal(yylex(&yylval, &yylloc, yyscanner), KEYWORD__THREAD_LOCAL);
-	assert_string_equal(yyget_text(yyscanner), "_Thread_Local");
+	assert_string_equal(yyget_text(yyscanner), "_Thread_local");
 }
 
 static void test_punctuators(void **state)

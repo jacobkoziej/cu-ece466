@@ -295,8 +295,8 @@ _Complex       return KEYWORD__COMPLEX;
 _Generic       return KEYWORD__GENERIC;
 _Imaginary     return KEYWORD__IMAGINARY;
 _Noreturn      return KEYWORD__NORETURN;
-_Static_Assert return KEYWORD__STATIC_ASSERT;
-_Thread_Local  return KEYWORD__THREAD_LOCAL;
+_Static_assert return KEYWORD__STATIC_ASSERT;
+_Thread_local  return KEYWORD__THREAD_LOCAL;
 
 
 	/* punctuators */
