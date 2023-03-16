@@ -25,11 +25,11 @@
 	if (n) {\
 		(cur).file = YYRHSLOC(rhs, 1).file;\
 		(cur).start.offset = YYRHSLOC(rhs, 1).start.offset;\
-		(cur).start.offset = YYRHSLOC(rhs, 1).start.line;\
-		(cur).start.offset = YYRHSLOC(rhs, 1).start.column;\
+		(cur).start.line   = YYRHSLOC(rhs, 1).start.line;\
+		(cur).start.column = YYRHSLOC(rhs, 1).start.column;\
 		(cur).end.offset   = YYRHSLOC(rhs, n).end.offset;\
-		(cur).end.offset   = YYRHSLOC(rhs, n).end.line;\
-		(cur).end.offset   = YYRHSLOC(rhs, n).end.column;\
+		(cur).end.line     = YYRHSLOC(rhs, n).end.line;\
+		(cur).end.column   = YYRHSLOC(rhs, n).end.column;\
 	} else {\
 		(cur).file = YYRHSLOC(rhs, 0).file;\
 		(cur).start.offset = (cur).end.offset = YYRHSLOC(rhs, 0).end.offset;\
