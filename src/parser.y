@@ -194,6 +194,7 @@ typedef void* yyscan_t;
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
+%nterm <ast> type_qualifier
 
 
 %destructor {
@@ -479,5 +480,41 @@ storage_class_specifier:
 		KEYWORD_REGISTER,
 		&@KEYWORD_REGISTER);
 	if (!$storage_class_specifier) YYNOMEM;
+}
+;
+
+
+type_qualifier:
+  KEYWORD_CONST {
+	TRACE("type_qualifier", "KEYWORD_CONST");
+
+	$type_qualifier = ast_type_qualifier_init(
+		KEYWORD_CONST,
+		&@KEYWORD_CONST);
+	if (!$type_qualifier) YYNOMEM;
+}
+| KEYWORD_RESTRICT {
+	TRACE("type_qualifier", "KEYWORD_RESTRICT");
+
+	$type_qualifier = ast_type_qualifier_init(
+		KEYWORD_RESTRICT,
+		&@KEYWORD_RESTRICT);
+	if (!$type_qualifier) YYNOMEM;
+}
+| KEYWORD_VOLATILE {
+	TRACE("type_qualifier", "KEYWORD_VOLATILE");
+
+	$type_qualifier = ast_type_qualifier_init(
+		KEYWORD_VOLATILE,
+		&@KEYWORD_VOLATILE);
+	if (!$type_qualifier) YYNOMEM;
+}
+| KEYWORD__ATOMIC {
+	TRACE("type_qualifier", "KEYWORD__ATOMIC");
+
+	$type_qualifier = ast_type_qualifier_init(
+		KEYWORD__ATOMIC,
+		&@KEYWORD__ATOMIC);
+	if (!$type_qualifier) YYNOMEM;
 }
 ;
