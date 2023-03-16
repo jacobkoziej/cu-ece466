@@ -14,7 +14,6 @@
 #include <stdlib.h>
 
 #include <jkcc/lexer.h>
-#include <jkcc/string.h>
 
 #include "y.tab.h"
 
