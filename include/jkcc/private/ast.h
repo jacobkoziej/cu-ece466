@@ -19,8 +19,8 @@
 
 
 #define INDENT(stream, level) if (level) {              \
-	char buf[level];                                \
-	memset(buf, '\t', sizeof(buf));                 \
+	char buf[level * 2];                            \
+	memset(buf, ' ', sizeof(buf));                  \
 	fwrite(buf, sizeof(*buf), sizeof(buf), stream); \
 }
 
