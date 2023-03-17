@@ -197,6 +197,7 @@ typedef void* yyscan_t;
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
 %nterm <ast> type_qualifier
+%nterm <ast> pointer
 %nterm <ast> type_qualifier_list
 
 
@@ -617,6 +618,40 @@ type_qualifier:
 		KEYWORD__ATOMIC,
 		&@KEYWORD__ATOMIC);
 	if (!$type_qualifier) YYNOMEM;
+}
+;
+
+
+pointer:
+  PUNCTUATOR_ASTERISK {
+	TRACE("pointer", "PUNCTUATOR_ASTERISK");
+
+	$pointer = ast_pointer_init(NULL, NULL, &@PUNCTUATOR_ASTERISK);
+	if (!$pointer) YYNOMEM;
+}
+| PUNCTUATOR_ASTERISK type_qualifier_list {
+	TRACE("pointer", "PUNCTUATOR_ASTERISK type_qualifier_list");
+
+	$pointer = ast_pointer_init(
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_ASTERISK);
+	if (!$pointer) YYNOMEM;
+}
+| PUNCTUATOR_ASTERISK pointer[child] {
+	TRACE("pointer", "PUNCTUATOR_ASTERISK pointer");
+
+	$$ = ast_pointer_init(NULL, $child, &@PUNCTUATOR_ASTERISK);
+	if (!$$) YYNOMEM;
+}
+| PUNCTUATOR_ASTERISK type_qualifier_list pointer[child] {
+	TRACE("pointer", "PUNCTUATOR_ASTERISK type_qualifier_list pointer");
+
+	$$ = ast_pointer_init(
+		$type_qualifier_list,
+		$child,
+		&@PUNCTUATOR_ASTERISK);
+	if (!$$) YYNOMEM;
 }
 ;
 
