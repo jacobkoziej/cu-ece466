@@ -217,6 +217,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_qualifier
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> type_name
 
 
 %destructor {
@@ -744,4 +745,30 @@ type_qualifier_list:
 		&@type_qualifier);
 	if (!$$) YYNOMEM;
 }
+;
+
+
+type_name:
+  specifier_qualifier_list {
+	TRACE("type_name", "specifier_qualifier_list");
+
+	$type_name = ast_type_name_init(
+		$specifier_qualifier_list,
+		NULL,
+		&@specifier_qualifier_list,
+		NULL);
+	if (!$type_name) YYNOMEM;
+}
+/*
+| specifier_qualifier_list abstract_declarator {
+	TRACE("type_name", "specifier_qualifier_list abstract_declarator");
+
+	$type_name = ast_type_name_init(
+		$specifier_qualifier_list,
+		$abstract_declarator,
+		&@specifier_qualifier_list,
+		&@abstract_declarator);
+	if (!$type_name) YYNOMEM;
+}
+*/
 ;
