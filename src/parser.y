@@ -218,6 +218,7 @@ typedef void* yyscan_t;
 %nterm <ast> additive_expression
 %nterm <ast> shift_expression
 %nterm <ast> relational_expression
+%nterm <ast> equality_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -756,6 +757,43 @@ relational_expression:
 		RELATIONAL_EXPRESSION_GREATER_THAN_OR_EQUAL,
 		&@child,
 		&@shift_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+equality_expression:
+  relational_expression {
+	TRACE("equality_expression", "relational_expression");
+
+	$equality_expression = ast_equality_expression_init(
+		NULL,
+		$relational_expression,
+		0,
+		&@relational_expression,
+		NULL);
+	if (!$equality_expression) YYNOMEM;
+}
+| equality_expression[child] PUNCTUATOR_EQUALITY relational_expression {
+	TRACE("equality_expression", "equality_expression PUNCTUATOR_EQUALITY relational_expression");
+
+	$$ = ast_equality_expression_init(
+		$child,
+		$relational_expression,
+		EQUALITY_EXPRESSION_EQUALITY,
+		&@child,
+		&@relational_expression);
+	if (!$$) YYNOMEM;
+}
+| equality_expression[child] PUNCTUATOR_INEQUALITY relational_expression {
+	TRACE("equality_expression", "equality_expression PUNCTUATOR_INEQUALITY relational_expression");
+
+	$$ = ast_equality_expression_init(
+		$child,
+		$relational_expression,
+		EQUALITY_EXPRESSION_INEQUALITY,
+		&@child,
+		&@relational_expression);
 	if (!$$) YYNOMEM;
 }
 ;

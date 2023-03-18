@@ -8,6 +8,7 @@ jkcc_src += files(
         'cast_expression.c',
         'character_constant.c',
         'constant.c',
+        'equality_expression.c',
         'floating_constant.c',
         'identifier.c',
         'integer_constant.c',
