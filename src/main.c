@@ -83,6 +83,7 @@ int main(int argc, char **argv)
 
 	parser_t parser = {
 		.path  = NULL,
+		.error = NULL,
 		.trace = &jkcc.trace,
 	};
 	size_t processed = 0;

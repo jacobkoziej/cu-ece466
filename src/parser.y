@@ -44,13 +44,14 @@ static void yyerror(
 	yyscan_t            scanner,
 	parser_t           *parser,
 	translation_unit_t *translation_unit,
-	char const         *token)
+	char const         *error)
 {
 	(void) yylloc;
 	(void) scanner;
 	(void) parser;
 	(void) translation_unit;
-	(void) token;
+
+	fprintf(stderr, "error: %s\n", error);
 }
 %}
 

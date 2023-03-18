@@ -15,6 +15,7 @@
 
 typedef struct parser_s {
 	const char *path;
+	const char *error;
 	trace_t    *trace;
 } parser_t;
 
