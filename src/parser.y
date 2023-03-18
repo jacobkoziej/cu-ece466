@@ -19,6 +19,22 @@
 #include <jkcc/trace.h>
 
 
+#define ERROR(ast) {                              \
+	if (!ast) {                               \
+		if (parser->error) {              \
+			yyerror(                  \
+				&yylloc,          \
+				scanner,          \
+				parser,           \
+				translation_unit, \
+				parser->error);   \
+			YYERROR;                  \
+		} else {                          \
+			YYNOMEM;                  \
+		}                                 \
+	}                                         \
+}
+
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
 #define YYLLOC_DEFAULT(cur, rhs, n) {\
