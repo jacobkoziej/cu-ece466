@@ -12,6 +12,8 @@
 #include "y.tab.h"
 #include "lex.yy.h"
 
+#include <stdbool.h>
+
 #include <jkcc/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/parser.h>
@@ -219,6 +221,7 @@ typedef void* yyscan_t;
 %nterm <ast> shift_expression
 %nterm <ast> relational_expression
 %nterm <ast> equality_expression
+%nterm <ast> and_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -794,6 +797,32 @@ equality_expression:
 		EQUALITY_EXPRESSION_INEQUALITY,
 		&@child,
 		&@relational_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+and_expression:
+  equality_expression {
+	TRACE("and_expression", "equality_expression");
+
+	$and_expression = ast_and_expression_init(
+		NULL,
+		$equality_expression,
+		false,
+		&@equality_expression,
+		NULL);
+	if (!$and_expression) YYNOMEM;
+}
+| and_expression[child] PUNCTUATOR_AMPERSAND equality_expression {
+	TRACE("and_expression", "and_expression PUNCTUATOR_AMPERSAND equality_expression");
+
+	$$ = ast_and_expression_init(
+		$child,
+		$equality_expression,
+		true,
+		&@child,
+		&@equality_expression);
 	if (!$$) YYNOMEM;
 }
 ;

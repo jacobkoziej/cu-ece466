@@ -4,6 +4,7 @@
 
 jkcc_src += files(
         'additive_expression.c',
+        'and_expression.c',
         'assignment_operator.c',
         'cast_expression.c',
         'character_constant.c',
