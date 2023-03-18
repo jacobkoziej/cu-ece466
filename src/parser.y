@@ -213,6 +213,7 @@ typedef void* yyscan_t;
 %nterm <ast> string_literal
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
+%nterm <ast> cast_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -623,6 +624,32 @@ unary_operator:
 		PUNCTUATOR_LOGICAL_NOT,
 		&@PUNCTUATOR_LOGICAL_NOT);
 	if (!$unary_operator) YYNOMEM;
+}
+;
+
+
+cast_expression:
+  unary_expression {
+	TRACE("cast_expression", "unary_expression");
+
+	$cast_expression = ast_cast_expression_init(
+		NULL,
+		$unary_expression,
+		NULL,
+		&@unary_expression,
+		NULL);
+	if (!$cast_expression) YYNOMEM;
+}
+| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression[child] {
+	TRACE("cast_expression", "PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression");
+
+	$$ = ast_cast_expression_init(
+		$child,
+		NULL,
+		$type_name,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@child);
+	if (!$$) YYNOMEM;
 }
 ;
 

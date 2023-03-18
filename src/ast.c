@@ -19,6 +19,7 @@
 
 void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_assignment_operator_free,
+	ast_cast_expression_free,
 	ast_character_constant_free,
 	ast_constant_free,
 	ast_floating_constant_free,
@@ -44,6 +45,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	size_t        level,
 	uint_fast8_t  flags) = {
 	fprint_ast_assignment_operator,
+	fprint_ast_cast_expression,
 	fprint_ast_character_constant,
 	fprint_ast_constant,
 	fprint_ast_floating_constant,
