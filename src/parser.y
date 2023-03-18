@@ -214,6 +214,7 @@ typedef void* yyscan_t;
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
 %nterm <ast> cast_expression
+%nterm <ast> multiplicative_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -572,6 +573,54 @@ unary_expression:
 		&@KEYWORD__ALIGNOF,
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$unary_expression) YYNOMEM;
+}
+;
+
+
+multiplicative_expression:
+  cast_expression {
+	TRACE("multiplicative_expression", "cast_expression");
+
+	$multiplicative_expression = ast_multiplicative_expression_init(
+		NULL,
+		$cast_expression,
+		0,
+		&@cast_expression,
+		NULL);
+	if (!$multiplicative_expression) YYNOMEM;
+}
+| multiplicative_expression[child] PUNCTUATOR_ASTERISK cast_expression {
+	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_ASTERISK cast_expression");
+
+	$$ = ast_multiplicative_expression_init(
+		$child,
+		$cast_expression,
+		MULTIPLICATIVE_EXPRESSION_MULTIPLICATION,
+		&@child,
+		&@cast_expression);
+	if (!$$) YYNOMEM;
+}
+| multiplicative_expression[child] PUNCTUATOR_DIVISION cast_expression {
+	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_DIVISION cast_expression");
+
+	$$ = ast_multiplicative_expression_init(
+		$child,
+		$cast_expression,
+		MULTIPLICATIVE_EXPRESSION_DIVISION,
+		&@child,
+		&@cast_expression);
+	if (!$$) YYNOMEM;
+}
+| multiplicative_expression[child] PUNCTUATOR_MODULO cast_expression {
+	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_MODULO cast_expression");
+
+	$$ = ast_multiplicative_expression_init(
+		$child,
+		$cast_expression,
+		MULTIPLICATIVE_EXPRESSION_MODULO,
+		&@child,
+		&@cast_expression);
+	if (!$$) YYNOMEM;
 }
 ;
 
