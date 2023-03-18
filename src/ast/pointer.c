@@ -53,7 +53,7 @@ void fprint_ast_pointer(
 	fprintf(stream, "\"type-qualifier-list\" : ");
 
 	if (node->type_qualifier_list)
-		fprint_ast_type_qualifier_list(
+		FPRINT_AST_NODE(
 			stream,
 			node->type_qualifier_list,
 			level + 1,
@@ -68,7 +68,7 @@ void fprint_ast_pointer(
 	fprintf(stream, "\"pointer\" : ");
 
 	if (node->pointer)
-		fprint_ast_pointer(
+		FPRINT_AST_NODE(
 			stream,
 			node->pointer,
 			level + 1,
