@@ -5,6 +5,7 @@
 jkcc_src += files(
         'assignment_operator.c',
         'character_constant.c',
+        'constant.c',
         'floating_constant.c',
         'identifier.c',
         'integer_constant.c',

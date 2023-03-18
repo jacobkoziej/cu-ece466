@@ -30,6 +30,7 @@
 typedef enum ast_e {
 	AST_ASSIGNMENT_OPERATOR,
 	AST_CHARACTER_CONSTANT,
+	AST_CONSTANT,
 	AST_FLOATING_CONSTANT,
 	AST_IDENTIFIER,
 	AST_INTEGER_CONSTANT,
@@ -69,6 +70,7 @@ void fprint_location(
 
 #include <jkcc/ast/assignment_operator.h>
 #include <jkcc/ast/character_constant.h>
+#include <jkcc/ast/constant.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/integer_constant.h>

@@ -208,6 +208,7 @@ typedef void* yyscan_t;
 %nterm <ast> integer_constant
 %nterm <ast> floating_constant
 %nterm <ast> character_constant
+%nterm <ast> constant
 %nterm <ast> string_literal
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
@@ -247,14 +248,6 @@ identifier: IDENTIFIER {
 }
 
 
-constant:
-  integer_constant
-| floating_constant
-// | enumeration_constant
-| character_constant
-;
-
-
 integer_constant: INTEGER_CONSTANT {
 	TRACE("integer_consant", "INTEGER_CONSTANT");
 
@@ -289,6 +282,44 @@ character_constant: CHARACTER_CONSTANT {
 		&@CHARACTER_CONSTANT);
 	if (!$character_constant) YYNOMEM;
 }
+
+
+constant:
+  integer_constant {
+	TRACE("constant", "integer_constant");
+
+	$constant = ast_constant_init(
+		$integer_constant,
+		&@integer_constant);
+	if (!$constant) YYNOMEM;
+}
+| floating_constant {
+	TRACE("constant", "floating_constant");
+
+	$constant = ast_constant_init(
+		$floating_constant,
+		&@floating_constant);
+	if (!$constant) YYNOMEM;
+}
+/*
+| enumeration_constant {
+	TRACE("constant", "enumeration_constant");
+
+	$constant = ast_constant_init(
+		$enumeration_constant,
+		&@enumeration_constant);
+	if (!$constant) YYNOMEM;
+}
+*/
+| character_constant {
+	TRACE("constant", "character_constant");
+
+	$constant = ast_constant_init(
+		$character_constant,
+		&@character_constant);
+	if (!$constant) YYNOMEM;
+}
+;
 
 
 string_literal: STRING_LITERAL {
