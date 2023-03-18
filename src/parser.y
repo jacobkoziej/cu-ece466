@@ -211,6 +211,7 @@ typedef void* yyscan_t;
 %nterm <ast> character_constant
 %nterm <ast> constant
 %nterm <ast> string_literal
+%nterm <ast> postfix_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -377,6 +378,110 @@ expression:
 
 generic_selection:
   %empty
+;
+
+
+postfix_expression:
+  primary_expression {
+	TRACE("postfix_expression", "primary_expression");
+
+	$postfix_expression = ast_postfix_expression_init(
+		NULL,
+		$primary_expression,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		0,
+		&@primary_expression,
+		NULL);
+	if (!$postfix_expression) YYNOMEM;
+}
+// | postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET
+| postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS");
+
+	$$ = ast_postfix_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		POSTFIX_EXPRESSION_PARENTHESIS,
+		&@child,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$$) YYNOMEM;
+}
+// | postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS
+| postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS identifier {
+	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_MEMBER_ACCESS identifier");
+
+	$$ = ast_postfix_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		$identifier,
+		NULL,
+		NULL,
+		0,
+		&@child,
+		&@identifier);
+	if (!$$) YYNOMEM;
+}
+| postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
+	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier");
+
+	$$ = ast_postfix_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		$identifier,
+		NULL,
+		NULL,
+		POSTFIX_EXPRESSION_DEREFERENCE,
+		&@child,
+		&@identifier);
+	if (!$$) YYNOMEM;
+}
+| postfix_expression[child] PUNCTUATOR_INCREMENT[increment] {
+	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_INCREMENT");
+
+	$$ = ast_postfix_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		POSTFIX_EXPRESSION_INCREMENT,
+		&@child,
+		&@increment);
+	if (!$$) YYNOMEM;
+}
+| postfix_expression[child] PUNCTUATOR_DECREMENT[decrement] {
+	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_DECREMENT");
+
+	$$ = ast_postfix_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		POSTFIX_EXPRESSION_DECREMENT,
+		&@child,
+		&@decrement);
+	if (!$$) YYNOMEM;
+}
+// | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_RBRACKET
+// | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_COMMA PUNCTUATOR_RBRACKET
 ;
 
 

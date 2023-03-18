@@ -10,6 +10,7 @@ jkcc_src += files(
         'identifier.c',
         'integer_constant.c',
         'pointer.c',
+        'postfix_expression.c',
         'primary_expression.c',
         'specifier_qualifier_list.c',
         'storage_class_specifier.c',
