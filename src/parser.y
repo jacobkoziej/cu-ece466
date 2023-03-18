@@ -206,15 +206,16 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
-%nterm <ast> primary_expression
 %nterm <ast> identifier
+%nterm <ast> constant
 %nterm <ast> integer_constant
 %nterm <ast> floating_constant
 %nterm <ast> character_constant
-%nterm <ast> constant
 %nterm <ast> string_literal
+%nterm <ast> primary_expression
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
+%nterm <ast> unary_operator
 %nterm <ast> cast_expression
 %nterm <ast> multiplicative_expression
 %nterm <ast> additive_expression
@@ -228,7 +229,6 @@ typedef void* yyscan_t;
 %nterm <ast> logical_or_expression
 %nterm <ast> conditional_expression
 %nterm <ast> assignment_expression
-%nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> expression
 %nterm <ast> constant_expression
@@ -251,6 +251,106 @@ typedef void* yyscan_t;
 %%
 
 
+// 6.4.4
+constant:
+  integer_constant {
+	TRACE("constant", "integer_constant");
+
+	$constant = ast_constant_init(
+		$integer_constant,
+		&@integer_constant);
+	if (!$constant) YYNOMEM;
+}
+| floating_constant {
+	TRACE("constant", "floating_constant");
+
+	$constant = ast_constant_init(
+		$floating_constant,
+		&@floating_constant);
+	if (!$constant) YYNOMEM;
+}
+/*
+| enumeration_constant {
+	TRACE("constant", "enumeration_constant");
+
+	$constant = ast_constant_init(
+		$enumeration_constant,
+		&@enumeration_constant);
+	if (!$constant) YYNOMEM;
+}
+*/
+| character_constant {
+	TRACE("constant", "character_constant");
+
+	$constant = ast_constant_init(
+		$character_constant,
+		&@character_constant);
+	if (!$constant) YYNOMEM;
+}
+;
+
+
+// 6.4.2.1
+identifier: IDENTIFIER {
+	TRACE("identifier", "IDENTIFIER");
+
+	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
+	if (!$identifier) YYNOMEM;
+}
+
+
+// 6.4.4.1
+integer_constant: INTEGER_CONSTANT {
+	TRACE("integer_consant", "INTEGER_CONSTANT");
+
+	$integer_constant = ast_integer_constant_init(
+		&$INTEGER_CONSTANT,
+		&@INTEGER_CONSTANT);
+	if (!$integer_constant) YYNOMEM;
+}
+
+
+// 6.4.4.2
+floating_constant: FLOATING_CONSTANT {
+	TRACE("floating_constant", "FLOATING_CONSTANT");
+
+	$floating_constant = ast_floating_constant_init(
+		&$FLOATING_CONSTANT,
+		&@FLOATING_CONSTANT);
+	if (!$floating_constant) YYNOMEM;
+}
+
+
+/* TODO: add support for enum's
+// 6.4.4.3
+enumeration_constant: IDENTIFIER {
+}
+*/
+
+
+// 6.4.4.4
+character_constant: CHARACTER_CONSTANT {
+	TRACE("character_constant", "CHARACTER_CONSTANT");
+
+	$character_constant = ast_character_constant_init(
+		&$CHARACTER_CONSTANT,
+		&@CHARACTER_CONSTANT);
+	if (!$character_constant) YYNOMEM;
+}
+
+
+// 6.4.5
+string_literal: STRING_LITERAL {
+	TRACE("string_literal", "STRING_LITERAL");
+
+	$string_literal = ast_string_literal_init(
+		&$STRING_LITERAL,
+		&@STRING_LITERAL);
+	if (!$string_literal) YYNOMEM;
+}
+
+
+// 6.5.1
 primary_expression:
   identifier {
 	TRACE("primary_expression", "identifier");
@@ -297,103 +397,13 @@ primary_expression:
 ;
 
 
-identifier: IDENTIFIER {
-	TRACE("identifier", "IDENTIFIER");
-
-	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
-	if (!$identifier) YYNOMEM;
-}
-
-
-integer_constant: INTEGER_CONSTANT {
-	TRACE("integer_consant", "INTEGER_CONSTANT");
-
-	$integer_constant = ast_integer_constant_init(
-		&$INTEGER_CONSTANT,
-		&@INTEGER_CONSTANT);
-	if (!$integer_constant) YYNOMEM;
-}
-
-
-floating_constant: FLOATING_CONSTANT {
-	TRACE("floating_constant", "FLOATING_CONSTANT");
-
-	$floating_constant = ast_floating_constant_init(
-		&$FLOATING_CONSTANT,
-		&@FLOATING_CONSTANT);
-	if (!$floating_constant) YYNOMEM;
-}
-
-
-/* TODO: add support for enum's
-enumeration_constant: IDENTIFIER {
-}
-*/
-
-
-character_constant: CHARACTER_CONSTANT {
-	TRACE("character_constant", "CHARACTER_CONSTANT");
-
-	$character_constant = ast_character_constant_init(
-		&$CHARACTER_CONSTANT,
-		&@CHARACTER_CONSTANT);
-	if (!$character_constant) YYNOMEM;
-}
-
-
-constant:
-  integer_constant {
-	TRACE("constant", "integer_constant");
-
-	$constant = ast_constant_init(
-		$integer_constant,
-		&@integer_constant);
-	if (!$constant) YYNOMEM;
-}
-| floating_constant {
-	TRACE("constant", "floating_constant");
-
-	$constant = ast_constant_init(
-		$floating_constant,
-		&@floating_constant);
-	if (!$constant) YYNOMEM;
-}
-/*
-| enumeration_constant {
-	TRACE("constant", "enumeration_constant");
-
-	$constant = ast_constant_init(
-		$enumeration_constant,
-		&@enumeration_constant);
-	if (!$constant) YYNOMEM;
-}
-*/
-| character_constant {
-	TRACE("constant", "character_constant");
-
-	$constant = ast_constant_init(
-		$character_constant,
-		&@character_constant);
-	if (!$constant) YYNOMEM;
-}
-;
-
-
-string_literal: STRING_LITERAL {
-	TRACE("string_literal", "STRING_LITERAL");
-
-	$string_literal = ast_string_literal_init(
-		&$STRING_LITERAL,
-		&@STRING_LITERAL);
-	if (!$string_literal) YYNOMEM;
-}
-
-
+// 6.5.1.1
 generic_selection:
   %empty
 ;
 
 
+// 6.5.2
 postfix_expression:
   primary_expression {
 	TRACE("postfix_expression", "primary_expression");
@@ -498,6 +508,7 @@ postfix_expression:
 ;
 
 
+// 6.5.3
 unary_expression:
   postfix_expression {
 	TRACE("unary_expression", "postfix_expression");
@@ -587,6 +598,87 @@ unary_expression:
 ;
 
 
+// 6.5.3
+unary_operator:
+  PUNCTUATOR_AMPERSAND {
+	TRACE("unary_operator", "PUNCTUATOR_AMPERSAND");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_AMPERSAND,
+		&@PUNCTUATOR_AMPERSAND);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_ASTERISK {
+	TRACE("unary_operator", "PUNCTUATOR_ASTERISK");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_ASTERISK,
+		&@PUNCTUATOR_ASTERISK);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_PLUS {
+	TRACE("unary_operator", "PUNCTUATOR_PLUS");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_PLUS,
+		&@PUNCTUATOR_PLUS);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_MINUS {
+	TRACE("unary_operator", "PUNCTUATOR_MINUS");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_MINUS,
+		&@PUNCTUATOR_MINUS);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_UNARY_COMPLEMENT {
+	TRACE("unary_operator", "PUNCTUATOR_UNARY_COMPLEMENT");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_UNARY_COMPLEMENT,
+		&@PUNCTUATOR_UNARY_COMPLEMENT);
+	if (!$unary_operator) YYNOMEM;
+}
+| PUNCTUATOR_LOGICAL_NOT {
+	TRACE("unary_operator", "PUNCTUATOR_LOGICAL_NOT");
+
+	$unary_operator = ast_unary_operator_init(
+		PUNCTUATOR_LOGICAL_NOT,
+		&@PUNCTUATOR_LOGICAL_NOT);
+	if (!$unary_operator) YYNOMEM;
+}
+;
+
+
+// 6.5.4
+cast_expression:
+  unary_expression {
+	TRACE("cast_expression", "unary_expression");
+
+	$cast_expression = ast_cast_expression_init(
+		NULL,
+		$unary_expression,
+		NULL,
+		&@unary_expression,
+		NULL);
+	if (!$cast_expression) YYNOMEM;
+}
+| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression[child] {
+	TRACE("cast_expression", "PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression");
+
+	$$ = ast_cast_expression_init(
+		$child,
+		NULL,
+		$type_name,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@child);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.5.4
 multiplicative_expression:
   cast_expression {
 	TRACE("multiplicative_expression", "cast_expression");
@@ -635,6 +727,7 @@ multiplicative_expression:
 ;
 
 
+// 6.5.6
 additive_expression:
   multiplicative_expression {
 	TRACE("additive_expression", "multiplicative_expression");
@@ -672,6 +765,7 @@ additive_expression:
 ;
 
 
+// 6.5.7
 shift_expression:
   additive_expression {
 	TRACE("shift_expression", "additive_expression");
@@ -709,6 +803,7 @@ shift_expression:
 ;
 
 
+// 6.5.8
 relational_expression:
   shift_expression {
 	TRACE("relational_expression", "shift_expression");
@@ -768,6 +863,7 @@ relational_expression:
 ;
 
 
+// 6.5.9
 equality_expression:
   relational_expression {
 	TRACE("equality_expression", "relational_expression");
@@ -805,6 +901,7 @@ equality_expression:
 ;
 
 
+// 6.5.10
 and_expression:
   equality_expression {
 	TRACE("and_expression", "equality_expression");
@@ -831,6 +928,7 @@ and_expression:
 ;
 
 
+// 6.5.11
 exclusive_or_expression:
   and_expression {
 	TRACE("exclusive_or_expression", "and_expression");
@@ -857,6 +955,7 @@ exclusive_or_expression:
 ;
 
 
+// 6.5.12
 inclusive_or_expression:
   exclusive_or_expression {
 	TRACE("inclusive_or_expression", "exclusive_or_expression");
@@ -883,6 +982,7 @@ inclusive_or_expression:
 ;
 
 
+// 6.5.13
 logical_and_expression:
   inclusive_or_expression {
 	TRACE("logical_and_expression", "inclusive_or_expression");
@@ -909,6 +1009,7 @@ logical_and_expression:
 ;
 
 
+// 6.5.14
 logical_or_expression:
   logical_and_expression {
 	TRACE("logical_or_expression", "logical_and_expression");
@@ -935,6 +1036,7 @@ logical_or_expression:
 ;
 
 
+// 6.5.15
 conditional_expression:
   logical_or_expression {
 	TRACE("conditional_expression", "logical_or_expression");
@@ -963,6 +1065,7 @@ conditional_expression:
 ;
 
 
+// 6.5.16
 assignment_expression:
   conditional_expression {
 	TRACE("assignment_expression", "conditional_expression");
@@ -991,115 +1094,7 @@ assignment_expression:
 ;
 
 
-unary_operator:
-  PUNCTUATOR_AMPERSAND {
-	TRACE("unary_operator", "PUNCTUATOR_AMPERSAND");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_AMPERSAND,
-		&@PUNCTUATOR_AMPERSAND);
-	if (!$unary_operator) YYNOMEM;
-}
-| PUNCTUATOR_ASTERISK {
-	TRACE("unary_operator", "PUNCTUATOR_ASTERISK");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_ASTERISK,
-		&@PUNCTUATOR_ASTERISK);
-	if (!$unary_operator) YYNOMEM;
-}
-| PUNCTUATOR_PLUS {
-	TRACE("unary_operator", "PUNCTUATOR_PLUS");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_PLUS,
-		&@PUNCTUATOR_PLUS);
-	if (!$unary_operator) YYNOMEM;
-}
-| PUNCTUATOR_MINUS {
-	TRACE("unary_operator", "PUNCTUATOR_MINUS");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_MINUS,
-		&@PUNCTUATOR_MINUS);
-	if (!$unary_operator) YYNOMEM;
-}
-| PUNCTUATOR_UNARY_COMPLEMENT {
-	TRACE("unary_operator", "PUNCTUATOR_UNARY_COMPLEMENT");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_UNARY_COMPLEMENT,
-		&@PUNCTUATOR_UNARY_COMPLEMENT);
-	if (!$unary_operator) YYNOMEM;
-}
-| PUNCTUATOR_LOGICAL_NOT {
-	TRACE("unary_operator", "PUNCTUATOR_LOGICAL_NOT");
-
-	$unary_operator = ast_unary_operator_init(
-		PUNCTUATOR_LOGICAL_NOT,
-		&@PUNCTUATOR_LOGICAL_NOT);
-	if (!$unary_operator) YYNOMEM;
-}
-;
-
-
-expression:
-  assignment_expression {
-	TRACE("expression", "assignment_expression");
-
-	$expression = ast_expression_init(
-		$assignment_expression,
-		&@assignment_expression);
-	if (!$expression) YYNOMEM;
-}
-| expression[child] PUNCTUATOR_COMMA assignment_expression {
-	TRACE("expression", "expression PUNCTUATOR_COMMA assignment_expression");
-
-	$$ = ast_expression_append(
-		$child,
-		$assignment_expression,
-		&@assignment_expression);
-	if (!$$) YYNOMEM;
-}
-;
-
-
-constant_expression: conditional_expression {
-	TRACE("constant_expression", "conditional_expression");
-
-	$constant_expression = ast_constant_expression_init(
-		$conditional_expression,
-		&@conditional_expression);
-	if (!$constant_expression) YYNOMEM;
-}
-
-
-cast_expression:
-  unary_expression {
-	TRACE("cast_expression", "unary_expression");
-
-	$cast_expression = ast_cast_expression_init(
-		NULL,
-		$unary_expression,
-		NULL,
-		&@unary_expression,
-		NULL);
-	if (!$cast_expression) YYNOMEM;
-}
-| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression[child] {
-	TRACE("cast_expression", "PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression");
-
-	$$ = ast_cast_expression_init(
-		$child,
-		NULL,
-		$type_name,
-		&@PUNCTUATOR_LPARENTHESIS,
-		&@child);
-	if (!$$) YYNOMEM;
-}
-;
-
-
+// 6.5.16
 assignment_operator:
   PUNCTUATOR_ASSIGNMENT {
 	TRACE("assignment_operator", "PUNCTUATOR_ASSIGNMENT");
@@ -1192,6 +1187,40 @@ assignment_operator:
 ;
 
 
+// 6.5.17
+expression:
+  assignment_expression {
+	TRACE("expression", "assignment_expression");
+
+	$expression = ast_expression_init(
+		$assignment_expression,
+		&@assignment_expression);
+	if (!$expression) YYNOMEM;
+}
+| expression[child] PUNCTUATOR_COMMA assignment_expression {
+	TRACE("expression", "expression PUNCTUATOR_COMMA assignment_expression");
+
+	$$ = ast_expression_append(
+		$child,
+		$assignment_expression,
+		&@assignment_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.6
+constant_expression: conditional_expression {
+	TRACE("constant_expression", "conditional_expression");
+
+	$constant_expression = ast_constant_expression_init(
+		$conditional_expression,
+		&@conditional_expression);
+	if (!$constant_expression) YYNOMEM;
+}
+
+
+// 6.7.1
 storage_class_specifier:
   KEYWORD_TYPEDEF {
 	TRACE("storage_class_specifier", "KEYWORD_TYPEDEF");
@@ -1244,6 +1273,7 @@ storage_class_specifier:
 ;
 
 
+// 6.7.2
 type_specifier:
   KEYWORD_VOID {
 	TRACE("type_specifier", "KEYWORD_VOID");
@@ -1351,6 +1381,7 @@ type_specifier:
 ;
 
 
+// 6.7.2.1
 specifier_qualifier_list:
   type_specifier {
 	TRACE("specifier_qualifier_list", "type_specifier");
@@ -1394,6 +1425,7 @@ specifier_qualifier_list:
 }
 
 
+// 6.7.3
 type_qualifier:
   KEYWORD_CONST {
 	TRACE("type_qualifier", "KEYWORD_CONST");
@@ -1430,6 +1462,7 @@ type_qualifier:
 ;
 
 
+// 6.7.6
 pointer:
   PUNCTUATOR_ASTERISK {
 	TRACE("pointer", "PUNCTUATOR_ASTERISK");
@@ -1464,6 +1497,7 @@ pointer:
 ;
 
 
+// 6.7.6
 type_qualifier_list:
   type_qualifier {
 	TRACE("type_qualifier_list", "type_qualifier");
@@ -1485,6 +1519,7 @@ type_qualifier_list:
 ;
 
 
+// 6.7.7
 type_name:
   specifier_qualifier_list {
 	TRACE("type_name", "specifier_qualifier_list");
