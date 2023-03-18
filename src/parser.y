@@ -225,6 +225,7 @@ typedef void* yyscan_t;
 %nterm <ast> exclusive_or_expression
 %nterm <ast> inclusive_or_expression
 %nterm <ast> logical_and_expression
+%nterm <ast> logical_or_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -904,6 +905,32 @@ logical_and_expression:
 		true,
 		&@child,
 		&@inclusive_or_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+logical_or_expression:
+  logical_and_expression {
+	TRACE("logical_or_expression", "logical_and_expression");
+
+	$logical_or_expression = ast_logical_or_expression_init(
+		NULL,
+		$logical_and_expression,
+		false,
+		&@logical_and_expression,
+		NULL);
+	if (!$logical_or_expression) YYNOMEM;
+}
+| logical_or_expression[child] PUNCTUATOR_LOGICAL_OR logical_and_expression {
+	TRACE("logical_or_expression", "logical_or_expression PUNCTUATOR_LOGICAL_OR logical_and_expression");
+
+	$$ = ast_logical_or_expression_init(
+		$child,
+		$logical_and_expression,
+		true,
+		&@child,
+		&@logical_and_expression);
 	if (!$$) YYNOMEM;
 }
 ;
