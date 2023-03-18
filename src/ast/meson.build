@@ -3,6 +3,7 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 jkcc_src += files(
+        'additive_expression.c',
         'assignment_operator.c',
         'cast_expression.c',
         'character_constant.c',

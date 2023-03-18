@@ -28,6 +28,7 @@
 
 
 typedef enum ast_e {
+	AST_ADDITIVE_EXPRESSION,
 	AST_ASSIGNMENT_OPERATOR,
 	AST_CAST_EXPRESSION,
 	AST_CHARACTER_CONSTANT,
@@ -73,6 +74,7 @@ void fprint_location(
 	uint_fast8_t      flags);
 
 
+#include <jkcc/ast/additive_expression.h>
 #include <jkcc/ast/assignment_operator.h>
 #include <jkcc/ast/cast_expression.h>
 #include <jkcc/ast/character_constant.h>

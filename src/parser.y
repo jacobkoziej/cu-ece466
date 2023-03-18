@@ -215,6 +215,7 @@ typedef void* yyscan_t;
 %nterm <ast> unary_expression
 %nterm <ast> cast_expression
 %nterm <ast> multiplicative_expression
+%nterm <ast> additive_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -620,6 +621,43 @@ multiplicative_expression:
 		MULTIPLICATIVE_EXPRESSION_MODULO,
 		&@child,
 		&@cast_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+additive_expression:
+  multiplicative_expression {
+	TRACE("additive_expression", "multiplicative_expression");
+
+	$additive_expression = ast_additive_expression_init(
+		NULL,
+		$multiplicative_expression,
+		0,
+		&@multiplicative_expression,
+		NULL);
+	if (!$additive_expression) YYNOMEM;
+}
+| additive_expression[child] PUNCTUATOR_PLUS multiplicative_expression {
+	TRACE("additive_expression", "additive_expression PUNCTUATOR_PLUS multiplicative_expression");
+
+	$$ = ast_additive_expression_init(
+		$child,
+		$multiplicative_expression,
+		ADDITIVE_EXPRESSION_ADDITION,
+		&@child,
+		&@multiplicative_expression);
+	if (!$$) YYNOMEM;
+}
+| additive_expression[child] PUNCTUATOR_MINUS multiplicative_expression {
+	TRACE("additive_expression", "additive_expression PUNCTUATOR_MINUS multiplicative_expression");
+
+	$$ = ast_additive_expression_init(
+		$child,
+		$multiplicative_expression,
+		ADDITIVE_EXPRESSION_SUBTRACTION,
+		&@child,
+		&@multiplicative_expression);
 	if (!$$) YYNOMEM;
 }
 ;
