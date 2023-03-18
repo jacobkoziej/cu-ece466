@@ -212,6 +212,7 @@ typedef void* yyscan_t;
 %nterm <ast> constant
 %nterm <ast> string_literal
 %nterm <ast> postfix_expression
+%nterm <ast> unary_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -482,6 +483,95 @@ postfix_expression:
 }
 // | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_RBRACKET
 // | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_COMMA PUNCTUATOR_RBRACKET
+;
+
+
+unary_expression:
+  postfix_expression {
+	TRACE("unary_expression", "postfix_expression");
+
+	$unary_expression = ast_unary_expression_init(
+		NULL,
+		$postfix_expression,
+		NULL,
+		NULL,
+		NULL,
+		0,
+		&@postfix_expression,
+		NULL);
+	if (!$unary_expression) YYNOMEM;
+}
+| PUNCTUATOR_INCREMENT unary_expression[child] {
+	TRACE("unary_expression", "PUNCTUATOR_INCREMENT unary_expression");
+
+	$$ = ast_unary_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		UNARY_EXPRESSION_INCREMENT,
+		&@PUNCTUATOR_INCREMENT,
+		&@child);
+	if (!$$) YYNOMEM;
+}
+| PUNCTUATOR_DECREMENT unary_expression[child] {
+	TRACE("unary_expression", "PUNCTUATOR_DECREMENT unary_expression");
+
+	$$ = ast_unary_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		UNARY_EXPRESSION_DECREMENT,
+		&@PUNCTUATOR_DECREMENT,
+		&@child);
+	if (!$$) YYNOMEM;
+}
+// | unary_operator cast_expression
+| KEYWORD_SIZEOF unary_expression[child] {
+	TRACE("unary_expression", "KEYWORD_SIZEOF unary_expression");
+
+	$$ = ast_unary_expression_init(
+		$child,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		UNARY_EXPRESSION_SIZEOF,
+		&@KEYWORD_SIZEOF,
+		&@child);
+	if (!$$) YYNOMEM;
+}
+| KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
+	TRACE("unary_expression", "KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS");
+
+	$unary_expression = ast_unary_expression_init(
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		$type_name,
+		UNARY_EXPRESSION_SIZEOF,
+		&@KEYWORD_SIZEOF,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$unary_expression) YYNOMEM;
+}
+| KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
+	TRACE("unary_expression", "KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS");
+
+	$unary_expression = ast_unary_expression_init(
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		$type_name,
+		UNARY_EXPRESSION__ALIGNOF,
+		&@KEYWORD__ALIGNOF,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$unary_expression) YYNOMEM;
+}
 ;
 
 

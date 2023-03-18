@@ -44,6 +44,7 @@ typedef enum ast_e {
 	AST_TYPE_QUALIFIER,
 	AST_TYPE_QUALIFIER_LIST,
 	AST_TYPE_SPECIFIER,
+	AST_UNARY_EXPRESSION,
 	AST_UNARY_OPERATOR,
 	AST_NODES_TOTAL,
 } ast_t;
@@ -86,6 +87,7 @@ void fprint_location(
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>
+#include <jkcc/ast/unary_expression.h>
 #include <jkcc/ast/unary_operator.h>
 
 

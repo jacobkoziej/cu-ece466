@@ -19,5 +19,6 @@ jkcc_src += files(
         'type_qualifier.c',
         'type_qualifier_list.c',
         'type_specifier.c',
+        'unary_expression.c',
         'unary_operator.c',
 )

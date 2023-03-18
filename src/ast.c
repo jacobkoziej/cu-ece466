@@ -34,6 +34,7 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_type_qualifier_free,
 	ast_type_qualifier_list_free,
 	ast_type_specifier_free,
+	ast_unary_expression_free,
 	ast_unary_operator_free,
 };
 
@@ -58,6 +59,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	fprint_ast_type_qualifier,
 	fprint_ast_type_qualifier_list,
 	fprint_ast_type_specifier,
+	fprint_ast_unary_expression,
 	fprint_ast_unary_operator,
 };
 
