@@ -25,7 +25,52 @@ ast_t *ast_type_specifier_init(
 {
 	AST_INIT(ast_type_specifier_t);
 
-	node->keyword_type  =  keyword_type,
+	switch (keyword_type) {
+		case KEYWORD_VOID:
+			node->type = TYPE_SPECIFIER_VOID;
+			break;
+
+		case KEYWORD_CHAR:
+			node->type = TYPE_SPECIFIER_CHAR;
+			break;
+
+		case KEYWORD_SHORT:
+			node->type = TYPE_SPECIFIER_SHORT;
+			break;
+
+		case KEYWORD_INT:
+			node->type = TYPE_SPECIFIER_INT;
+			break;
+
+		case KEYWORD_LONG:
+			node->type = TYPE_SPECIFIER_LONG;
+			break;
+
+		case KEYWORD_FLOAT:
+			node->type = TYPE_SPECIFIER_FLOAT;
+			break;
+
+		case KEYWORD_DOUBLE:
+			node->type = TYPE_SPECIFIER_DOUBLE;
+			break;
+
+		case KEYWORD_SIGNED:
+			node->type = TYPE_SPECIFIER_SIGNED;
+			break;
+
+		case KEYWORD_UNSIGNED:
+			node->type = TYPE_SPECIFIER_UNSIGNED;
+			break;
+
+		case KEYWORD__BOOL:
+			node->type = TYPE_SPECIFIER__BOOL;
+			break;
+
+		case KEYWORD__COMPLEX:
+			node->type = TYPE_SPECIFIER__COMPLEX;
+			break;
+	}
+
 	node->semantic_type =  semantic_type,
 	node->location      = *location;
 
@@ -55,44 +100,48 @@ void fprint_ast_type_specifier(
 		fprintf(stream, "\"(semantic)\",\n");
 	} else {
 		const char *type;
-		switch (node->keyword_type) {
-			case KEYWORD_VOID:
+		switch (node->type) {
+			case TYPE_SPECIFIER_VOID:
 				type = "void";
 				break;
 
-			case KEYWORD_CHAR:
+			case TYPE_SPECIFIER_CHAR:
 				type = "char";
 				break;
 
-			case KEYWORD_SHORT:
+			case TYPE_SPECIFIER_SHORT:
 				type = "short";
 				break;
 
-			case KEYWORD_INT:
+			case TYPE_SPECIFIER_INT:
 				type = "int";
 				break;
 
-			case KEYWORD_LONG:
+			case TYPE_SPECIFIER_LONG:
 				type = "long";
 				break;
 
-			case KEYWORD_FLOAT:
+			case TYPE_SPECIFIER_FLOAT:
 				type = "float";
 				break;
 
-			case KEYWORD_DOUBLE:
+			case TYPE_SPECIFIER_DOUBLE:
 				type = "double";
 				break;
 
-			case KEYWORD_UNSIGNED:
+			case TYPE_SPECIFIER_SIGNED:
+				type = "signed";
+				break;
+
+			case TYPE_SPECIFIER_UNSIGNED:
 				type = "unsigned";
 				break;
 
-			case KEYWORD__BOOL:
+			case TYPE_SPECIFIER__BOOL:
 				type = "_Bool";
 				break;
 
-			case KEYWORD__COMPLEX:
+			case TYPE_SPECIFIER__COMPLEX:
 				type = "_Complex";
 				break;
 

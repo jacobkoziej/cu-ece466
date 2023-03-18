@@ -213,6 +213,7 @@ typedef void* yyscan_t;
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
+%nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
@@ -569,6 +570,15 @@ type_specifier:
 		&@KEYWORD_DOUBLE);
 	if (!$type_specifier) YYNOMEM;
 }
+| KEYWORD_SIGNED {
+	TRACE("type_specifier", "KEYWORD_SIGNED");
+
+	$type_specifier = ast_type_specifier_init(
+		KEYWORD_SIGNED,
+		NULL,
+		&@KEYWORD_SIGNED);
+	if (!$type_specifier) YYNOMEM;
+}
 | KEYWORD_UNSIGNED {
 	TRACE("type_specifier", "KEYWORD_UNSIGNED");
 
@@ -601,6 +611,49 @@ type_specifier:
 // | enum_specifier
 // | typedef_name
 ;
+
+
+specifier_qualifier_list:
+  type_specifier {
+	TRACE("specifier_qualifier_list", "type_specifier");
+
+	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
+		$type_specifier,
+		NULL,
+		&@type_specifier);
+	if (!$specifier_qualifier_list) YYNOMEM;
+}
+| type_specifier specifier_qualifier_list[list] {
+	TRACE("specifier_qualifier_list", "type_specifier specifier_qualifier_list");
+
+	$$ = ast_specifier_qualifier_list_append(
+		$list,
+		$type_specifier,
+		NULL,
+		&@type_specifier,
+		&parser->error);
+	ERROR($$);
+}
+| type_qualifier {
+	TRACE("specifier_qualifier_list", "type_qualifier");
+
+	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
+		NULL,
+		$type_qualifier,
+		&@type_qualifier);
+	if (!$$) YYNOMEM;
+}
+| type_qualifier specifier_qualifier_list[list] {
+	TRACE("specifier_qualifier_list", "type_qualifier specifier_qualifier_list");
+
+	$$ = ast_specifier_qualifier_list_append(
+		$list,
+		NULL,
+		$type_qualifier,
+		&@type_qualifier,
+		&parser->error);
+	ERROR($$);
+}
 
 
 type_qualifier:
