@@ -204,6 +204,7 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
+%nterm <ast> primary_expression
 %nterm <ast> identifier
 %nterm <ast> integer_constant
 %nterm <ast> floating_constant
@@ -232,11 +233,48 @@ typedef void* yyscan_t;
 
 
 primary_expression:
-  identifier
-| constant
-| string_literal
-| PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS
-| generic_selection
+  identifier {
+	TRACE("primary_expression", "identifier");
+
+	$primary_expression = ast_primary_expression_init(
+		$identifier,
+		&@identifier);
+	if (!$primary_expression) YYNOMEM;
+}
+| constant {
+	TRACE("primary_expression", "constant");
+
+	$primary_expression = ast_primary_expression_init(
+		$constant,
+		&@constant);
+	if (!$primary_expression) YYNOMEM;
+}
+| string_literal {
+	TRACE("primary_expression", "string_literal");
+
+	$primary_expression = ast_primary_expression_init(
+		$string_literal,
+		&@string_literal);
+	if (!$primary_expression) YYNOMEM;
+}
+/*
+| PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS {
+	TRACE("primary_expression", "PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS");
+
+	$primary_expression = ast_primary_expression_init(
+		$expression,
+		&@expression);
+	if (!$primary_expression) YYNOMEM;
+}
+| generic_selection {
+	TRACE("primary_expression", "generic_selection");
+
+	$primary_expression = ast_primary_expression_init(
+		$generic_selection,
+		&@generic_selection);
+	if (!$primary_expression) YYNOMEM;
+}
+*/
 ;
 
 
