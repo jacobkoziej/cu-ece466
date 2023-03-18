@@ -13,6 +13,7 @@ jkcc_src += files(
         'exclusive_or_expression.c',
         'floating_constant.c',
         'identifier.c',
+        'inclusive_or_expression.c',
         'integer_constant.c',
         'multiplicative_expression.c',
         'pointer.c',
