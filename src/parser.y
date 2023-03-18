@@ -217,6 +217,7 @@ typedef void* yyscan_t;
 %nterm <ast> multiplicative_expression
 %nterm <ast> additive_expression
 %nterm <ast> shift_expression
+%nterm <ast> relational_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -696,6 +697,65 @@ shift_expression:
 		SHIFT_EXPRESSION_RBITSHIFT,
 		&@child,
 		&@additive_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+relational_expression:
+  shift_expression {
+	TRACE("relational_expression", "shift_expression");
+
+	$relational_expression = ast_relational_expression_init(
+		NULL,
+		$shift_expression,
+		0,
+		&@shift_expression,
+		NULL);
+	if (!$relational_expression) YYNOMEM;
+}
+| relational_expression[child] PUNCTUATOR_LESS_THAN shift_expression {
+	TRACE("relational_expression", "relational_expression PUNCTUATOR_LESS_THAN shift_expression");
+
+	$$ = ast_relational_expression_init(
+		$child,
+		$shift_expression,
+		RELATIONAL_EXPRESSION_LESS_THAN,
+		&@child,
+		&@shift_expression);
+	if (!$$) YYNOMEM;
+}
+| relational_expression[child] PUNCTUATOR_GREATER_THAN shift_expression {
+	TRACE("relational_expression", "relational_expression PUNCTUATOR_GREATER_THAN shift_expression");
+
+	$$ = ast_relational_expression_init(
+		$child,
+		$shift_expression,
+		RELATIONAL_EXPRESSION_GREATER_THAN,
+		&@child,
+		&@shift_expression);
+	if (!$$) YYNOMEM;
+}
+| relational_expression[child] PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression {
+	TRACE("relational_expression", "relational_expression PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression");
+
+	$$ = ast_relational_expression_init(
+		$child,
+		$shift_expression,
+		RELATIONAL_EXPRESSION_LESS_THAN_OR_EQUAL,
+		&@child,
+		&@shift_expression);
+	if (!$$) YYNOMEM;
+}
+| relational_expression[child] PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression {
+	TRACE("relational_expression", "relational_expression PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression");
+
+	$$ = ast_relational_expression_init(
+		$child,
+		$shift_expression,
+		RELATIONAL_EXPRESSION_GREATER_THAN_OR_EQUAL,
+		&@child,
+		&@shift_expression);
 	if (!$$) YYNOMEM;
 }
 ;

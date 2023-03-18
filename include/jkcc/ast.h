@@ -40,6 +40,7 @@ typedef enum ast_e {
 	AST_POINTER,
 	AST_POSTFIX_EXPRESSION,
 	AST_PRIMARY_EXPRESSION,
+	AST_RELATIONAL_EXPRESSION,
 	AST_SHIFT_EXPRESSION,
 	AST_SPECIFIER_QUALIFIER_LIST,
 	AST_STORAGE_CLASS_SPECIFIER,
@@ -87,6 +88,7 @@ void fprint_location(
 #include <jkcc/ast/pointer.h>
 #include <jkcc/ast/postfix_expression.h>
 #include <jkcc/ast/primary_expression.h>
+#include <jkcc/ast/relational_expression.h>
 #include <jkcc/ast/shift_expression.h>
 #include <jkcc/ast/specifier_qualifier_list.h>
 #include <jkcc/ast/storage_class_specifier.h>
