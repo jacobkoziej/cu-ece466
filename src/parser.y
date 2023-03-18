@@ -230,6 +230,7 @@ typedef void* yyscan_t;
 %nterm <ast> assignment_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
+%nterm <ast> expression
 %nterm <ast> constant_expression
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
@@ -386,11 +387,6 @@ string_literal: STRING_LITERAL {
 		&@STRING_LITERAL);
 	if (!$string_literal) YYNOMEM;
 }
-
-
-expression:
-  %empty
-;
 
 
 generic_selection:
@@ -1043,6 +1039,27 @@ unary_operator:
 		PUNCTUATOR_LOGICAL_NOT,
 		&@PUNCTUATOR_LOGICAL_NOT);
 	if (!$unary_operator) YYNOMEM;
+}
+;
+
+
+expression:
+  assignment_expression {
+	TRACE("expression", "assignment_expression");
+
+	$expression = ast_expression_init(
+		$assignment_expression,
+		&@assignment_expression);
+	if (!$expression) YYNOMEM;
+}
+| expression[child] PUNCTUATOR_COMMA assignment_expression {
+	TRACE("expression", "expression PUNCTUATOR_COMMA assignment_expression");
+
+	$$ = ast_expression_append(
+		$child,
+		$assignment_expression,
+		&@assignment_expression);
+	if (!$$) YYNOMEM;
 }
 ;
 

@@ -14,6 +14,7 @@ jkcc_src += files(
         'constant_expression.c',
         'equality_expression.c',
         'exclusive_or_expression.c',
+        'expression.c',
         'floating_constant.c',
         'identifier.c',
         'inclusive_or_expression.c',
