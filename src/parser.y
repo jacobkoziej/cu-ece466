@@ -216,6 +216,7 @@ typedef void* yyscan_t;
 %nterm <ast> cast_expression
 %nterm <ast> multiplicative_expression
 %nterm <ast> additive_expression
+%nterm <ast> shift_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -658,6 +659,43 @@ additive_expression:
 		ADDITIVE_EXPRESSION_SUBTRACTION,
 		&@child,
 		&@multiplicative_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+shift_expression:
+  additive_expression {
+	TRACE("shift_expression", "additive_expression");
+
+	$shift_expression = ast_shift_expression_init(
+		NULL,
+		$additive_expression,
+		0,
+		&@additive_expression,
+		NULL);
+	if (!$shift_expression) YYNOMEM;
+}
+| shift_expression[child] PUNCTUATOR_LBITSHIFT additive_expression {
+	TRACE("shift_expression", "shift_expression PUNCTUATOR_LBITSHIFT additive_expression");
+
+	$$ = ast_shift_expression_init(
+		$child,
+		$additive_expression,
+		SHIFT_EXPRESSION_LBITSHIFT,
+		&@child,
+		&@additive_expression);
+	if (!$$) YYNOMEM;
+}
+| shift_expression[child] PUNCTUATOR_RBITSHIFT additive_expression {
+	TRACE("additive_expression", "shift_expression PUNCTUATOR_RBITSHIFT additive_expression");
+
+	$$ = ast_shift_expression_init(
+		$child,
+		$additive_expression,
+		SHIFT_EXPRESSION_RBITSHIFT,
+		&@child,
+		&@additive_expression);
 	if (!$$) YYNOMEM;
 }
 ;
