@@ -8,6 +8,7 @@ jkcc_src += files(
         'assignment_operator.c',
         'cast_expression.c',
         'character_constant.c',
+        'conditional_expression.c',
         'constant.c',
         'equality_expression.c',
         'exclusive_or_expression.c',
