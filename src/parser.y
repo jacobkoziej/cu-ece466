@@ -222,6 +222,7 @@ typedef void* yyscan_t;
 %nterm <ast> relational_expression
 %nterm <ast> equality_expression
 %nterm <ast> and_expression
+%nterm <ast> exclusive_or_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
 %nterm <ast> storage_class_specifier
@@ -823,6 +824,32 @@ and_expression:
 		true,
 		&@child,
 		&@equality_expression);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+exclusive_or_expression:
+  and_expression {
+	TRACE("exclusive_or_expression", "and_expression");
+
+	$exclusive_or_expression = ast_exclusive_or_expression_init(
+		NULL,
+		$and_expression,
+		false,
+		&@and_expression,
+		NULL);
+	if (!$exclusive_or_expression) YYNOMEM;
+}
+| exclusive_or_expression[child] PUNCTUATOR_XOR and_expression {
+	TRACE("exclusive_or_expression", "exclusive_or_expression PUNCTUATOR_XOR and_expression");
+
+	$$ = ast_exclusive_or_expression_init(
+		$child,
+		$and_expression,
+		true,
+		&@child,
+		&@and_expression);
 	if (!$$) YYNOMEM;
 }
 ;

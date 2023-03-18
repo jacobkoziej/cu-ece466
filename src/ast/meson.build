@@ -10,6 +10,7 @@ jkcc_src += files(
         'character_constant.c',
         'constant.c',
         'equality_expression.c',
+        'exclusive_or_expression.c',
         'floating_constant.c',
         'identifier.c',
         'integer_constant.c',
