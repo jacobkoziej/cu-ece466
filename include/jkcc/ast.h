@@ -36,6 +36,7 @@ typedef enum ast_e {
 	AST_CHARACTER_CONSTANT,
 	AST_CONDITIONAL_EXPRESSION,
 	AST_CONSTANT,
+	AST_CONSTANT_EXPRESSION,
 	AST_EQUALITY_EXPRESSION,
 	AST_EXCLUSIVE_OR_EXPRESSION,
 	AST_FLOATING_CONSTANT,
@@ -92,6 +93,7 @@ void fprint_location(
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/conditional_expression.h>
 #include <jkcc/ast/constant.h>
+#include <jkcc/ast/constant_expression.h>
 #include <jkcc/ast/equality_expression.h>
 #include <jkcc/ast/exclusive_or_expression.h>
 #include <jkcc/ast/floating_constant.h>

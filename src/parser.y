@@ -230,6 +230,7 @@ typedef void* yyscan_t;
 %nterm <ast> assignment_expression
 %nterm <ast> unary_operator
 %nterm <ast> assignment_operator
+%nterm <ast> constant_expression
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
@@ -1044,6 +1045,16 @@ unary_operator:
 	if (!$unary_operator) YYNOMEM;
 }
 ;
+
+
+constant_expression: conditional_expression {
+	TRACE("constant_expression", "conditional_expression");
+
+	$constant_expression = ast_constant_expression_init(
+		$conditional_expression,
+		&@conditional_expression);
+	if (!$constant_expression) YYNOMEM;
+}
 
 
 cast_expression:

@@ -11,6 +11,7 @@ jkcc_src += files(
         'character_constant.c',
         'conditional_expression.c',
         'constant.c',
+        'constant_expression.c',
         'equality_expression.c',
         'exclusive_or_expression.c',
         'floating_constant.c',
