@@ -59,12 +59,11 @@ void fprint_ast_primary_expression(
 			type = "string-literal";
 			break;
 
-		/* TODO: add support for
-		 * expresisons and generic-selection
 		case AST_EXPRESSION:
 			type = "expression";
 			break;
 
+		/* TODO: add support for generic-selection
 		case AST_GENERIC_SELECTION:
 			type = "generic-selection";
 			break;

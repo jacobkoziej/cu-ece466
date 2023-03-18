@@ -376,7 +376,6 @@ primary_expression:
 		&@string_literal);
 	if (!$primary_expression) YYNOMEM;
 }
-/*
 | PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS {
 	TRACE("primary_expression", "PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS");
 
@@ -385,6 +384,7 @@ primary_expression:
 		&@expression);
 	if (!$primary_expression) YYNOMEM;
 }
+/*
 | generic_selection {
 	TRACE("primary_expression", "generic_selection");
 
@@ -552,7 +552,20 @@ unary_expression:
 		&@child);
 	if (!$$) YYNOMEM;
 }
-// | unary_operator cast_expression
+| unary_operator cast_expression {
+	TRACE("unary_expression", "unary_operator cast_expression");
+
+	$$ = ast_unary_expression_init(
+		NULL,
+		NULL,
+		$unary_operator,
+		$cast_expression,
+		NULL,
+		0,
+		&@unary_operator,
+		&@cast_expression);
+	if (!$$) YYNOMEM;
+}
 | KEYWORD_SIZEOF unary_expression[child] {
 	TRACE("unary_expression", "KEYWORD_SIZEOF unary_expression");
 
@@ -1049,7 +1062,6 @@ conditional_expression:
 		NULL);
 	if (!$conditional_expression) YYNOMEM;
 }
-/*
 | logical_or_expression PUNCTUATOR_CONDITIONAL_QUESTION expression PUNCTUATOR_CONDITIONAL_COLON conditional_expression[child] {
 	TRACE("conditional_expression", "logical_or_expression PUNCTUATOR_CONDITIONAL_QUESTION expression PUNCTUATOR_CONDITIONAL_COLON conditional_expression");
 
@@ -1061,7 +1073,6 @@ conditional_expression:
 		&@child);
 	if (!$$) YYNOMEM;
 }
-*/
 ;
 
 
