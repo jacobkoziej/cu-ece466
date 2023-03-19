@@ -26,6 +26,8 @@
 	level,                                                            \
 	flags)
 
+#define AST_NODE_STR(ast) ast_node_str[*ast]
+
 
 typedef enum ast_e {
 	AST_ADDITIVE_EXPRESSION,
