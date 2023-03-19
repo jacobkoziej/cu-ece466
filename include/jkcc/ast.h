@@ -73,6 +73,8 @@ extern void (*fprint_ast_node[AST_NODES_TOTAL])(
 	size_t       level,
 	uint_fast8_t flags);
 
+extern char *ast_node_str[AST_NODES_TOTAL];
+
 
 void fprint_file(
 	FILE             *stream,

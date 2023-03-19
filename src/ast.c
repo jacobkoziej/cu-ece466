@@ -94,6 +94,43 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 };
 
 
+char *ast_node_str[AST_NODES_TOTAL] = {
+	"additive-expression",
+	"AND-expression",
+	"assignment-expression",
+	"assignment-operator",
+	"cast-expression",
+	"character-constant",
+	"conditional-expression",
+	"constant-expression",
+	"constant",
+	"equality-expression",
+	"exclusive-OR-expression",
+	"expression",
+	"floating-constant",
+	"identifier",
+	"inclusive-OR-expression",
+	"integer-constant",
+	"logical-AND-expression",
+	"logical-OR-expression",
+	"multiplicative-expression",
+	"pointer",
+	"postfix-expression",
+	"primary-expression",
+	"relational-expression",
+	"shift-expression",
+	"specifier-qualifier-list",
+	"storage-class-specifier",
+	"string-literal",
+	"type-name",
+	"type-qualifier",
+	"type-qualifier-list",
+	"type-specifier",
+	"unary-expression",
+	"unary-operator",
+};
+
+
 void fprint_file(
 	FILE             *stream,
 	const file_t     *file,
