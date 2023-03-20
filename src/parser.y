@@ -254,38 +254,22 @@ typedef void* yyscan_t;
 // 6.4.4
 constant:
   integer_constant {
-	TRACE("constant", "integer_constant");
-
-	$constant = ast_constant_init(
-		$integer_constant,
-		&@integer_constant);
-	if (!$constant) YYNOMEM;
+	TRACE("constant", "integer-constant");
+	$constant = $integer_constant;
 }
 | floating_constant {
-	TRACE("constant", "floating_constant");
-
-	$constant = ast_constant_init(
-		$floating_constant,
-		&@floating_constant);
-	if (!$constant) YYNOMEM;
+	TRACE("constant", "floating-constant");
+	$constant = $floating_constant;
 }
 /*
 | enumeration_constant {
-	TRACE("constant", "enumeration_constant");
-
-	$constant = ast_constant_init(
-		$enumeration_constant,
-		&@enumeration_constant);
-	if (!$constant) YYNOMEM;
+	TRACE("constant", "enumeration-constant");
+	$constant = $enumeration_constant;
 }
 */
 | character_constant {
-	TRACE("constant", "character_constant");
-
-	$constant = ast_constant_init(
-		$character_constant,
-		&@character_constant);
-	if (!$constant) YYNOMEM;
+	TRACE("constant", "character-constant");
+	$constant = $character_constant;
 }
 ;
 
