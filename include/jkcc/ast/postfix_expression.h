@@ -25,7 +25,6 @@
 
 typedef struct ast_postfix_expression_s {
 	ast_t        *postfix_expression;
-	ast_t        *primary_expression;
 	ast_t        *expression;
 	ast_t        *argument_expression_list;
 	ast_t        *identifier;
@@ -39,7 +38,6 @@ typedef struct ast_postfix_expression_s {
 
 ast_t *ast_postfix_expression_init(
 	ast_t        *postfix_expression,
-	ast_t        *primary_expression,
 	ast_t        *expression,
 	ast_t        *argument_expression_list,
 	ast_t        *identifier,

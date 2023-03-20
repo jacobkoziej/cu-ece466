@@ -353,45 +353,25 @@ string_literal: STRING_LITERAL {
 // 6.5.1
 primary_expression:
   identifier {
-	TRACE("primary_expression", "identifier");
-
-	$primary_expression = ast_primary_expression_init(
-		$identifier,
-		&@identifier);
-	if (!$primary_expression) YYNOMEM;
+	TRACE("primary-expression", "identifier");
+	$primary_expression = $identifier;
 }
 | constant {
-	TRACE("primary_expression", "constant");
-
-	$primary_expression = ast_primary_expression_init(
-		$constant,
-		&@constant);
-	if (!$primary_expression) YYNOMEM;
+	TRACE("primary-expression", "constant");
+	$primary_expression = $constant;
 }
 | string_literal {
-	TRACE("primary_expression", "string_literal");
-
-	$primary_expression = ast_primary_expression_init(
-		$string_literal,
-		&@string_literal);
-	if (!$primary_expression) YYNOMEM;
+	TRACE("primary-expression", "string-literal");
+	$primary_expression = $string_literal;
 }
 | PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS {
-	TRACE("primary_expression", "PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS");
-
-	$primary_expression = ast_primary_expression_init(
-		$expression,
-		&@expression);
-	if (!$primary_expression) YYNOMEM;
+	TRACE("primary-expression", "( expression )");
+	$primary_expression = $expression;
 }
 /*
 | generic_selection {
-	TRACE("primary_expression", "generic_selection");
-
-	$primary_expression = ast_primary_expression_init(
-		$generic_selection,
-		&@generic_selection);
-	if (!$primary_expression) YYNOMEM;
+	TRACE("primary-expression", "generic-selection");
+	$primary_expression = $generic_selection;
 }
 */
 ;
@@ -406,28 +386,15 @@ generic_selection:
 // 6.5.2
 postfix_expression:
   primary_expression {
-	TRACE("postfix_expression", "primary_expression");
-
-	$postfix_expression = ast_postfix_expression_init(
-		NULL,
-		$primary_expression,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		0,
-		&@primary_expression,
-		NULL);
-	if (!$postfix_expression) YYNOMEM;
+	TRACE("postfix-expression", "primary-expression");
+	$postfix_expression = $primary_expression;
 }
 // | postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET
 | postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
-	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS");
+	TRACE("postfix-expression", "postfix-expression ( )");
 
 	$$ = ast_postfix_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -440,11 +407,10 @@ postfix_expression:
 }
 // | postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS
 | postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS identifier {
-	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_MEMBER_ACCESS identifier");
+	TRACE("postfix-expression", "postfix-expression . identifier");
 
 	$$ = ast_postfix_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		$identifier,
@@ -456,11 +422,10 @@ postfix_expression:
 	if (!$$) YYNOMEM;
 }
 | postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
-	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier");
+	TRACE("postfix-expression", "postfix-expression -> identifier");
 
 	$$ = ast_postfix_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		$identifier,
@@ -472,11 +437,10 @@ postfix_expression:
 	if (!$$) YYNOMEM;
 }
 | postfix_expression[child] PUNCTUATOR_INCREMENT[increment] {
-	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_INCREMENT");
+	TRACE("postfix-expression", "postfix-expression ++");
 
 	$$ = ast_postfix_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -488,11 +452,10 @@ postfix_expression:
 	if (!$$) YYNOMEM;
 }
 | postfix_expression[child] PUNCTUATOR_DECREMENT[decrement] {
-	TRACE("postfix_expression", "postfix_expression PUNCTUATOR_DECREMENT");
+	TRACE("postfix-expression", "postfix-expression --");
 
 	$$ = ast_postfix_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,

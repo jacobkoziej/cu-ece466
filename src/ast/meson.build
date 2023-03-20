@@ -24,7 +24,6 @@ jkcc_src += files(
         'multiplicative_expression.c',
         'pointer.c',
         'postfix_expression.c',
-        'primary_expression.c',
         'relational_expression.c',
         'shift_expression.c',
         'specifier_qualifier_list.c',

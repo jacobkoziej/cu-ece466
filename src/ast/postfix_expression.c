@@ -18,7 +18,6 @@
 
 ast_t *ast_postfix_expression_init(
 	ast_t        *postfix_expression,
-	ast_t        *primary_expression,
 	ast_t        *expression,
 	ast_t        *argument_expression_list,
 	ast_t        *identifier,
@@ -31,7 +30,6 @@ ast_t *ast_postfix_expression_init(
 	AST_INIT(ast_postfix_expression_t);
 
 	node->postfix_expression       = postfix_expression;
-	node->primary_expression       = primary_expression;
 	node->expression               = expression;
 	node->argument_expression_list = argument_expression_list;
 	node->identifier               = identifier;
@@ -55,7 +53,6 @@ void ast_postfix_expression_free(ast_t *ast)
 	AST_FREE(ast_postfix_expression_t);
 
 	AST_NODE_FREE(node->postfix_expression);
-	AST_NODE_FREE(node->primary_expression);
 	AST_NODE_FREE(node->expression);
 	AST_NODE_FREE(node->argument_expression_list);
 	AST_NODE_FREE(node->identifier);
@@ -74,33 +71,17 @@ void fprint_ast_postfix_expression(
 	FPRINT_AST_NODE_BEGIN(ast_postfix_expression_t);
 
 	INDENT(stream, level);
-	fprintf(stream, "\"postfix-expression\" : ");
+	fprintf(
+		stream,
+		"\"%s\" : ",
+		AST_NODE_STR(node->postfix_expression));
 
-	if (node->postfix_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->postfix_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"primary-expression\" : ");
-
-	if (node->primary_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->primary_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
+	FPRINT_AST_NODE(
+		stream,
+		node->postfix_expression,
+		level + 1,
+		AST_PRINT_NO_INDENT_INITIAL |
+		AST_PRINT_NO_TRAILING_NEWLINE);
 	fprintf(stream, ",\n");
 
 	INDENT(stream, level);
