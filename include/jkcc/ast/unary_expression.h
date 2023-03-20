@@ -25,7 +25,6 @@
 
 typedef struct ast_unary_expression_s {
 	ast_t        *unary_expression;
-	ast_t        *postfix_expression;
 	ast_t        *unary_operator;
 	ast_t        *cast_expression;
 	ast_t        *type_name;
@@ -37,7 +36,6 @@ typedef struct ast_unary_expression_s {
 
 ast_t *ast_unary_expression_init(
 	ast_t        *unary_expression,
-	ast_t        *postfix_expression,
 	ast_t        *unary_operator,
 	ast_t        *cast_expression,
 	ast_t        *type_name,

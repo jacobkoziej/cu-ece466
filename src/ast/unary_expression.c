@@ -18,7 +18,6 @@
 
 ast_t *ast_unary_expression_init(
 	ast_t        *unary_expression,
-	ast_t        *postfix_expression,
 	ast_t        *unary_operator,
 	ast_t        *cast_expression,
 	ast_t        *type_name,
@@ -29,7 +28,6 @@ ast_t *ast_unary_expression_init(
 	AST_INIT(ast_unary_expression_t);
 
 	node->unary_expression   = unary_expression;
-	node->postfix_expression = postfix_expression;
 	node->unary_operator     = unary_operator;
 	node->cast_expression    = cast_expression;
 	node->type_name          = type_name;
@@ -51,7 +49,6 @@ void ast_unary_expression_free(ast_t *ast)
 	AST_FREE(ast_unary_expression_t);
 
 	AST_NODE_FREE(node->unary_expression);
-	AST_NODE_FREE(node->postfix_expression);
 	AST_NODE_FREE(node->unary_operator);
 	AST_NODE_FREE(node->cast_expression);
 	AST_NODE_FREE(node->type_name);
@@ -68,33 +65,17 @@ void fprint_ast_unary_expression(
 	FPRINT_AST_NODE_BEGIN(ast_unary_expression_t);
 
 	INDENT(stream, level);
-	fprintf(stream, "\"unary-expression\" : ");
+	fprintf(
+		stream,
+		"\"%s\" : ",
+		AST_NODE_STR(node->unary_expression));
 
-	if (node->unary_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->unary_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"postfix-expression\" : ");
-
-	if (node->postfix_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->postfix_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
+	FPRINT_AST_NODE(
+		stream,
+		node->unary_expression,
+		level + 1,
+		AST_PRINT_NO_INDENT_INITIAL |
+		AST_PRINT_NO_TRAILING_NEWLINE);
 	fprintf(stream, ",\n");
 
 	INDENT(stream, level);

@@ -458,25 +458,14 @@ postfix_expression:
 // 6.5.3
 unary_expression:
   postfix_expression {
-	TRACE("unary_expression", "postfix_expression");
-
-	$unary_expression = ast_unary_expression_init(
-		NULL,
-		$postfix_expression,
-		NULL,
-		NULL,
-		NULL,
-		0,
-		&@postfix_expression,
-		NULL);
-	if (!$unary_expression) YYNOMEM;
+	TRACE("unary-expression", "postfix-expression");
+	$unary_expression = $postfix_expression;
 }
 | PUNCTUATOR_INCREMENT unary_expression[child] {
-	TRACE("unary_expression", "PUNCTUATOR_INCREMENT unary_expression");
+	TRACE("unary-expression", "++ unary-expression");
 
 	$$ = ast_unary_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -486,11 +475,10 @@ unary_expression:
 	if (!$$) YYNOMEM;
 }
 | PUNCTUATOR_DECREMENT unary_expression[child] {
-	TRACE("unary_expression", "PUNCTUATOR_DECREMENT unary_expression");
+	TRACE("unary-expression", "-- unary-expression");
 
 	$$ = ast_unary_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -500,10 +488,9 @@ unary_expression:
 	if (!$$) YYNOMEM;
 }
 | unary_operator cast_expression {
-	TRACE("unary_expression", "unary_operator cast_expression");
+	TRACE("unary-expression", "unary-operator cast-expression");
 
 	$$ = ast_unary_expression_init(
-		NULL,
 		NULL,
 		$unary_operator,
 		$cast_expression,
@@ -514,11 +501,10 @@ unary_expression:
 	if (!$$) YYNOMEM;
 }
 | KEYWORD_SIZEOF unary_expression[child] {
-	TRACE("unary_expression", "KEYWORD_SIZEOF unary_expression");
+	TRACE("unary-expression", "sizeof unary-expression");
 
 	$$ = ast_unary_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -528,10 +514,9 @@ unary_expression:
 	if (!$$) YYNOMEM;
 }
 | KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
-	TRACE("unary_expression", "KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS");
+	TRACE("unary-expression", "sizeof ( type-name )");
 
 	$unary_expression = ast_unary_expression_init(
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -542,10 +527,9 @@ unary_expression:
 	if (!$unary_expression) YYNOMEM;
 }
 | KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
-	TRACE("unary_expression", "KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS");
+	TRACE("unary-expression", "_Alignof ( type-name )");
 
 	$unary_expression = ast_unary_expression_init(
-		NULL,
 		NULL,
 		NULL,
 		NULL,
