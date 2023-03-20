@@ -881,23 +881,15 @@ logical_and_expression:
 // 6.5.14
 logical_or_expression:
   logical_and_expression {
-	TRACE("logical_or_expression", "logical_and_expression");
-
-	$logical_or_expression = ast_logical_or_expression_init(
-		NULL,
-		$logical_and_expression,
-		false,
-		&@logical_and_expression,
-		NULL);
-	if (!$logical_or_expression) YYNOMEM;
+	TRACE("logical-OR-expression", "logical-AND-expression");
+	$logical_or_expression = $logical_and_expression;
 }
 | logical_or_expression[child] PUNCTUATOR_LOGICAL_OR logical_and_expression {
-	TRACE("logical_or_expression", "logical_or_expression PUNCTUATOR_LOGICAL_OR logical_and_expression");
+	TRACE("logical-OR-expression", "logical-OR-expression || logical-AND-expression");
 
 	$$ = ast_logical_or_expression_init(
 		$child,
 		$logical_and_expression,
-		true,
 		&@child,
 		&@logical_and_expression);
 	if (!$$) YYNOMEM;
