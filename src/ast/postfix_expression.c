@@ -70,79 +70,11 @@ void fprint_ast_postfix_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_postfix_expression_t);
 
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"%s\" : ",
-		AST_NODE_STR(node->postfix_expression));
-
-	FPRINT_AST_NODE(
-		stream,
-		node->postfix_expression,
-		level + 1,
-		AST_PRINT_NO_INDENT_INITIAL |
-		AST_PRINT_NO_TRAILING_NEWLINE);
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"expression\" : ");
-
-	if (node->expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"argument-expression-list\" : ");
-
-	if (node->argument_expression_list)
-		FPRINT_AST_NODE(
-			stream,
-			node->argument_expression_list,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"identifier\" : ");
-
-	if (node->identifier)
-		FPRINT_AST_NODE(
-			stream,
-			node->identifier,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"initializer_list\" : ");
-
-	if (node->initializer_list)
-		FPRINT_AST_NODE(
-			stream,
-			node->identifier,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->postfix_expression);
+	FPRINT_AST_MEMBER(node->expression);
+	FPRINT_AST_MEMBER(node->argument_expression_list);
+	FPRINT_AST_MEMBER(node->identifier);
+	FPRINT_AST_MEMBER(node->initializer_list);
 
 	INDENT(stream, level);
 	fprintf(
@@ -163,7 +95,7 @@ void fprint_ast_postfix_expression(
 	INDENT(stream, level);
 	fprintf(
 		stream,
-		"\"increment\" : %s,\n",
+		"\"increment\"   : %s,\n",
 		(node->flags & POSTFIX_EXPRESSION_INCREMENT)
 		? "true"
 		: "false");
@@ -171,7 +103,7 @@ void fprint_ast_postfix_expression(
 	INDENT(stream, level);
 	fprintf(
 		stream,
-		"\"decrement\" : %s,\n",
+		"\"decrement\"   : %s,\n",
 		(node->flags & POSTFIX_EXPRESSION_DECREMENT)
 		? "true"
 		: "false");

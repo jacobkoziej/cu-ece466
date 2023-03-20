@@ -64,64 +64,10 @@ void fprint_ast_unary_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_unary_expression_t);
 
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"%s\" : ",
-		AST_NODE_STR(node->unary_expression));
-
-	FPRINT_AST_NODE(
-		stream,
-		node->unary_expression,
-		level + 1,
-		AST_PRINT_NO_INDENT_INITIAL |
-		AST_PRINT_NO_TRAILING_NEWLINE);
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"unary-operator\" : ");
-
-	if (node->unary_operator)
-		FPRINT_AST_NODE(
-			stream,
-			node->unary_operator,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"cast-expression\" : ");
-
-	if (node->cast_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->cast_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"type-name\" : ");
-
-	if (node->type_name)
-		FPRINT_AST_NODE(
-			stream,
-			node->type_name,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->unary_expression);
+	FPRINT_AST_MEMBER(node->unary_operator);
+	FPRINT_AST_MEMBER(node->cast_expression);
+	FPRINT_AST_MEMBER(node->type_name);
 
 	INDENT(stream, level);
 	fprintf(
@@ -142,7 +88,7 @@ void fprint_ast_unary_expression(
 	INDENT(stream, level);
 	fprintf(
 		stream,
-		"\"sizeof\" : %s,\n",
+		"\"sizeof\"    : %s,\n",
 		(node->flags & UNARY_EXPRESSION_SIZEOF)
 		? "true"
 		: "false");
@@ -150,7 +96,7 @@ void fprint_ast_unary_expression(
 	INDENT(stream, level);
 	fprintf(
 		stream,
-		"\"_Alignof\" : %s,\n",
+		"\"_Alignof\"  : %s,\n",
 		(node->flags & UNARY_EXPRESSION__ALIGNOF)
 		? "true"
 		: "false");
