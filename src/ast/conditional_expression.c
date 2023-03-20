@@ -58,50 +58,9 @@ void fprint_ast_conditional_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_conditional_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"logical-OR-expression\" : ");
-
-	if (node->logical_or_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->logical_or_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"expression\" : ");
-
-	if (node->expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"conditional-expression\" : ");
-
-	if (node->conditional_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->conditional_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->logical_or_expression);
+	FPRINT_AST_MEMBER(node->expression);
+	FPRINT_AST_MEMBER(node->conditional_expression);
 
 	FPRINT_AST_NODE_FINISH;
 }
