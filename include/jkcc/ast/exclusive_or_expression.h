@@ -10,7 +10,6 @@
 
 #include <jkcc/ast.h>
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -21,7 +20,6 @@
 typedef struct ast_exclusive_or_expression_s {
 	ast_t      *exclusive_or_expression;
 	ast_t      *and_expression;
-	bool        exclusive_or;
 	location_t  location;
 	ast_t       ast;
 } ast_exclusive_or_expression_t;
@@ -30,7 +28,6 @@ typedef struct ast_exclusive_or_expression_s {
 ast_t *ast_exclusive_or_expression_init(
 	ast_t        *exclusive_or_expression,
 	ast_t        *and_expression,
-	bool          exclusive_or,
 	location_t   *location_start,
 	location_t   *location_end);
 void ast_exclusive_or_expression_free(

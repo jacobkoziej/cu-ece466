@@ -824,23 +824,15 @@ and_expression:
 // 6.5.11
 exclusive_or_expression:
   and_expression {
-	TRACE("exclusive_or_expression", "and_expression");
-
-	$exclusive_or_expression = ast_exclusive_or_expression_init(
-		NULL,
-		$and_expression,
-		false,
-		&@and_expression,
-		NULL);
-	if (!$exclusive_or_expression) YYNOMEM;
+	TRACE("exclusive-OR-expression", "AND-expression");
+	$exclusive_or_expression = $and_expression;
 }
 | exclusive_or_expression[child] PUNCTUATOR_XOR and_expression {
-	TRACE("exclusive_or_expression", "exclusive_or_expression PUNCTUATOR_XOR and_expression");
+	TRACE("exclusive-OR-expression", "exclusive-OR-expression ^ AND-expression");
 
 	$$ = ast_exclusive_or_expression_init(
 		$child,
 		$and_expression,
-		true,
 		&@child,
 		&@and_expression);
 	if (!$$) YYNOMEM;
