@@ -617,18 +617,11 @@ cast_expression:
 // 6.5.4
 multiplicative_expression:
   cast_expression {
-	TRACE("multiplicative_expression", "cast_expression");
-
-	$multiplicative_expression = ast_multiplicative_expression_init(
-		NULL,
-		$cast_expression,
-		0,
-		&@cast_expression,
-		NULL);
-	if (!$multiplicative_expression) YYNOMEM;
+	TRACE("multiplicative-expression", "cast-expression");
+	$multiplicative_expression = $cast_expression;
 }
 | multiplicative_expression[child] PUNCTUATOR_ASTERISK cast_expression {
-	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_ASTERISK cast_expression");
+	TRACE("multiplicative-expression", "multiplicative-expression * cast-expression");
 
 	$$ = ast_multiplicative_expression_init(
 		$child,
@@ -639,7 +632,7 @@ multiplicative_expression:
 	if (!$$) YYNOMEM;
 }
 | multiplicative_expression[child] PUNCTUATOR_DIVISION cast_expression {
-	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_DIVISION cast_expression");
+	TRACE("multiplicative-expression", "multiplicative-expression / cast-expression");
 
 	$$ = ast_multiplicative_expression_init(
 		$child,
@@ -650,7 +643,7 @@ multiplicative_expression:
 	if (!$$) YYNOMEM;
 }
 | multiplicative_expression[child] PUNCTUATOR_MODULO cast_expression {
-	TRACE("multiplicative_expression", "multiplicative_expression PUNCTUATOR_MODULO cast_expression");
+	TRACE("multiplicative-expression", "multiplicative-expression % cast-expression");
 
 	$$ = ast_multiplicative_expression_init(
 		$child,
