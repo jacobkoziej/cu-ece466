@@ -805,23 +805,15 @@ equality_expression:
 // 6.5.10
 and_expression:
   equality_expression {
-	TRACE("and_expression", "equality_expression");
-
-	$and_expression = ast_and_expression_init(
-		NULL,
-		$equality_expression,
-		false,
-		&@equality_expression,
-		NULL);
-	if (!$and_expression) YYNOMEM;
+	TRACE("AND-expression", "equality-expression");
+	$and_expression = $equality_expression;
 }
 | and_expression[child] PUNCTUATOR_AMPERSAND equality_expression {
-	TRACE("and_expression", "and_expression PUNCTUATOR_AMPERSAND equality_expression");
+	TRACE("AND-expression", "AND-expression & equality-expression");
 
 	$$ = ast_and_expression_init(
 		$child,
 		$equality_expression,
-		true,
 		&@child,
 		&@equality_expression);
 	if (!$$) YYNOMEM;
