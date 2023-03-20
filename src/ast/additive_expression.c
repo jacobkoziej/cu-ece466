@@ -58,35 +58,8 @@ void fprint_ast_additive_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_additive_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"additive-expression\" : ");
-
-	if (node->additive_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->additive_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"multiplicative-expression\" : ");
-
-	if (node->multiplicative_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->multiplicative_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->additive_expression);
+	FPRINT_AST_MEMBER(node->multiplicative_expression);
 
 	const char *operation;
 	switch (node->operation) {
@@ -99,7 +72,7 @@ void fprint_ast_additive_expression(
 			break;
 
 		case ADDITIVE_EXPRESSION_SUBTRACTION:
-			operation = "+";
+			operation = "-";
 			break;
 
 		default:

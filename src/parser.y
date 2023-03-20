@@ -659,18 +659,11 @@ multiplicative_expression:
 // 6.5.6
 additive_expression:
   multiplicative_expression {
-	TRACE("additive_expression", "multiplicative_expression");
-
-	$additive_expression = ast_additive_expression_init(
-		NULL,
-		$multiplicative_expression,
-		0,
-		&@multiplicative_expression,
-		NULL);
-	if (!$additive_expression) YYNOMEM;
+	TRACE("additive-expression", "multiplicative-expression");
+	$additive_expression = $multiplicative_expression;
 }
 | additive_expression[child] PUNCTUATOR_PLUS multiplicative_expression {
-	TRACE("additive_expression", "additive_expression PUNCTUATOR_PLUS multiplicative_expression");
+	TRACE("additive-expression", "additive-expression + multiplicative-expression");
 
 	$$ = ast_additive_expression_init(
 		$child,
@@ -681,7 +674,7 @@ additive_expression:
 	if (!$$) YYNOMEM;
 }
 | additive_expression[child] PUNCTUATOR_MINUS multiplicative_expression {
-	TRACE("additive_expression", "additive_expression PUNCTUATOR_MINUS multiplicative_expression");
+	TRACE("additive-expression", "additive-expression - multiplicative-expression");
 
 	$$ = ast_additive_expression_init(
 		$child,
