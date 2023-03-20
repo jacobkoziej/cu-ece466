@@ -8,7 +8,6 @@
 #include <jkcc/ast/inclusive_or_expression.h>
 #include <jkcc/private/ast.h>
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,7 +19,6 @@
 ast_t *ast_inclusive_or_expression_init(
 	ast_t      *inclusive_or_expression,
 	ast_t      *exclusive_or_expression,
-	bool        inclusive_or,
 	location_t *location_start,
 	location_t *location_end)
 {
@@ -28,8 +26,6 @@ ast_t *ast_inclusive_or_expression_init(
 
 	node->inclusive_or_expression = inclusive_or_expression;
 	node->exclusive_or_expression = exclusive_or_expression;
-
-	node->inclusive_or = inclusive_or;
 
 	node->location.file  = location_start->file;
 	node->location.start = location_start->start;
@@ -59,41 +55,8 @@ void fprint_ast_inclusive_or_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_inclusive_or_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"inclusive-OR-expression\" : ");
-
-	if (node->inclusive_or_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->inclusive_or_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"exclusive-OR-expression\" : ");
-
-	if (node->exclusive_or_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->exclusive_or_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"inclusive_or\" : %s,\n",
-		(node->inclusive_or) ? "true" : "false");
+	FPRINT_AST_MEMBER(node->inclusive_or_expression);
+	FPRINT_AST_MEMBER(node->exclusive_or_expression);
 
 	FPRINT_AST_NODE_FINISH;
 }

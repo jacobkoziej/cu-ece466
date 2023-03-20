@@ -843,23 +843,15 @@ exclusive_or_expression:
 // 6.5.12
 inclusive_or_expression:
   exclusive_or_expression {
-	TRACE("inclusive_or_expression", "exclusive_or_expression");
-
-	$inclusive_or_expression = ast_inclusive_or_expression_init(
-		NULL,
-		$exclusive_or_expression,
-		false,
-		&@exclusive_or_expression,
-		NULL);
-	if (!$inclusive_or_expression) YYNOMEM;
+	TRACE("inclusive-OR-expression", "exclusive-OR-expression");
+	$inclusive_or_expression = $exclusive_or_expression;
 }
 | inclusive_or_expression[child] PUNCTUATOR_OR exclusive_or_expression {
-	TRACE("inclusive_or_expression", "inclusive_or_expression PUNCTUATOR_OR exclusive_or_expression");
+	TRACE("inclusive-OR-expression", "inclusive-OR-expression | exclusive-OR-expression");
 
 	$$ = ast_inclusive_or_expression_init(
 		$child,
 		$exclusive_or_expression,
-		true,
 		&@child,
 		&@exclusive_or_expression);
 	if (!$$) YYNOMEM;
