@@ -1054,12 +1054,8 @@ expression:
 
 // 6.6
 constant_expression: conditional_expression {
-	TRACE("constant_expression", "conditional_expression");
-
-	$constant_expression = ast_constant_expression_init(
-		$conditional_expression,
-		&@conditional_expression);
-	if (!$constant_expression) YYNOMEM;
+	TRACE("constant-expression", "conditional-expression");
+	$constant_expression = $conditional_expression;
 }
 
 
