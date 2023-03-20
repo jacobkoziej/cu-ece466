@@ -721,18 +721,11 @@ shift_expression:
 // 6.5.8
 relational_expression:
   shift_expression {
-	TRACE("relational_expression", "shift_expression");
-
-	$relational_expression = ast_relational_expression_init(
-		NULL,
-		$shift_expression,
-		0,
-		&@shift_expression,
-		NULL);
-	if (!$relational_expression) YYNOMEM;
+	TRACE("relational-expression", "shift-expression");
+	$relational_expression = $shift_expression;
 }
 | relational_expression[child] PUNCTUATOR_LESS_THAN shift_expression {
-	TRACE("relational_expression", "relational_expression PUNCTUATOR_LESS_THAN shift_expression");
+	TRACE("relational-expression", "relational-expression < shift-expression");
 
 	$$ = ast_relational_expression_init(
 		$child,
@@ -743,7 +736,7 @@ relational_expression:
 	if (!$$) YYNOMEM;
 }
 | relational_expression[child] PUNCTUATOR_GREATER_THAN shift_expression {
-	TRACE("relational_expression", "relational_expression PUNCTUATOR_GREATER_THAN shift_expression");
+	TRACE("relational-expression", "relational-expression > shift-expression");
 
 	$$ = ast_relational_expression_init(
 		$child,
@@ -754,7 +747,7 @@ relational_expression:
 	if (!$$) YYNOMEM;
 }
 | relational_expression[child] PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression {
-	TRACE("relational_expression", "relational_expression PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression");
+	TRACE("relational-expression", "relational-expression <= shift-expression");
 
 	$$ = ast_relational_expression_init(
 		$child,
@@ -765,7 +758,7 @@ relational_expression:
 	if (!$$) YYNOMEM;
 }
 | relational_expression[child] PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression {
-	TRACE("relational_expression", "relational_expression PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression");
+	TRACE("relational-expression", "relational-expression >= shift-expression");
 
 	$$ = ast_relational_expression_init(
 		$child,

@@ -58,35 +58,8 @@ void fprint_ast_relational_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_relational_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"relational-expression\" : ");
-
-	if (node->relational_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->relational_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"shift-expression\" : ");
-
-	if (node->shift_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->shift_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->relational_expression);
+	FPRINT_AST_MEMBER(node->shift_expression);
 
 	const char *relation;
 	switch (node->relation) {
