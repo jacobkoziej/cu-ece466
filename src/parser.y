@@ -690,18 +690,11 @@ additive_expression:
 // 6.5.7
 shift_expression:
   additive_expression {
-	TRACE("shift_expression", "additive_expression");
-
-	$shift_expression = ast_shift_expression_init(
-		NULL,
-		$additive_expression,
-		0,
-		&@additive_expression,
-		NULL);
-	if (!$shift_expression) YYNOMEM;
+	TRACE("shift-expression", "additive-expression");
+	$shift_expression = $additive_expression;
 }
 | shift_expression[child] PUNCTUATOR_LBITSHIFT additive_expression {
-	TRACE("shift_expression", "shift_expression PUNCTUATOR_LBITSHIFT additive_expression");
+	TRACE("shift-expression", "shift-expression << additive-expression");
 
 	$$ = ast_shift_expression_init(
 		$child,
@@ -712,7 +705,7 @@ shift_expression:
 	if (!$$) YYNOMEM;
 }
 | shift_expression[child] PUNCTUATOR_RBITSHIFT additive_expression {
-	TRACE("additive_expression", "shift_expression PUNCTUATOR_RBITSHIFT additive_expression");
+	TRACE("shift-expression", "shift-expression >> additive-expression");
 
 	$$ = ast_shift_expression_init(
 		$child,
