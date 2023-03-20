@@ -18,7 +18,6 @@
 
 
 typedef struct ast_assignment_expression_s {
-	ast_t      *conditional_expression;
 	ast_t      *unary_expression;
 	ast_t      *assignment_operator;
 	ast_t      *assignment_expression;
@@ -28,7 +27,6 @@ typedef struct ast_assignment_expression_s {
 
 
 ast_t *ast_assignment_expression_init(
-	ast_t        *conditional_expression,
 	ast_t        *unary_expression,
 	ast_t        *assignment_operator,
 	ast_t        *assignment_expression,

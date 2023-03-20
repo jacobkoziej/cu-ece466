@@ -17,7 +17,6 @@
 
 
 ast_t *ast_assignment_expression_init(
-	ast_t        *conditional_expression,
 	ast_t        *unary_expression,
 	ast_t        *assignment_operator,
 	ast_t        *assignment_expression,
@@ -26,7 +25,6 @@ ast_t *ast_assignment_expression_init(
 {
 	AST_INIT(ast_assignment_expression_t);
 
-	node->conditional_expression = conditional_expression;
 	node->unary_expression       = unary_expression;
 	node->assignment_operator    = assignment_operator;
 	node->assignment_expression  = assignment_expression;
@@ -45,7 +43,6 @@ void ast_assignment_expression_free(ast_t *ast)
 {
 	AST_FREE(ast_assignment_expression_t);
 
-	AST_NODE_FREE(node->conditional_expression);
 	AST_NODE_FREE(node->unary_expression);
 	AST_NODE_FREE(node->assignment_operator);
 	AST_NODE_FREE(node->assignment_expression);
@@ -61,65 +58,9 @@ void fprint_ast_assignment_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_assignment_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"conditional-expression\" : ");
-
-	if (node->conditional_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->conditional_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"unary-expression\" : ");
-
-	if (node->unary_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->unary_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"assignment-operator\" : ");
-
-	if (node->assignment_operator)
-		FPRINT_AST_NODE(
-			stream,
-			node->assignment_operator,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"assignment-expression\" : ");
-
-	if (node->assignment_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->assignment_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->unary_expression);
+	FPRINT_AST_MEMBER(node->assignment_operator);
+	FPRINT_AST_MEMBER(node->assignment_expression);
 
 	FPRINT_AST_NODE_FINISH;
 }

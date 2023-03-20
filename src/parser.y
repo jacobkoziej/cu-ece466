@@ -920,22 +920,13 @@ conditional_expression:
 // 6.5.16
 assignment_expression:
   conditional_expression {
-	TRACE("assignment_expression", "conditional_expression");
-
-	$assignment_expression = ast_assignment_expression_init(
-		$conditional_expression,
-		NULL,
-		NULL,
-		NULL,
-		&@conditional_expression,
-		NULL);
-	if (!$assignment_expression) YYNOMEM;
+	TRACE("assignment-expression", "conditional-expression");
+	$assignment_expression = $conditional_expression;
 }
 | unary_expression assignment_operator assignment_expression[child] {
-	TRACE("assignment_expression", "unary_expression assignment_operator assignment_expression");
+	TRACE("assignment-expression", "unary-expression assignment-operator assignment-expression");
 
 	$$ = ast_assignment_expression_init(
-		NULL,
 		$unary_expression,
 		$assignment_operator,
 		$child,
