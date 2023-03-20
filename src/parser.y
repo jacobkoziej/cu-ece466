@@ -774,18 +774,11 @@ relational_expression:
 // 6.5.9
 equality_expression:
   relational_expression {
-	TRACE("equality_expression", "relational_expression");
-
-	$equality_expression = ast_equality_expression_init(
-		NULL,
-		$relational_expression,
-		0,
-		&@relational_expression,
-		NULL);
-	if (!$equality_expression) YYNOMEM;
+	TRACE("equality-expression", "relational-expression");
+	$equality_expression = $relational_expression;
 }
 | equality_expression[child] PUNCTUATOR_EQUALITY relational_expression {
-	TRACE("equality_expression", "equality_expression PUNCTUATOR_EQUALITY relational_expression");
+	TRACE("equality-expression", "equality-expression == relational-expression");
 
 	$$ = ast_equality_expression_init(
 		$child,
@@ -796,7 +789,7 @@ equality_expression:
 	if (!$$) YYNOMEM;
 }
 | equality_expression[child] PUNCTUATOR_INEQUALITY relational_expression {
-	TRACE("equality_expression", "equality_expression PUNCTUATOR_INEQUALITY relational_expression");
+	TRACE("equality-expression", "equality-expression != relational-expression");
 
 	$$ = ast_equality_expression_init(
 		$child,

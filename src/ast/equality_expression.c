@@ -58,35 +58,8 @@ void fprint_ast_equality_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_equality_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"equality-expression\" : ");
-
-	if (node->equality_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->equality_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"relational-expression\" : ");
-
-	if (node->relational_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->relational_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->equality_expression);
+	FPRINT_AST_MEMBER(node->relational_expression);
 
 	const char *equality;
 	switch (node->equality) {
