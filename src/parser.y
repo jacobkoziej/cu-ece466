@@ -598,22 +598,14 @@ unary_operator:
 // 6.5.4
 cast_expression:
   unary_expression {
-	TRACE("cast_expression", "unary_expression");
-
-	$cast_expression = ast_cast_expression_init(
-		NULL,
-		$unary_expression,
-		NULL,
-		&@unary_expression,
-		NULL);
-	if (!$cast_expression) YYNOMEM;
+	TRACE("cast-expression", "unary-expression");
+	$cast_expression = $unary_expression;
 }
 | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression[child] {
-	TRACE("cast_expression", "PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression");
+	TRACE("cast-expression", "( type-name ) cast-expression");
 
 	$$ = ast_cast_expression_init(
 		$child,
-		NULL,
 		$type_name,
 		&@PUNCTUATOR_LPARENTHESIS,
 		&@child);

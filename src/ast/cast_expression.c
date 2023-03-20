@@ -18,7 +18,6 @@
 
 ast_t *ast_cast_expression_init(
 	ast_t        *cast_expression,
-	ast_t        *unary_expression,
 	ast_t        *type_name,
 	location_t   *location_start,
 	location_t   *location_end)
@@ -26,7 +25,6 @@ ast_t *ast_cast_expression_init(
 	AST_INIT(ast_cast_expression_t);
 
 	node->cast_expression  = cast_expression;
-	node->unary_expression = unary_expression;
 	node->type_name        = type_name;
 
 	node->location.file  = location_start->file;
@@ -44,7 +42,6 @@ void ast_cast_expression_free(ast_t *ast)
 	AST_FREE(ast_cast_expression_t);
 
 	AST_NODE_FREE(node->cast_expression);
-	AST_NODE_FREE(node->unary_expression);
 	AST_NODE_FREE(node->type_name);
 
 	free(node);
@@ -58,50 +55,8 @@ void fprint_ast_cast_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_cast_expression_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"cast-expression\" : ");
-
-	if (node->cast_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->cast_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"unary-expression\" : ");
-
-	if (node->unary_expression)
-		FPRINT_AST_NODE(
-			stream,
-			node->unary_expression,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"type-name\" : ");
-
-	if (node->type_name)
-		FPRINT_AST_NODE(
-			stream,
-			node->type_name,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(node->cast_expression);
+	FPRINT_AST_MEMBER(node->type_name);
 
 	FPRINT_AST_NODE_FINISH;
 }

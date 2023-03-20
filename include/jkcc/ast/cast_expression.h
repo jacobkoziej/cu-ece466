@@ -19,7 +19,6 @@
 
 typedef struct ast_cast_expression_s {
 	ast_t        *cast_expression;
-	ast_t        *unary_expression;
 	ast_t        *type_name;
 	location_t    location;
 	ast_t         ast;
@@ -28,7 +27,6 @@ typedef struct ast_cast_expression_s {
 
 ast_t *ast_cast_expression_init(
 	ast_t        *cast_expression,
-	ast_t        *unary_expression,
 	ast_t        *type_name,
 	location_t   *location_start,
 	location_t   *location_end);
