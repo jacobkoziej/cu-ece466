@@ -862,23 +862,15 @@ inclusive_or_expression:
 // 6.5.13
 logical_and_expression:
   inclusive_or_expression {
-	TRACE("logical_and_expression", "inclusive_or_expression");
-
-	$logical_and_expression = ast_logical_and_expression_init(
-		NULL,
-		$inclusive_or_expression,
-		false,
-		&@inclusive_or_expression,
-		NULL);
-	if (!$logical_and_expression) YYNOMEM;
+	TRACE("logical-AND-expression", "inclusive-OR-expression");
+	$logical_and_expression = $inclusive_or_expression;
 }
 | logical_and_expression[child] PUNCTUATOR_LOGICAL_AND inclusive_or_expression {
-	TRACE("logical_and_expression", "logical_and_expression PUNCTUATOR_LOGICAL_AND inclusive_or_expression");
+	TRACE("logical-AND-expression", "logical-AND-expression && inclusive-OR-expression");
 
 	$$ = ast_logical_and_expression_init(
 		$child,
 		$inclusive_or_expression,
-		true,
 		&@child,
 		&@inclusive_or_expression);
 	if (!$$) YYNOMEM;

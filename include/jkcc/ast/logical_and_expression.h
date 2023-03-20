@@ -10,7 +10,6 @@
 
 #include <jkcc/ast.h>
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -21,7 +20,6 @@
 typedef struct ast_logical_and_expression_s {
 	ast_t      *logical_and_expression;
 	ast_t      *inclusive_or_expression;
-	bool        logical_and;
 	location_t  location;
 	ast_t       ast;
 } ast_logical_and_expression_t;
@@ -30,7 +28,6 @@ typedef struct ast_logical_and_expression_s {
 ast_t *ast_logical_and_expression_init(
 	ast_t        *logical_and_expression,
 	ast_t        *inclusive_or_expression,
-	bool          logical_and,
 	location_t   *location_start,
 	location_t   *location_end);
 void ast_logical_and_expression_free(
