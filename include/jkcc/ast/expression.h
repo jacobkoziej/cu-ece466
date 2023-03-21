@@ -19,7 +19,7 @@
 
 
 typedef struct ast_expression_s {
-	vector_t   assignment_expression;  // ast_t* (AST_ASSIGNMENT_EXPRESSION)
+	vector_t   assignment_expression;
 	location_t location;
 	ast_t      ast;
 } ast_expression_t;

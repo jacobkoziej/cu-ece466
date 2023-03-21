@@ -90,7 +90,10 @@ void fprint_ast_expression(
 	FPRINT_AST_NODE_BEGIN(ast_expression_t);
 
 	INDENT(stream, level);
-	fprintf(stream, "\"assignment-expression\" : [\n");
+	fprintf(
+		stream,
+		"\"%s\" : [\n",
+		ast_node_str[AST_ASSIGNMENT_EXPRESSION]);
 
 	++level;
 

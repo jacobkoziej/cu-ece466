@@ -1033,7 +1033,7 @@ assignment_operator:
 // 6.5.17
 expression:
   assignment_expression {
-	TRACE("expression", "assignment_expression");
+	TRACE("expression", "assignment-expression");
 
 	$expression = ast_expression_init(
 		$assignment_expression,
@@ -1041,7 +1041,7 @@ expression:
 	if (!$expression) YYNOMEM;
 }
 | expression[child] PUNCTUATOR_COMMA assignment_expression {
-	TRACE("expression", "expression PUNCTUATOR_COMMA assignment_expression");
+	TRACE("expression", "expression , assignment-expression");
 
 	$$ = ast_expression_append(
 		$child,
