@@ -58,8 +58,12 @@ void fprint_ast_relational_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_relational_expression_t);
 
-	FPRINT_AST_MEMBER(node->relational_expression);
-	FPRINT_AST_MEMBER(node->shift_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_RELATIONAL_EXPRESSION],
+		node->relational_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_SHIFT_EXPRESSION],
+		node->shift_expression);
 
 	const char *relation;
 	switch (node->relation) {

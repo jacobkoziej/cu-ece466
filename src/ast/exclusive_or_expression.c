@@ -55,8 +55,12 @@ void fprint_ast_exclusive_or_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_exclusive_or_expression_t);
 
-	FPRINT_AST_MEMBER(node->exclusive_or_expression);
-	FPRINT_AST_MEMBER(node->and_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_EXCLUSIVE_OR_EXPRESSION],
+		node->exclusive_or_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_AND_EXPRESSION],
+		node->and_expression);
 
 	FPRINT_AST_NODE_FINISH;
 }

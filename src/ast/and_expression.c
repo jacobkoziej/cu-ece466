@@ -55,8 +55,12 @@ void fprint_ast_and_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_and_expression_t);
 
-	FPRINT_AST_MEMBER(node->and_expression);
-	FPRINT_AST_MEMBER(node->equality_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_AND_EXPRESSION],
+		node->and_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_EQUALITY_EXPRESSION],
+		node->equality_expression);
 
 	FPRINT_AST_NODE_FINISH;
 }

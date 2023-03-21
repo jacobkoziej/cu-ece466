@@ -60,28 +60,36 @@
 	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE)) \
 		fprintf(stream, "\n");
 
-#define FPRINT_AST_MEMBER(member) if (member) {             \
-	INDENT(stream, level);                              \
-	fprintf(stream, "\"%s\" : ", AST_NODE_STR(member)); \
-							    \
-	FPRINT_AST_NODE(                                    \
-		stream,                                     \
-		member,                                     \
-		level,                                      \
-		AST_PRINT_NO_INDENT_INITIAL |               \
-		AST_PRINT_NO_TRAILING_NEWLINE);             \
-	fprintf(stream, ",\n");                             \
+#define FPRINT_AST_MEMBER(type, member) if (member) { \
+	INDENT(stream, level);                        \
+	fprintf(stream, "\"%s\" : ", type);           \
+						      \
+	FPRINT_AST_NODE(                              \
+		stream,                               \
+		member,                               \
+		level,                                \
+		AST_PRINT_NO_INDENT_INITIAL |         \
+		AST_PRINT_NO_TRAILING_NEWLINE);       \
+	fprintf(stream, ",\n");                       \
 }
 
-#define FPRINT_AST_NODE_FINISH                \
-	INDENT(stream, level);                \
-	fprintf(stream, "\"location\" : ");   \
-	fprint_location(                      \
-		stream,                       \
-		&node->location,              \
-		level,                        \
-		AST_PRINT_NO_INDENT_INITIAL); \
-                                              \
+#define FPRINT_AST_NODE_FINISH                  \
+	INDENT(stream, level);                  \
+	fprintf(stream, "\"location\" : ");     \
+	fprint_location(                        \
+		stream,                         \
+		&node->location,                \
+		level,                          \
+		AST_PRINT_NO_INDENT_INITIAL |   \
+		AST_PRINT_NO_TRAILING_NEWLINE); \
+                                                \
+	fprintf(stream, ",\n");                 \
+	INDENT(stream, level);                  \
+	fprintf(                                \
+		stream,                         \
+		"\"ast-type\" : \"%s\"\n",      \
+		AST_NODE_STR(&node->ast));      \
+                                                \
 	FPRINT_AST_FINISH;
 
 

@@ -55,8 +55,12 @@ void fprint_ast_cast_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_cast_expression_t);
 
-	FPRINT_AST_MEMBER(node->cast_expression);
-	FPRINT_AST_MEMBER(node->type_name);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_CAST_EXPRESSION],
+		node->cast_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_TYPE_NAME],
+		node->type_name);
 
 	FPRINT_AST_NODE_FINISH;
 }

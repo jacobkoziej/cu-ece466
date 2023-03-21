@@ -58,8 +58,12 @@ void fprint_ast_equality_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_equality_expression_t);
 
-	FPRINT_AST_MEMBER(node->equality_expression);
-	FPRINT_AST_MEMBER(node->relational_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_EQUALITY_EXPRESSION],
+		node->equality_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_RELATIONAL_EXPRESSION],
+		node->relational_expression);
 
 	const char *equality;
 	switch (node->equality) {

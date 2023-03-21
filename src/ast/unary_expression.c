@@ -64,10 +64,18 @@ void fprint_ast_unary_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_unary_expression_t);
 
-	FPRINT_AST_MEMBER(node->unary_expression);
-	FPRINT_AST_MEMBER(node->unary_operator);
-	FPRINT_AST_MEMBER(node->cast_expression);
-	FPRINT_AST_MEMBER(node->type_name);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_UNARY_EXPRESSION],
+		node->unary_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_UNARY_OPERATOR],
+		node->unary_operator);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_CAST_EXPRESSION],
+		node->cast_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_TYPE_NAME],
+		node->type_name);
 
 	INDENT(stream, level);
 	fprintf(

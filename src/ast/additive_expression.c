@@ -58,8 +58,12 @@ void fprint_ast_additive_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_additive_expression_t);
 
-	FPRINT_AST_MEMBER(node->additive_expression);
-	FPRINT_AST_MEMBER(node->multiplicative_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_ADDITIVE_EXPRESSION],
+		node->additive_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_MULTIPLICATIVE_EXPRESSION],
+		node->multiplicative_expression);
 
 	const char *operation;
 	switch (node->operation) {

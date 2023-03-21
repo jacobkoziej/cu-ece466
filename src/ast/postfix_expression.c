@@ -70,11 +70,25 @@ void fprint_ast_postfix_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_postfix_expression_t);
 
-	FPRINT_AST_MEMBER(node->postfix_expression);
-	FPRINT_AST_MEMBER(node->expression);
-	FPRINT_AST_MEMBER(node->argument_expression_list);
-	FPRINT_AST_MEMBER(node->identifier);
-	FPRINT_AST_MEMBER(node->initializer_list);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_POSTFIX_EXPRESSION],
+		node->postfix_expression);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_EXPRESSION],
+		node->expression);
+	/* TODO: AST_ARGUMENT_EXPRESSION_LIST
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_ARGUMENT_EXPRESSION_LIST],
+		node->argument_expression_list);
+	*/
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_IDENTIFIER],
+		node->identifier);
+	/* TODO: AST_INITIALIZER_LIST
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_INITIALIZER_LIST],
+		node->initializer_list);
+	*/
 
 	INDENT(stream, level);
 	fprintf(
