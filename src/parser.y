@@ -1223,7 +1223,7 @@ type_specifier:
 // 6.7.2.1
 specifier_qualifier_list:
   type_specifier {
-	TRACE("specifier_qualifier_list", "type_specifier");
+	TRACE("specifier-qualifier-list", "type-specifier");
 
 	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
 		$type_specifier,
@@ -1232,7 +1232,7 @@ specifier_qualifier_list:
 	if (!$specifier_qualifier_list) YYNOMEM;
 }
 | type_specifier specifier_qualifier_list[list] {
-	TRACE("specifier_qualifier_list", "type_specifier specifier_qualifier_list");
+	TRACE("specifier-qualifier-list", "type-specifier specifier-qualifier-list");
 
 	$$ = ast_specifier_qualifier_list_append(
 		$list,
@@ -1243,7 +1243,7 @@ specifier_qualifier_list:
 	ERROR($$);
 }
 | type_qualifier {
-	TRACE("specifier_qualifier_list", "type_qualifier");
+	TRACE("specifier-qualifier-list", "type-qualifier");
 
 	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
 		NULL,
@@ -1252,7 +1252,7 @@ specifier_qualifier_list:
 	if (!$$) YYNOMEM;
 }
 | type_qualifier specifier_qualifier_list[list] {
-	TRACE("specifier_qualifier_list", "type_qualifier specifier_qualifier_list");
+	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
 
 	$$ = ast_specifier_qualifier_list_append(
 		$list,

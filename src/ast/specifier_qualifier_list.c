@@ -55,20 +55,20 @@ ast_t *ast_specifier_qualifier_list_append(
 			ast_specifier_qualifier_list_t)
 		: NULL;
 
-	ast_type_specifier_t *type = (type_specifier)
+	ast_type_specifier_t *specifier = (type_specifier)
 		? OFFSETOF_AST_NODE(type_specifier, ast_type_specifier_t)
 		: NULL;
 
-	if (list && type) {
-		uint16_t contraints = list->type;
+	if (list && specifier) {
+		uint16_t contraints = list->specifier;
 
 		if (
-			!(type->type &
+			!(specifier->specifier &
 			(TYPE_SPECIFIER_SIGNED | TYPE_SPECIFIER_UNSIGNED)))
 			contraints &= ~(TYPE_SPECIFIER_SIGNED |
 					TYPE_SPECIFIER_UNSIGNED);
 
-		switch (type->type) {
+		switch (specifier->specifier) {
 			case TYPE_SPECIFIER_VOID:
 				if (contraints)
 					goto multiset_error;
@@ -158,7 +158,7 @@ ast_t *ast_specifier_qualifier_list_append(
 		if (vector_append(&list->type_specifier, &type_specifier))
 			goto vector_error;
 
-		list->type |= type->type;
+		list->specifier |= specifier->specifier;
 	}
 
 	if (type_qualifier)
@@ -197,11 +197,11 @@ ast_t *ast_specifier_qualifier_list_init(
 		if (vector_append(&node->type_specifier, &type_specifier))
 			goto error_append;
 
-		ast_type_specifier_t *type = OFFSETOF_AST_NODE(
+		ast_type_specifier_t *specifier = OFFSETOF_AST_NODE(
 			type_specifier,
 			ast_type_specifier_t);
 
-		node->type = type->type;
+		node->specifier = specifier->specifier;
 	}
 
 	if (type_qualifier)
@@ -247,11 +247,12 @@ void fprint_ast_specifier_qualifier_list(
 {
 	FPRINT_AST_NODE_BEGIN(ast_specifier_qualifier_list_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"type-specifier\" : ");
-
 	if (node->type_specifier.use) {
-		fprintf(stream, "[\n");
+		INDENT(stream, level);
+		fprintf(
+			stream,
+			"\"%s\" : [\n",
+			ast_node_str[AST_TYPE_SPECIFIER]);
 
 		++level;
 
@@ -273,17 +274,15 @@ void fprint_ast_specifier_qualifier_list(
 		--level;
 
 		INDENT(stream, level);
-		fprintf(stream, "]");
-	} else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"type-qualifier\" : ");
+		fprintf(stream, "],\n");
+	}
 
 	if (node->type_qualifier.use) {
-		fprintf(stream, "[\n");
+		INDENT(stream, level);
+		fprintf(
+			stream,
+			"\"%s\" : [\n",
+			ast_node_str[AST_TYPE_QUALIFIER]);
 
 		++level;
 
@@ -305,11 +304,8 @@ void fprint_ast_specifier_qualifier_list(
 		--level;
 
 		INDENT(stream, level);
-		fprintf(stream, "]");
-	} else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+		fprintf(stream, "],\n");
+	}
 
 	FPRINT_AST_NODE_FINISH;
 }

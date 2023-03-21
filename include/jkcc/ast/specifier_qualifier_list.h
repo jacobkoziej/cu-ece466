@@ -20,11 +20,11 @@
 
 
 typedef struct ast_specifier_qualifier_list_s {
-	vector_t    type_specifier;  // ast_t* (ast_type_specifier_t)
-	vector_t    type_qualifier;  // ast_t* (ast_type_qualifier_t)
-	uint16_t    type;
-	location_t  location;
-	ast_t       ast;
+	vector_t      type_specifier;  // ast_t* ast_type_specifier_t
+	vector_t      type_qualifier;  // ast_t* ast_type_qualifier_t
+	uint_fast16_t specifier;
+	location_t    location;
+	ast_t         ast;
 } ast_specifier_qualifier_list_t;
 
 
