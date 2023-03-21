@@ -38,6 +38,11 @@
 	unput(x);                               \
 }
 
+#define YYMORE {                      \
+	yylloc->end.offset -= yyleng; \
+	yylloc->end.column -= yyleng; \
+}
+
 #define YY_USER_ACTION {                                   \
 	if (YY_START == INITIAL) {                         \
 		yylloc->start.offset = yylloc->end.offset; \
@@ -47,7 +52,13 @@
                                                            \
 	yylloc->end.offset += yyleng;                      \
 	yylloc->end.line    = yylineno;                    \
-	yylloc->end.column += yyleng;                      \
+                                                           \
+	if (yyextra->prev_yylineno == yylineno)            \
+		yylloc->end.column += yyleng;              \
+	else                                               \
+		yylloc->end.column  = yyleng;              \
+                                                           \
+	yyextra->prev_yylineno = yylineno;                 \
 }
 
 #define YY_USER_INIT {                      \
@@ -55,6 +66,8 @@
 	yylloc->file       = yyextra->file; \
 	yylloc->end.line   = 1;             \
 	yylloc->end.column = 1;             \
+                                            \
+	yyextra->prev_yylineno = 1;         \
 }
 
 #define M_IDENTIFIER_ERROR {                         \
@@ -435,18 +448,21 @@ _Thread_local  return KEYWORD__THREAD_LOCAL;
 	/* integer constants */
 {DECIMAL_CONSTANT} {
 	yyextra->integer_constant_base = 10;
+	YYMORE;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
 
 {OCTAL_CONSTANT} {
 	yyextra->integer_constant_base = 8;
+	YYMORE;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
 
 {HEXADECIMAL_CONSTANT} {
 	yyextra->integer_constant_base = 16;
+	YYMORE;
 	yymore();
 	BEGIN(SC_INTEGER_CONSTANT);
 }
@@ -537,6 +553,7 @@ _Thread_local  return KEYWORD__THREAD_LOCAL;
 {FRACTIONAL_CONSTANT}{EXPONENT_PART}?                                                              |
 {DIGIT}+{EXPONENT_PART}                                                                            |
 {HEXADECIMAL_PREFIX}({HEXADECIMAL_FRACTIONAL_CONSTANT}|{HEXADECIMAL_DIGIT}+){BINARY_EXPONENT_PART} {
+	YYMORE;
 	yymore();
 	BEGIN(SC_FLOATING_CONSTANT);
 }
@@ -605,24 +622,28 @@ _Thread_local  return KEYWORD__THREAD_LOCAL;
 	/* character constants */
 ' {
 	yyextra->character_constant_type = UNSIGNED_CHAR;
+	YYMORE;
 	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 L' {
 	yyextra->character_constant_type = WCHAR_T;
+	YYMORE;
 	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 u' {
 	yyextra->character_constant_type = CHAR16_T;
+	YYMORE;
 	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }
 
 U' {
 	yyextra->character_constant_type = CHAR32_T;
+	YYMORE;
 	yymore();
 	BEGIN(SC_CHARACTER_CONSTANT);
 }

@@ -120,6 +120,7 @@ typedef struct yyextra_s {
 	vector_t                  *file_allocated;
 	int                        integer_constant_base;
 	enum character_constant_e  character_constant_type;
+	int                        prev_yylineno;
 } yyextra_t;
 
 
