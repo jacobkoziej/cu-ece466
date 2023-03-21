@@ -1062,50 +1062,50 @@ constant_expression: conditional_expression {
 // 6.7.1
 storage_class_specifier:
   KEYWORD_TYPEDEF {
-	TRACE("storage_class_specifier", "KEYWORD_TYPEDEF");
+	TRACE("storage-class-specifier", "typedef");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD_TYPEDEF,
+		STORAGE_CLASS_SPECIFIER_TYPEDEF,
 		&@KEYWORD_TYPEDEF);
 	if (!$storage_class_specifier) YYNOMEM;
 }
 | KEYWORD_EXTERN {
-	TRACE("storage_class_specifier", "KEYWORD_EXTERN");
+	TRACE("storage-class-specifier", "extern");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD_EXTERN,
+		STORAGE_CLASS_SPECIFIER_EXTERN,
 		&@KEYWORD_EXTERN);
 	if (!$storage_class_specifier) YYNOMEM;
 }
 | KEYWORD_STATIC {
-	TRACE("storage_class_specifier", "KEYWORD_STATIC");
+	TRACE("storage-class-specifier", "static");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD_STATIC,
+		STORAGE_CLASS_SPECIFIER_STATIC,
 		&@KEYWORD_STATIC);
 	if (!$storage_class_specifier) YYNOMEM;
 }
 | KEYWORD__THREAD_LOCAL {
-	TRACE("storage_class_specifier", "KEYWORD__THREAD_LOCAL");
+	TRACE("storage-class-specifier", "_Thread_local");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD__THREAD_LOCAL,
+		STORAGE_CLASS_SPECIFIER__THREAD_LOCAL,
 		&@KEYWORD__THREAD_LOCAL);
 	if (!$storage_class_specifier) YYNOMEM;
 }
 | KEYWORD_AUTO {
-	TRACE("storage_class_specifier", "KEYWORD_AUTO");
+	TRACE("storage-class-specifier", "auto");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD_AUTO,
+		STORAGE_CLASS_SPECIFIER_AUTO,
 		&@KEYWORD_AUTO);
 	if (!$storage_class_specifier) YYNOMEM;
 }
 | KEYWORD_REGISTER {
-	TRACE("storage_class_specifier", "KEYWORD_REGISTER");
+	TRACE("storage-class-specifier", "register");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		KEYWORD_REGISTER,
+		STORAGE_CLASS_SPECIFIER_REGISTER,
 		&@KEYWORD_REGISTER);
 	if (!$storage_class_specifier) YYNOMEM;
 }

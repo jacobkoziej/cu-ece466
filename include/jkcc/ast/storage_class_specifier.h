@@ -17,15 +17,23 @@
 #include <jkcc/lexer.h>
 
 
+#define STORAGE_CLASS_SPECIFIER_TYPEDEF       (1 << 0)
+#define STORAGE_CLASS_SPECIFIER_EXTERN        (1 << 1)
+#define STORAGE_CLASS_SPECIFIER_STATIC        (1 << 2)
+#define STORAGE_CLASS_SPECIFIER__THREAD_LOCAL (1 << 3)
+#define STORAGE_CLASS_SPECIFIER_AUTO          (1 << 4)
+#define STORAGE_CLASS_SPECIFIER_REGISTER      (1 << 5)
+
+
 typedef struct ast_storage_class_specifier_s {
-	int        type;
-	location_t location;
-	ast_t      ast;
+	uint_fast8_t specifier;
+	location_t   location;
+	ast_t        ast;
 } ast_storage_class_specifier_t;
 
 
 ast_t *ast_storage_class_specifier_init(
-	int           type,
+	uint_fast8_t  specifier,
 	location_t   *location);
 void ast_storage_class_specifier_free(
 	ast_t        *ast);

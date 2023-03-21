@@ -15,15 +15,15 @@
 
 #include <jkcc/lexer.h>
 
-#include "y.tab.h"
 
-
-ast_t *ast_storage_class_specifier_init(int type, location_t *location)
+ast_t *ast_storage_class_specifier_init(
+	uint_fast8_t  specifier,
+	location_t   *location)
 {
 	AST_INIT(ast_storage_class_specifier_t);
 
-	node->type     =  type;
-	node->location = *location;
+	node->specifier =  specifier;
+	node->location  = *location;
 
 	AST_RETURN(AST_STORAGE_CLASS_SPECIFIER);
 }
@@ -43,39 +43,39 @@ void fprint_ast_storage_class_specifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_storage_class_specifier_t);
 
-	const char *type;
-	switch (node->type) {
-		case KEYWORD_TYPEDEF:
-			type = "typedef";
+	const char *specifier;
+	switch (node->specifier) {
+		case STORAGE_CLASS_SPECIFIER_TYPEDEF:
+			specifier = "typedef";
 			break;
 
-		case KEYWORD_EXTERN:
-			type = "extern";
+		case STORAGE_CLASS_SPECIFIER_EXTERN:
+			specifier = "extern";
 			break;
 
-		case KEYWORD_STATIC:
-			type = "static";
+		case STORAGE_CLASS_SPECIFIER_STATIC:
+			specifier = "static";
 			break;
 
-		case KEYWORD__THREAD_LOCAL:
-			type = "_Thread_local";
+		case STORAGE_CLASS_SPECIFIER__THREAD_LOCAL:
+			specifier = "_Thread_local";
 			break;
 
-		case KEYWORD_AUTO:
-			type = "auto";
+		case STORAGE_CLASS_SPECIFIER_AUTO:
+			specifier = "auto";
 			break;
 
-		case KEYWORD_REGISTER:
-			type = "register";
+		case STORAGE_CLASS_SPECIFIER_REGISTER:
+			specifier = "register";
 			break;
 
 		default:
-			type = "(unknown)";
+			specifier = "(unknown)";
 			break;
 	}
 
 	INDENT(stream, level);
-	fprintf(stream, "\"type\" : \"%s\",\n", type);
+	fprintf(stream, "\"specifier\" : \"%s\",\n", specifier);
 
 	FPRINT_AST_NODE_FINISH;
 }
