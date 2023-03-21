@@ -19,7 +19,7 @@
 
 
 typedef struct ast_type_qualifier_list_s {
-	vector_t   type_qualifier;  // ast_t* (AST_TYPE_QUALIFIER_LIST)
+	vector_t   type_qualifier;  // ast_t* ast_type_qualifier_t
 	location_t location;
 	ast_t      ast;
 } ast_type_qualifier_list_t;

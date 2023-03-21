@@ -21,9 +21,9 @@
 
 
 ast_t *ast_type_qualifier_list_append(
-	ast_t        *type_qualifier_list,
-	ast_t        *type_qualifier,
-	location_t   *location)
+	ast_t      *type_qualifier_list,
+	ast_t      *type_qualifier,
+	location_t *location)
 {
 	ast_type_qualifier_list_t *node = OFFSETOF_AST_NODE(
 		type_qualifier_list,
@@ -85,7 +85,7 @@ void fprint_ast_type_qualifier_list(
 	FPRINT_AST_NODE_BEGIN(ast_type_qualifier_list_t);
 
 	INDENT(stream, level);
-	fprintf(stream, "\"type-qualifier\" : [\n");
+	fprintf(stream, "\"%s\" : [\n", ast_node_str[AST_TYPE_QUALIFIER]);
 
 	++level;
 

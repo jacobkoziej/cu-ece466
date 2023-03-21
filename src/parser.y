@@ -1339,7 +1339,7 @@ pointer:
 // 6.7.6
 type_qualifier_list:
   type_qualifier {
-	TRACE("type_qualifier_list", "type_qualifier");
+	TRACE("type-qualifier-list", "type-qualifier");
 
 	$type_qualifier_list = ast_type_qualifier_list_init(
 		$type_qualifier,
@@ -1347,7 +1347,7 @@ type_qualifier_list:
 	if (!$type_qualifier_list) YYNOMEM;
 }
 | type_qualifier_list[list] type_qualifier {
-	TRACE("type_qualifier_list", "type_qualifier_list type_qualifier");
+	TRACE("type-qualifier-list", "type-qualifier-list type-qualifier");
 
 	$$ = ast_type_qualifier_list_append(
 		$list,
