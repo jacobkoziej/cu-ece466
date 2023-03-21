@@ -18,11 +18,13 @@
 #include "y.tab.h"
 
 
-ast_t *ast_assignment_operator_init(int type, location_t *location)
+ast_t *ast_assignment_operator_init(
+	uint_fast16_t  operator,
+	location_t    *location)
 {
 	AST_INIT(ast_assignment_operator_t);
 
-	node->type     =  type;
+	node->operator =  operator;
 	node->location = *location;
 
 	AST_RETURN(AST_ASSIGNMENT_OPERATOR);
@@ -43,59 +45,59 @@ void fprint_ast_assignment_operator(
 {
 	FPRINT_AST_NODE_BEGIN(ast_assignment_operator_t);
 
-	const char *type;
-	switch (node->type) {
-		case PUNCTUATOR_ASSIGNMENT:
-			type = "=";
+	const char *operator;
+	switch (node->operator) {
+		case ASSIGNMENT_OPERATOR_ASSIGNMENT:
+			operator = "=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_MULTIPLICATION:
-			type = "*=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_MULTIPLICATION:
+			operator = "*=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_DIVISION:
-			type = "/=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_DIVISION:
+			operator = "/=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_MODULO:
-			type = "%=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_MODULO:
+			operator = "%=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_ADDITION:
-			type = "+=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_ADDITION:
+			operator = "+=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_SUBTRACTION:
-			type = "-=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_SUBTRACTION:
+			operator = "-=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_LBITSHIFT:
-			type = "<<=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_LBITSHIFT:
+			operator = "<<=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_RBITSHIFT:
-			type = ">>=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_RBITSHIFT:
+			operator = ">>=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_AND:
-			type = "&=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_AND:
+			operator = "&=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_XOR:
-			type = "^=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_XOR:
+			operator = "^=";
 			break;
 
-		case PUNCTUATOR_COMPOUND_OR:
-			type = "|=";
+		case ASSIGNMENT_OPERATOR_COMPOUND_OR:
+			operator = "|=";
 			break;
 
 		default:
-			type = "(unknown)";
+			operator = "(unknown)";
 			break;
 	}
 
 	INDENT(stream, level);
-	fprintf(stream, "\"type\" : \"%s\",\n", type);
+	fprintf(stream, "\"operator\" : \"%s\",\n", operator);
 
 	FPRINT_AST_NODE_FINISH;
 }

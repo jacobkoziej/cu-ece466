@@ -940,90 +940,90 @@ assignment_expression:
 // 6.5.16
 assignment_operator:
   PUNCTUATOR_ASSIGNMENT {
-	TRACE("assignment_operator", "PUNCTUATOR_ASSIGNMENT");
+	TRACE("assignment-operator", "=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_ASSIGNMENT,
+		ASSIGNMENT_OPERATOR_ASSIGNMENT,
 		&@PUNCTUATOR_ASSIGNMENT);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_MULTIPLICATION {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_MULTIPLICATION");
+	TRACE("assignment-operator", "*=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_MULTIPLICATION,
+		ASSIGNMENT_OPERATOR_COMPOUND_MULTIPLICATION,
 		&@PUNCTUATOR_COMPOUND_MULTIPLICATION);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_DIVISION {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_DIVISION");
+	TRACE("assignment-operator", "/=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_DIVISION,
+		ASSIGNMENT_OPERATOR_COMPOUND_DIVISION,
 		&@PUNCTUATOR_COMPOUND_DIVISION);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_MODULO {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_MODULO");
+	TRACE("assignment-operator", "%=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_MODULO,
+		ASSIGNMENT_OPERATOR_COMPOUND_MODULO,
 		&@PUNCTUATOR_COMPOUND_MODULO);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_ADDITION {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_ADDITION");
+	TRACE("assignment-operator", "+=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_ADDITION,
+		ASSIGNMENT_OPERATOR_COMPOUND_ADDITION,
 		&@PUNCTUATOR_COMPOUND_ADDITION);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_SUBTRACTION {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_SUBTRACTION");
+	TRACE("assignment-operator", "-=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_SUBTRACTION,
+		ASSIGNMENT_OPERATOR_COMPOUND_SUBTRACTION,
 		&@PUNCTUATOR_COMPOUND_SUBTRACTION);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_LBITSHIFT {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_LBITSHIFT");
+	TRACE("assignment-operator", "<<=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_LBITSHIFT,
+		ASSIGNMENT_OPERATOR_COMPOUND_LBITSHIFT,
 		&@PUNCTUATOR_COMPOUND_LBITSHIFT);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_RBITSHIFT {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_RBITSHIFT");
+	TRACE("assignment-operator", ">>=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_RBITSHIFT,
+		ASSIGNMENT_OPERATOR_COMPOUND_RBITSHIFT,
 		&@PUNCTUATOR_COMPOUND_RBITSHIFT);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_AND {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_AND");
+	TRACE("assignment-operator", "&=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_AND,
+		ASSIGNMENT_OPERATOR_COMPOUND_AND,
 		&@PUNCTUATOR_COMPOUND_AND);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_XOR {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_XOR");
+	TRACE("assignment-operator", "^=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_XOR,
+		ASSIGNMENT_OPERATOR_COMPOUND_XOR,
 		&@PUNCTUATOR_COMPOUND_XOR);
 	if (!$assignment_operator) YYNOMEM;
 }
 | PUNCTUATOR_COMPOUND_OR {
-	TRACE("assignment_operator", "PUNCTUATOR_COMPOUND_OR");
+	TRACE("assignment-operator", "|=");
 
 	$assignment_operator = ast_assignment_operator_init(
-		PUNCTUATOR_COMPOUND_OR,
+		ASSIGNMENT_OPERATOR_COMPOUND_OR,
 		&@PUNCTUATOR_COMPOUND_OR);
 	if (!$assignment_operator) YYNOMEM;
 }
