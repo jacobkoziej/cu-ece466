@@ -1115,100 +1115,100 @@ storage_class_specifier:
 // 6.7.2
 type_specifier:
   KEYWORD_VOID {
-	TRACE("type_specifier", "KEYWORD_VOID");
+	TRACE("type-specifier", "void");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_VOID,
+		TYPE_SPECIFIER_VOID,
 		NULL,
 		&@KEYWORD_VOID);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_CHAR {
-	TRACE("type_specifier", "KEYWORD_CHAR");
+	TRACE("type-specifier", "char");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_CHAR,
+		TYPE_SPECIFIER_CHAR,
 		NULL,
 		&@KEYWORD_CHAR);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_SHORT {
-	TRACE("type_specifier", "KEYWORD_SHORT");
+	TRACE("type-specifier", "short");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_SHORT,
+		TYPE_SPECIFIER_SHORT,
 		NULL,
 		&@KEYWORD_SHORT);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_INT {
-	TRACE("type_specifier", "KEYWORD_INT");
+	TRACE("type-specifier", "int");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_INT,
+		TYPE_SPECIFIER_INT,
 		NULL,
 		&@KEYWORD_INT);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_LONG {
-	TRACE("type_specifier", "KEYWORD_LONG");
+	TRACE("type-specifier", "long");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_LONG,
+		TYPE_SPECIFIER_LONG,
 		NULL,
 		&@KEYWORD_LONG);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_FLOAT {
-	TRACE("type_specifier", "KEYWORD_FLOAT");
+	TRACE("type-specifier", "float");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_FLOAT,
+		TYPE_SPECIFIER_FLOAT,
 		NULL,
 		&@KEYWORD_FLOAT);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_DOUBLE {
-	TRACE("type_specifier", "KEYWORD_DOUBLE");
+	TRACE("type-specifier", "double");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_DOUBLE,
+		TYPE_SPECIFIER_DOUBLE,
 		NULL,
 		&@KEYWORD_DOUBLE);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_SIGNED {
-	TRACE("type_specifier", "KEYWORD_SIGNED");
+	TRACE("type-specifier", "signed");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_SIGNED,
+		TYPE_SPECIFIER_SIGNED,
 		NULL,
 		&@KEYWORD_SIGNED);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD_UNSIGNED {
-	TRACE("type_specifier", "KEYWORD_UNSIGNED");
+	TRACE("type-specifier", "unsigned");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD_UNSIGNED,
+		TYPE_SPECIFIER_UNSIGNED,
 		NULL,
 		&@KEYWORD_UNSIGNED);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD__BOOL {
-	TRACE("type_specifier", "KEYWORD__BOOL");
+	TRACE("type-specifier", "_Bool");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD__BOOL,
+		TYPE_SPECIFIER__BOOL,
 		NULL,
 		&@KEYWORD__BOOL);
 	if (!$type_specifier) YYNOMEM;
 }
 | KEYWORD__COMPLEX {
-	TRACE("type_specifier", "KEYWORD__COMPLEX");
+	TRACE("type-specifier", "_Complex");
 
 	$type_specifier = ast_type_specifier_init(
-		KEYWORD__COMPLEX,
+		TYPE_SPECIFIER__COMPLEX,
 		NULL,
 		&@KEYWORD__COMPLEX);
 	if (!$type_specifier) YYNOMEM;

@@ -36,24 +36,24 @@
 
 
 typedef struct ast_type_specifier_s {
-	uint16_t    type;
-	ast_t      *semantic_type;
-	location_t  location;
-	ast_t       ast;
+	uint_fast16_t  specifier;
+	ast_t         *semantic_type;
+	location_t     location;
+	ast_t          ast;
 } ast_type_specifier_t;
 
 
 ast_t *ast_type_specifier_init(
-	int           keyword_type,
-	ast_t        *semantic_type,
-	location_t   *location);
+	uint_fast16_t  specifier,
+	ast_t         *semantic_type,
+	location_t    *location);
 void ast_type_specifier_free(
-	ast_t        *ast);
+	ast_t         *ast);
 void fprint_ast_type_specifier(
-	FILE         *stream,
-	const ast_t  *ast,
-	size_t        level,
-	uint_fast8_t  flags);
+	FILE          *stream,
+	const ast_t   *ast,
+	size_t         level,
+	uint_fast8_t   flags);
 
 
 #endif  /* JKCC_AST_TYPE_SPECIFIER_H */

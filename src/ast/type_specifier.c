@@ -19,59 +19,14 @@
 
 
 ast_t *ast_type_specifier_init(
-	int         keyword_type,
-	ast_t      *semantic_type,
-	location_t *location)
+	uint_fast16_t  specifier,
+	ast_t         *semantic_type,
+	location_t    *location)
 {
 	AST_INIT(ast_type_specifier_t);
 
-	switch (keyword_type) {
-		case KEYWORD_VOID:
-			node->type = TYPE_SPECIFIER_VOID;
-			break;
-
-		case KEYWORD_CHAR:
-			node->type = TYPE_SPECIFIER_CHAR;
-			break;
-
-		case KEYWORD_SHORT:
-			node->type = TYPE_SPECIFIER_SHORT;
-			break;
-
-		case KEYWORD_INT:
-			node->type = TYPE_SPECIFIER_INT;
-			break;
-
-		case KEYWORD_LONG:
-			node->type = TYPE_SPECIFIER_LONG;
-			break;
-
-		case KEYWORD_FLOAT:
-			node->type = TYPE_SPECIFIER_FLOAT;
-			break;
-
-		case KEYWORD_DOUBLE:
-			node->type = TYPE_SPECIFIER_DOUBLE;
-			break;
-
-		case KEYWORD_SIGNED:
-			node->type = TYPE_SPECIFIER_SIGNED;
-			break;
-
-		case KEYWORD_UNSIGNED:
-			node->type = TYPE_SPECIFIER_UNSIGNED;
-			break;
-
-		case KEYWORD__BOOL:
-			node->type = TYPE_SPECIFIER__BOOL;
-			break;
-
-		case KEYWORD__COMPLEX:
-			node->type = TYPE_SPECIFIER__COMPLEX;
-			break;
-	}
-
-	node->semantic_type =  semantic_type,
+	node->specifier     =  specifier;
+	node->semantic_type =  semantic_type;
 	node->location      = *location;
 
 	AST_RETURN(AST_TYPE_SPECIFIER);
@@ -81,7 +36,8 @@ void ast_type_specifier_free(ast_t *ast)
 {
 	AST_FREE(ast_type_specifier_t);
 
-	if (node->semantic_type) AST_NODE_FREE(node->semantic_type);
+	AST_NODE_FREE(node->semantic_type);
+
 	free(node);
 }
 
@@ -93,65 +49,64 @@ void fprint_ast_type_specifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_type_specifier_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"type\" : ");
+	const char *specifier;
 
 	if (node->semantic_type) {
-		fprintf(stream, "\"(semantic)\",\n");
+		specifier = "(semantic)";
 	} else {
-		const char *type;
-		switch (node->type) {
+		switch (node->specifier) {
 			case TYPE_SPECIFIER_VOID:
-				type = "void";
+				specifier = "void";
 				break;
 
 			case TYPE_SPECIFIER_CHAR:
-				type = "char";
+				specifier = "char";
 				break;
 
 			case TYPE_SPECIFIER_SHORT:
-				type = "short";
+				specifier = "short";
 				break;
 
 			case TYPE_SPECIFIER_INT:
-				type = "int";
+				specifier = "int";
 				break;
 
 			case TYPE_SPECIFIER_LONG:
-				type = "long";
+				specifier = "long";
 				break;
 
 			case TYPE_SPECIFIER_FLOAT:
-				type = "float";
+				specifier = "float";
 				break;
 
 			case TYPE_SPECIFIER_DOUBLE:
-				type = "double";
+				specifier = "double";
 				break;
 
 			case TYPE_SPECIFIER_SIGNED:
-				type = "signed";
+				specifier = "signed";
 				break;
 
 			case TYPE_SPECIFIER_UNSIGNED:
-				type = "unsigned";
+				specifier = "unsigned";
 				break;
 
 			case TYPE_SPECIFIER__BOOL:
-				type = "_Bool";
+				specifier = "_Bool";
 				break;
 
 			case TYPE_SPECIFIER__COMPLEX:
-				type = "_Complex";
+				specifier = "_Complex";
 				break;
 
 			default:
-				type = "(unknown)";
+				specifier = "(unknown)";
 				break;
 		}
-
-		fprintf(stream, "\"%s\",\n", type);
 	}
+
+	INDENT(stream, level);
+	fprintf(stream, "\"specifier\" : \"%s\",\n", specifier);
 
 	FPRINT_AST_NODE_FINISH;
 }
