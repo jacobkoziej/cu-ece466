@@ -17,15 +17,23 @@
 #include <jkcc/lexer.h>
 
 
+#define UNARY_OPERATOR_AMPERSAND        (1 << 0)
+#define UNARY_OPERATOR_ASTERISK         (1 << 1)
+#define UNARY_OPERATOR_PLUS             (1 << 2)
+#define UNARY_OPERATOR_MINUS            (1 << 3)
+#define UNARY_OPERATOR_UNARY_COMPLEMENT (1 << 4)
+#define UNARY_OPERATOR_LOGICAL_NOT      (1 << 5)
+
+
 typedef struct ast_unary_operator_s {
-	int        type;
-	location_t location;
-	ast_t      ast;
+	uint_fast8_t operator;
+	location_t   location;
+	ast_t        ast;
 } ast_unary_operator_t;
 
 
 ast_t *ast_unary_operator_init(
-	int           type,
+	uint_fast8_t  operator,
 	location_t   *location);
 void ast_unary_operator_free(
 	ast_t        *ast);

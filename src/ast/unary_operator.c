@@ -15,14 +15,12 @@
 
 #include <jkcc/lexer.h>
 
-#include "y.tab.h"
 
-
-ast_t *ast_unary_operator_init(int type, location_t *location)
+ast_t *ast_unary_operator_init(uint_fast8_t operator, location_t *location)
 {
 	AST_INIT(ast_unary_operator_t);
 
-	node->type     =  type;
+	node->operator =  operator;
 	node->location = *location;
 
 	AST_RETURN(AST_UNARY_OPERATOR);
@@ -43,39 +41,39 @@ void fprint_ast_unary_operator(
 {
 	FPRINT_AST_NODE_BEGIN(ast_unary_operator_t);
 
-	const char *type;
-	switch (node->type) {
-		case PUNCTUATOR_AMPERSAND:
-			type = "&";
+	const char *operator;
+	switch (node->operator) {
+		case UNARY_OPERATOR_AMPERSAND:
+			operator = "&";
 			break;
 
-		case PUNCTUATOR_ASTERISK:
-			type = "*";
+		case UNARY_OPERATOR_ASTERISK:
+			operator = "*";
 			break;
 
-		case PUNCTUATOR_PLUS:
-			type = "+";
+		case UNARY_OPERATOR_PLUS:
+			operator = "+";
 			break;
 
-		case PUNCTUATOR_MINUS:
-			type = "-";
+		case UNARY_OPERATOR_MINUS:
+			operator = "-";
 			break;
 
-		case PUNCTUATOR_UNARY_COMPLEMENT:
-			type = "~";
+		case UNARY_OPERATOR_UNARY_COMPLEMENT:
+			operator = "~";
 			break;
 
-		case PUNCTUATOR_LOGICAL_NOT:
-			type = "!";
+		case UNARY_OPERATOR_LOGICAL_NOT:
+			operator = "!";
 			break;
 
 		default:
-			type = "(unknown)";
+			operator = "(unknown)";
 			break;
 	}
 
 	INDENT(stream, level);
-	fprintf(stream, "\"type\" : \"%s\",\n", type);
+	fprintf(stream, "\"operator\" : \"%s\",\n", operator);
 
 	FPRINT_AST_NODE_FINISH;
 }
