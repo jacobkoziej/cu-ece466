@@ -5,8 +5,10 @@
  */
 
 #include <jkcc/ht.h>
+#include <jkcc/private/ht.h>
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 
@@ -35,4 +37,18 @@ int ht_init(ht_t *ht, size_t size)
 	if (!ht->entries) return -1;
 
 	return 0;
+}
+
+
+static uint64_t fnv1a_hash(const void *key, size_t size)
+{
+	uint64_t hash = FNV_OFFSET_BASIS;
+
+	const unsigned char *byte = key;
+	while (size--) {
+		hash ^= *byte++;
+		hash *=  FNV_PRIME;
+	}
+
+	return hash;
 }
