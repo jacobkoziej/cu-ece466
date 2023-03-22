@@ -31,7 +31,8 @@ typedef struct ht_s {
 } ht_t;
 
 
-int ht_init(ht_t *ht, size_t size);
+void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry));
+int  ht_init(ht_t *ht, size_t size);
 
 
 #endif  /* JCC_HT_H */

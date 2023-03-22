@@ -10,6 +10,17 @@
 #include <stdlib.h>
 
 
+void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry))
+{
+	if (!ht) return;
+
+	if (entry_free)
+		for (size_t i = 0; i < ht->size; i++)
+			entry_free(&ht->entries[i]);
+
+	free(ht->entries);
+}
+
 int ht_init(ht_t *ht, size_t size)
 {
 	// ensure size is even
