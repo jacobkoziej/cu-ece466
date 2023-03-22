@@ -17,15 +17,21 @@
 #include <jkcc/lexer.h>
 
 
+#define TYPE_QUALIFIER_CONST    (1 << 0)
+#define TYPE_QUALIFIER_RESTRICT (1 << 1)
+#define TYPE_QUALIFIER_VOLATILE (1 << 2)
+#define TYPE_QUALIFIER__ATOMIC  (1 << 3)
+
+
 typedef struct ast_type_qualifier_s {
-	int        type;
-	location_t location;
-	ast_t      ast;
+	uint_fast8_t qualifier;
+	location_t   location;
+	ast_t        ast;
 } ast_type_qualifier_t;
 
 
 ast_t *ast_type_qualifier_init(
-	int           type,
+	uint_fast8_t  qualifier,
 	location_t   *location);
 void ast_type_qualifier_free(
 	ast_t        *ast);

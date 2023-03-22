@@ -18,12 +18,14 @@
 #include "y.tab.h"
 
 
-ast_t *ast_type_qualifier_init(int type, location_t *location)
+ast_t *ast_type_qualifier_init(
+	uint_fast8_t  qualifier,
+	location_t   *location)
 {
 	AST_INIT(ast_type_qualifier_t);
 
-	node->type     =  type;
-	node->location = *location;
+	node->qualifier =  qualifier;
+	node->location  = *location;
 
 	AST_RETURN(AST_TYPE_QUALIFIER);
 }
@@ -43,31 +45,31 @@ void fprint_ast_type_qualifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_type_qualifier_t);
 
-	const char *type;
-	switch (node->type) {
-		case KEYWORD_CONST:
-			type = "const";
+	const char *qualifier;
+	switch (node->qualifier) {
+		case TYPE_QUALIFIER_CONST:
+			qualifier = "const";
 			break;
 
-		case KEYWORD_RESTRICT:
-			type = "restrict";
+		case TYPE_QUALIFIER_RESTRICT:
+			qualifier = "restrict";
 			break;
 
-		case KEYWORD_VOLATILE:
-			type = "volatile";
+		case TYPE_QUALIFIER_VOLATILE:
+			qualifier = "volatile";
 			break;
 
-		case KEYWORD__ATOMIC:
-			type = "_Atomic";
+		case TYPE_QUALIFIER__ATOMIC:
+			qualifier = "_Atomic";
 			break;
 
 		default:
-			type = "(unknown)";
+			qualifier = "(unknown)";
 			break;
 	}
 
 	INDENT(stream, level);
-	fprintf(stream, "\"type\" : \"%s\",\n", type);
+	fprintf(stream, "\"qualifier\" : \"%s\",\n", qualifier);
 
 	FPRINT_AST_NODE_FINISH;
 }

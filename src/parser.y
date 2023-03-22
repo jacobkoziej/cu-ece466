@@ -1267,34 +1267,34 @@ specifier_qualifier_list:
 // 6.7.3
 type_qualifier:
   KEYWORD_CONST {
-	TRACE("type_qualifier", "KEYWORD_CONST");
+	TRACE("type-qualifier", "const");
 
 	$type_qualifier = ast_type_qualifier_init(
-		KEYWORD_CONST,
+		TYPE_QUALIFIER_CONST,
 		&@KEYWORD_CONST);
 	if (!$type_qualifier) YYNOMEM;
 }
 | KEYWORD_RESTRICT {
-	TRACE("type_qualifier", "KEYWORD_RESTRICT");
+	TRACE("type-qualifier", "restrict");
 
 	$type_qualifier = ast_type_qualifier_init(
-		KEYWORD_RESTRICT,
+		TYPE_QUALIFIER_RESTRICT,
 		&@KEYWORD_RESTRICT);
 	if (!$type_qualifier) YYNOMEM;
 }
 | KEYWORD_VOLATILE {
-	TRACE("type_qualifier", "KEYWORD_VOLATILE");
+	TRACE("type-qualifier", "volatile");
 
 	$type_qualifier = ast_type_qualifier_init(
-		KEYWORD_VOLATILE,
+		TYPE_QUALIFIER_VOLATILE,
 		&@KEYWORD_VOLATILE);
 	if (!$type_qualifier) YYNOMEM;
 }
 | KEYWORD__ATOMIC {
-	TRACE("type_qualifier", "KEYWORD__ATOMIC");
+	TRACE("type-qualifier", "_Atomic");
 
 	$type_qualifier = ast_type_qualifier_init(
-		KEYWORD__ATOMIC,
+		TYPE_QUALIFIER__ATOMIC,
 		&@KEYWORD__ATOMIC);
 	if (!$type_qualifier) YYNOMEM;
 }
