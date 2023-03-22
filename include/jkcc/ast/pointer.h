@@ -18,16 +18,16 @@
 
 
 typedef struct ast_pointer_s {
-	ast_t      *type_qualifier_list;  // ast_type_qualifier_list_t
-	ast_t      *pointer;              // ast_pointer_t
+	ast_t      *pointer;              // ast_t* ast_pointer_t
+	ast_t      *type_qualifier_list;  // ast_t* ast_type_qualifier_list_t
 	location_t  location;
 	ast_t       ast;
 } ast_pointer_t;
 
 
 ast_t *ast_pointer_init(
-	ast_t        *type_qualifier_list,
 	ast_t        *pointer,
+	ast_t        *type_qualifier_list,
 	location_t   *location);
 void ast_pointer_free(
 	ast_t        *ast);

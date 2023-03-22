@@ -17,14 +17,14 @@
 
 
 ast_t *ast_pointer_init(
-	ast_t      *type_qualifier_list,
 	ast_t      *pointer,
+	ast_t      *type_qualifier_list,
 	location_t *location)
 {
 	AST_INIT(ast_pointer_t);
 
-	node->type_qualifier_list =  type_qualifier_list;
 	node->pointer             =  pointer;
+	node->type_qualifier_list =  type_qualifier_list;
 	node->location            = *location;
 
 	AST_RETURN(AST_POINTER);
@@ -34,8 +34,8 @@ void ast_pointer_free(ast_t *ast)
 {
 	AST_FREE(ast_pointer_t);
 
-	AST_NODE_FREE(node->type_qualifier_list);
 	AST_NODE_FREE(node->pointer);
+	AST_NODE_FREE(node->type_qualifier_list);
 
 	free(node);
 }
@@ -48,36 +48,12 @@ void fprint_ast_pointer(
 {
 	FPRINT_AST_NODE_BEGIN(ast_pointer_t);
 
-	INDENT(stream, level);
-
-	fprintf(stream, "\"type-qualifier-list\" : ");
-
-	if (node->type_qualifier_list)
-		FPRINT_AST_NODE(
-			stream,
-			node->type_qualifier_list,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"pointer\" : ");
-
-	if (node->pointer)
-		FPRINT_AST_NODE(
-			stream,
-			node->pointer,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_POINTER],
+		node->pointer);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_TYPE_QUALIFIER_LIST],
+		node->type_qualifier_list);
 
 	FPRINT_AST_NODE_FINISH;
 }

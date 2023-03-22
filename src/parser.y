@@ -1304,32 +1304,32 @@ type_qualifier:
 // 6.7.6
 pointer:
   PUNCTUATOR_ASTERISK {
-	TRACE("pointer", "PUNCTUATOR_ASTERISK");
+	TRACE("pointer", "*");
 
 	$pointer = ast_pointer_init(NULL, NULL, &@PUNCTUATOR_ASTERISK);
 	if (!$pointer) YYNOMEM;
 }
 | PUNCTUATOR_ASTERISK type_qualifier_list {
-	TRACE("pointer", "PUNCTUATOR_ASTERISK type_qualifier_list");
+	TRACE("pointer", "* type-qualifier-list");
 
 	$pointer = ast_pointer_init(
-		$type_qualifier_list,
 		NULL,
+		$type_qualifier_list,
 		&@PUNCTUATOR_ASTERISK);
 	if (!$pointer) YYNOMEM;
 }
 | PUNCTUATOR_ASTERISK pointer[child] {
-	TRACE("pointer", "PUNCTUATOR_ASTERISK pointer");
+	TRACE("pointer", "* pointer");
 
 	$$ = ast_pointer_init(NULL, $child, &@PUNCTUATOR_ASTERISK);
 	if (!$$) YYNOMEM;
 }
 | PUNCTUATOR_ASTERISK type_qualifier_list pointer[child] {
-	TRACE("pointer", "PUNCTUATOR_ASTERISK type_qualifier_list pointer");
+	TRACE("pointer", "* type-qualifier-list pointer");
 
 	$$ = ast_pointer_init(
-		$type_qualifier_list,
 		$child,
+		$type_qualifier_list,
 		&@PUNCTUATOR_ASTERISK);
 	if (!$$) YYNOMEM;
 }
