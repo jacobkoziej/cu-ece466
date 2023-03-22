@@ -14,6 +14,8 @@
 
 #define HT_ATTRIBUTE_DELETED (1 << 0)
 
+#define HT_DEFAULT_SIZE 64
+
 
 typedef struct ht_entry_s {
 	void         *val;
@@ -27,6 +29,9 @@ typedef struct ht_s {
 	size_t      use;
 	size_t      size;
 } ht_t;
+
+
+int ht_init(ht_t *ht, size_t size);
 
 
 #endif  /* JCC_HT_H */
