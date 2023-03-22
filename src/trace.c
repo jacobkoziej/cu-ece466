@@ -254,8 +254,7 @@ void trace_rule(
 			"%s\n"
 			ANSI_CSI
 			ANSI_SGR_RESET
-			ANSI_SGR
-			ANSI_CSI,
+			ANSI_SGR,
 			file,
 			func,
 			rule,
