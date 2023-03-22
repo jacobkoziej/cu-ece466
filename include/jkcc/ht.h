@@ -8,4 +8,19 @@
 #define JKCC_HT_H
 
 
+#include <stddef.h>
+#include <stdint.h>
+
+
+#define HT_ATTRIBUTE_DELETED (1 << 0)
+
+
+typedef struct ht_entry_s {
+	void         *val;
+	void         *key;
+	size_t        size;
+	uint_fast8_t  attributes;
+} ht_entry_t;
+
+
 #endif  /* JCC_HT_H */
