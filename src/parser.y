@@ -39,21 +39,21 @@
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
-#define YYLLOC_DEFAULT(cur, rhs, n) {\
-	if (n) {\
-		(cur).file = YYRHSLOC(rhs, 1).file;\
-		(cur).start.offset = YYRHSLOC(rhs, 1).start.offset;\
-		(cur).start.line   = YYRHSLOC(rhs, 1).start.line;\
-		(cur).start.column = YYRHSLOC(rhs, 1).start.column;\
-		(cur).end.offset   = YYRHSLOC(rhs, n).end.offset;\
-		(cur).end.line     = YYRHSLOC(rhs, n).end.line;\
-		(cur).end.column   = YYRHSLOC(rhs, n).end.column;\
-	} else {\
-		(cur).file = YYRHSLOC(rhs, 0).file;\
-		(cur).start.offset = (cur).end.offset = YYRHSLOC(rhs, 0).end.offset;\
-		(cur).start.line   = (cur).end.line   = YYRHSLOC(rhs, 0).end.line;\
-		(cur).start.column = (cur).end.column = YYRHSLOC(rhs, 0).end.column;\
-	}\
+#define YYLLOC_DEFAULT(cur, rhs, n) {                                                \
+	if (n) {                                                                     \
+		(cur).file = YYRHSLOC(rhs, 1).file;                                  \
+		(cur).start.offset = YYRHSLOC(rhs, 1).start.offset;                  \
+		(cur).start.line   = YYRHSLOC(rhs, 1).start.line;                    \
+		(cur).start.column = YYRHSLOC(rhs, 1).start.column;                  \
+		(cur).end.offset   = YYRHSLOC(rhs, n).end.offset;                    \
+		(cur).end.line     = YYRHSLOC(rhs, n).end.line;                      \
+		(cur).end.column   = YYRHSLOC(rhs, n).end.column;                    \
+	} else {                                                                     \
+		(cur).file = YYRHSLOC(rhs, 0).file;                                  \
+		(cur).start.offset = (cur).end.offset = YYRHSLOC(rhs, 0).end.offset; \
+		(cur).start.line   = (cur).end.line   = YYRHSLOC(rhs, 0).end.line;   \
+		(cur).start.column = (cur).end.column = YYRHSLOC(rhs, 0).end.column; \
+	}                                                                            \
 }
 
 
