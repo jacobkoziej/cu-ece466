@@ -1361,7 +1361,7 @@ type_qualifier_list:
 // 6.7.7
 type_name:
   specifier_qualifier_list {
-	TRACE("type_name", "specifier_qualifier_list");
+	TRACE("type-name", "specifier-qualifier-list");
 
 	$type_name = ast_type_name_init(
 		$specifier_qualifier_list,
@@ -1372,7 +1372,7 @@ type_name:
 }
 /*
 | specifier_qualifier_list abstract_declarator {
-	TRACE("type_name", "specifier_qualifier_list abstract_declarator");
+	TRACE("type-name", "specifier-qualifier-list abstract-declarator");
 
 	$type_name = ast_type_name_init(
 		$specifier_qualifier_list,

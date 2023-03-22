@@ -19,22 +19,20 @@
 ast_t *ast_type_name_init(
 	ast_t      *specifier_qualifier_list,
 	ast_t      *abstract_declarator,
-	location_t *specifier_qualifier_list_location,
-	location_t *abstract_declarator_location)
+	location_t *location_start,
+	location_t *location_end)
 {
 	AST_INIT(ast_type_name_t);
 
 	node->specifier_qualifier_list =  specifier_qualifier_list;
 	node->abstract_declarator      =  abstract_declarator;
 
-	if (abstract_declarator_location) {
-		node->location.file  = specifier_qualifier_list_location->file;
-		node->location.start = specifier_qualifier_list_location->start;
+	node->location.file  = location_start->file;
+	node->location.start = location_start->start;
 
-		node->location.end   = abstract_declarator_location->end;
-	} else {
-		node->location = *specifier_qualifier_list_location;
-	}
+	node->location.end = (location_end)
+		? location_end->end
+		: location_start->end;
 
 	AST_RETURN(AST_TYPE_NAME);
 }
@@ -57,36 +55,14 @@ void fprint_ast_type_name(
 {
 	FPRINT_AST_NODE_BEGIN(ast_type_name_t);
 
-	INDENT(stream, level);
-
-	fprintf(stream, "\"specifier-qualifier-list\" : ");
-
-	if (node->specifier_qualifier_list)
-		FPRINT_AST_NODE(
-			stream,
-			node->specifier_qualifier_list,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"abstract-declarator\" : ");
-
-	if (node->abstract_declarator)
-		FPRINT_AST_NODE(
-			stream,
-			node->abstract_declarator,
-			level + 1,
-			AST_PRINT_NO_INDENT_INITIAL |
-			AST_PRINT_NO_TRAILING_NEWLINE);
-	else
-		fprintf(stream, "null");
-
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_SPECIFIER_QUALIFIER_LIST],
+		node->specifier_qualifier_list);
+	/* TODO: AST_ABSTRACT_DECLARATOR
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_ABSTRACT_DECLARATOR],
+		node->abstract_declarator);
+	*/
 
 	FPRINT_AST_NODE_FINISH;
 }

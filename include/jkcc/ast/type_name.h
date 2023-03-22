@@ -18,8 +18,8 @@
 
 
 typedef struct ast_type_name_s {
-	ast_t      *specifier_qualifier_list;  // ast_specifier_qualifier_list_t
-	ast_t      *abstract_declarator;       // ast_abstract_declarator_t
+	ast_t      *specifier_qualifier_list;  // ast_t* ast_specifier_qualifier_list_t
+	ast_t      *abstract_declarator;       // ast_t* ast_abstract_declarator_t
 	location_t  location;
 	ast_t       ast;
 } ast_type_name_t;
@@ -28,8 +28,8 @@ typedef struct ast_type_name_s {
 ast_t *ast_type_name_init(
 	ast_t        *specifier_qualifier_list,
 	ast_t        *abstract_declarator,
-	location_t   *specifier_qualifier_list_location,
-	location_t   *abstract_declarator_location);
+	location_t   *location_start,
+	location_t   *location_end);
 void ast_type_name_free(
 	ast_t        *ast);
 void fprint_ast_type_name(
