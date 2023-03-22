@@ -22,5 +22,11 @@ typedef struct ht_entry_s {
 	uint_fast8_t  attributes;
 } ht_entry_t;
 
+typedef struct ht_s {
+	ht_entry_t *entries;
+	size_t      use;
+	size_t      size;
+} ht_t;
+
 
 #endif  /* JCC_HT_H */
