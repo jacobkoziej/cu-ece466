@@ -18,6 +18,7 @@
 
 
 static uint64_t fnv1a_hash(const void *key, size_t size);
+static int      rehash(ht_t *ht);
 
 
 #endif  /* JCC_PRIVATE_HT_H */

@@ -33,7 +33,7 @@ int ht_init(ht_t *ht, size_t size)
 	ht->use  = 0;
 	ht->size = size;
 
-	ht->entries = malloc(ht->size * sizeof(*ht->entries));
+	ht->entries = calloc(ht->size, sizeof(*ht->entries));
 	if (!ht->entries) return -1;
 
 	return 0;
@@ -51,4 +51,54 @@ static uint64_t fnv1a_hash(const void *key, size_t size)
 	}
 
 	return hash;
+}
+
+static int rehash(ht_t *ht)
+{
+	size_t size = ht->size * 2;
+
+	// overflow
+	if (size / 2 != ht->size) return -1;
+
+	ht_entry_t *new_entries = calloc(size, sizeof(*new_entries));
+	if (!new_entries) return -1;
+
+	size_t use = ht->use;
+
+	ht_entry_t *entry;
+
+	for (size_t i = 0; i < ht->size; i++) {
+		if (!use) break;
+
+		entry = &ht->entries[i];
+
+		if (!entry->key) continue;
+		if (entry->attributes & HT_ATTRIBUTE_DELETED) {
+			free(entry->key);
+			continue;
+		}
+
+		uint64_t pos = fnv1a_hash(entry->key, entry->size) % size;
+
+		// potentially dangerous infinite loop ;)
+		for (;;) {
+			ht_entry_t *tmp = &new_entries[pos];
+			pos = (pos + 1) % size;
+
+			// probe over set entries
+			if (tmp->key) continue;
+
+			*tmp = *entry;
+			break;
+		}
+
+		--use;
+	}
+
+	free(ht->entries);
+
+	ht->entries = new_entries;
+	ht->size    = size;
+
+	return 0;
 }
