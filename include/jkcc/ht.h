@@ -36,6 +36,7 @@ bool ht_exists(ht_t *ht, const void *key, size_t size);
 void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry));
 int  ht_get(ht_t *ht, const void *key, size_t size, void **val);
 int  ht_init(ht_t *ht, size_t size);
+int  ht_rm(ht_t *ht, const void *key, size_t size, void **val);
 int  ht_set(ht_t *ht, const void *key, size_t size, void *val);
 
 
