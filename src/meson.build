@@ -46,6 +46,7 @@ lex_yy_c = custom_target(
 
 
 jkcc_src = files(
+        'ht.c',
         'jkcc.c',
         'lexer.c',
         'string.c',
