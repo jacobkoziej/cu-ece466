@@ -500,28 +500,20 @@ unary_expression:
 		&@cast_expression);
 	if (!$$) YYNOMEM;
 }
-| KEYWORD_SIZEOF unary_expression[child] {
+| KEYWORD_SIZEOF unary_expression[operand] {
 	TRACE("unary-expression", "sizeof unary-expression");
 
-	$$ = ast_unary_expression_init(
-		$child,
-		NULL,
-		NULL,
-		NULL,
-		UNARY_EXPRESSION_SIZEOF,
+	$$ = ast_sizeof_init(
+		$operand,
 		&@KEYWORD_SIZEOF,
-		&@child);
+		&@operand);
 	if (!$$) YYNOMEM;
 }
-| KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
+| KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
 	TRACE("unary-expression", "sizeof ( type-name )");
 
-	$unary_expression = ast_unary_expression_init(
-		NULL,
-		NULL,
-		NULL,
-		$type_name,
-		UNARY_EXPRESSION_SIZEOF,
+	$$ = ast_sizeof_init(
+		$operand,
 		&@KEYWORD_SIZEOF,
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$unary_expression) YYNOMEM;
