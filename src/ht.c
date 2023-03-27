@@ -53,6 +53,36 @@ void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry))
 	free(ht->entries);
 }
 
+int ht_get(ht_t *ht, const void *key, size_t size, void **val)
+{
+	// invalid key size
+	if (!size) return -1;
+
+	// empty hash table
+	if (!ht->use) return -1;
+
+	uint64_t pos = fnv1a_hash(key, size) % ht->size;
+
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+		ht_entry_t *entry = &ht->entries[pos];
+
+		// we've passed the set entries
+		if (!entry->key && !(entry->attributes & HT_ATTRIBUTE_DELETED))
+			return -1;
+
+		if (entry->attributes & HT_ATTRIBUTE_DELETED) continue;
+		if (entry->size != size) continue;
+
+		if (!memcmp(entry->key, key, size)) {
+			*val = entry->val;
+			return 0;
+		}
+	}
+
+	// we've somehow traversed the entire hash table
+	return -1;
+}
+
 int ht_init(ht_t *ht, size_t size)
 {
 	// ensure size is even
