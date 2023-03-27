@@ -8,6 +8,7 @@
 #define JKCC_HT_H
 
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -31,6 +32,7 @@ typedef struct ht_s {
 } ht_t;
 
 
+bool ht_exists(ht_t *ht, const void *key, size_t size);
 void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry));
 int  ht_init(ht_t *ht, size_t size);
 

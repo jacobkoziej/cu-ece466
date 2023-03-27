@@ -7,10 +7,40 @@
 #include <jkcc/ht.h>
 #include <jkcc/private/ht.h>
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
+
+bool ht_exists(ht_t *ht, const void *key, size_t size)
+{
+	// invalid key size
+	if (!size) return false;
+
+	// empty hash table
+	if (!ht->use) return false;
+
+	uint64_t pos = fnv1a_hash(key, size) % ht->size;
+
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+		ht_entry_t *entry = &ht->entries[pos];
+
+		// we've passed the set entries
+		if (!entry->key && !(entry->attributes & HT_ATTRIBUTE_DELETED))
+			return false;
+
+		if (entry->attributes & HT_ATTRIBUTE_DELETED) continue;
+		if (entry->size != size) continue;
+
+		if (!memcmp(entry->key, key, size))
+			return true;
+	}
+
+	// we've somehow traversed the entire hash table
+	return false;
+}
 
 void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry))
 {
