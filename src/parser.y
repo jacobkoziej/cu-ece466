@@ -620,37 +620,37 @@ multiplicative_expression:
 	TRACE("multiplicative-expression", "cast-expression");
 	$multiplicative_expression = $cast_expression;
 }
-| multiplicative_expression[child] PUNCTUATOR_ASTERISK cast_expression {
+| multiplicative_expression[lhs] PUNCTUATOR_ASTERISK cast_expression[rhs] {
 	TRACE("multiplicative-expression", "multiplicative-expression * cast-expression");
 
-	$$ = ast_multiplicative_expression_init(
-		$child,
-		$cast_expression,
-		MULTIPLICATIVE_EXPRESSION_MULTIPLICATION,
-		&@child,
-		&@cast_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_MULTIPLICATION,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| multiplicative_expression[child] PUNCTUATOR_DIVISION cast_expression {
+| multiplicative_expression[lhs] PUNCTUATOR_DIVISION cast_expression[rhs] {
 	TRACE("multiplicative-expression", "multiplicative-expression / cast-expression");
 
-	$$ = ast_multiplicative_expression_init(
-		$child,
-		$cast_expression,
-		MULTIPLICATIVE_EXPRESSION_DIVISION,
-		&@child,
-		&@cast_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_DIVISION,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| multiplicative_expression[child] PUNCTUATOR_MODULO cast_expression {
+| multiplicative_expression[lhs] PUNCTUATOR_MODULO cast_expression[rhs] {
 	TRACE("multiplicative-expression", "multiplicative-expression % cast-expression");
 
-	$$ = ast_multiplicative_expression_init(
-		$child,
-		$cast_expression,
-		MULTIPLICATIVE_EXPRESSION_MODULO,
-		&@child,
-		&@cast_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_MODULO,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -662,26 +662,26 @@ additive_expression:
 	TRACE("additive-expression", "multiplicative-expression");
 	$additive_expression = $multiplicative_expression;
 }
-| additive_expression[child] PUNCTUATOR_PLUS multiplicative_expression {
+| additive_expression[lhs] PUNCTUATOR_PLUS multiplicative_expression[rhs] {
 	TRACE("additive-expression", "additive-expression + multiplicative-expression");
 
-	$$ = ast_additive_expression_init(
-		$child,
-		$multiplicative_expression,
-		ADDITIVE_EXPRESSION_ADDITION,
-		&@child,
-		&@multiplicative_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_ADDITION,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| additive_expression[child] PUNCTUATOR_MINUS multiplicative_expression {
+| additive_expression[lhs] PUNCTUATOR_MINUS multiplicative_expression[rhs] {
 	TRACE("additive-expression", "additive-expression - multiplicative-expression");
 
-	$$ = ast_additive_expression_init(
-		$child,
-		$multiplicative_expression,
-		ADDITIVE_EXPRESSION_SUBTRACTION,
-		&@child,
-		&@multiplicative_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_SUBTRACTION,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -693,26 +693,26 @@ shift_expression:
 	TRACE("shift-expression", "additive-expression");
 	$shift_expression = $additive_expression;
 }
-| shift_expression[child] PUNCTUATOR_LBITSHIFT additive_expression {
+| shift_expression[lhs] PUNCTUATOR_LBITSHIFT additive_expression[rhs] {
 	TRACE("shift-expression", "shift-expression << additive-expression");
 
-	$$ = ast_shift_expression_init(
-		$child,
-		$additive_expression,
-		SHIFT_EXPRESSION_LBITSHIFT,
-		&@child,
-		&@additive_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_LBITSHIFT,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| shift_expression[child] PUNCTUATOR_RBITSHIFT additive_expression {
+| shift_expression[lhs] PUNCTUATOR_RBITSHIFT additive_expression[rhs] {
 	TRACE("shift-expression", "shift-expression >> additive-expression");
 
-	$$ = ast_shift_expression_init(
-		$child,
-		$additive_expression,
-		SHIFT_EXPRESSION_RBITSHIFT,
-		&@child,
-		&@additive_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_RBITSHIFT,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -724,48 +724,48 @@ relational_expression:
 	TRACE("relational-expression", "shift-expression");
 	$relational_expression = $shift_expression;
 }
-| relational_expression[child] PUNCTUATOR_LESS_THAN shift_expression {
+| relational_expression[lhs] PUNCTUATOR_LESS_THAN shift_expression[rhs] {
 	TRACE("relational-expression", "relational-expression < shift-expression");
 
-	$$ = ast_relational_expression_init(
-		$child,
-		$shift_expression,
-		RELATIONAL_EXPRESSION_LESS_THAN,
-		&@child,
-		&@shift_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_LESS_THAN,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| relational_expression[child] PUNCTUATOR_GREATER_THAN shift_expression {
+| relational_expression[lhs] PUNCTUATOR_GREATER_THAN shift_expression[rhs] {
 	TRACE("relational-expression", "relational-expression > shift-expression");
 
-	$$ = ast_relational_expression_init(
-		$child,
-		$shift_expression,
-		RELATIONAL_EXPRESSION_GREATER_THAN,
-		&@child,
-		&@shift_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_GREATER_THAN,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| relational_expression[child] PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression {
+| relational_expression[lhs] PUNCTUATOR_LESS_THAN_OR_EQUAL shift_expression[rhs] {
 	TRACE("relational-expression", "relational-expression <= shift-expression");
 
-	$$ = ast_relational_expression_init(
-		$child,
-		$shift_expression,
-		RELATIONAL_EXPRESSION_LESS_THAN_OR_EQUAL,
-		&@child,
-		&@shift_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_LESS_THAN_OR_EQUAL,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| relational_expression[child] PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression {
+| relational_expression[lhs] PUNCTUATOR_GREATER_THAN_OR_EQUAL shift_expression[rhs] {
 	TRACE("relational-expression", "relational-expression >= shift-expression");
 
-	$$ = ast_relational_expression_init(
-		$child,
-		$shift_expression,
-		RELATIONAL_EXPRESSION_GREATER_THAN_OR_EQUAL,
-		&@child,
-		&@shift_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_GREATER_THAN_OR_EQUAL,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -777,26 +777,26 @@ equality_expression:
 	TRACE("equality-expression", "relational-expression");
 	$equality_expression = $relational_expression;
 }
-| equality_expression[child] PUNCTUATOR_EQUALITY relational_expression {
+| equality_expression[lhs] PUNCTUATOR_EQUALITY relational_expression[rhs] {
 	TRACE("equality-expression", "equality-expression == relational-expression");
 
-	$$ = ast_equality_expression_init(
-		$child,
-		$relational_expression,
-		EQUALITY_EXPRESSION_EQUALITY,
-		&@child,
-		&@relational_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_EQUALITY,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
-| equality_expression[child] PUNCTUATOR_INEQUALITY relational_expression {
+| equality_expression[lhs] PUNCTUATOR_INEQUALITY relational_expression[rhs] {
 	TRACE("equality-expression", "equality-expression != relational-expression");
 
-	$$ = ast_equality_expression_init(
-		$child,
-		$relational_expression,
-		EQUALITY_EXPRESSION_INEQUALITY,
-		&@child,
-		&@relational_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_INEQUALITY,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -808,14 +808,15 @@ and_expression:
 	TRACE("AND-expression", "equality-expression");
 	$and_expression = $equality_expression;
 }
-| and_expression[child] PUNCTUATOR_AMPERSAND equality_expression {
+| and_expression[lhs] PUNCTUATOR_AMPERSAND equality_expression[rhs] {
 	TRACE("AND-expression", "AND-expression & equality-expression");
 
-	$$ = ast_and_expression_init(
-		$child,
-		$equality_expression,
-		&@child,
-		&@equality_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_AND,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -827,14 +828,15 @@ exclusive_or_expression:
 	TRACE("exclusive-OR-expression", "AND-expression");
 	$exclusive_or_expression = $and_expression;
 }
-| exclusive_or_expression[child] PUNCTUATOR_XOR and_expression {
+| exclusive_or_expression[lhs] PUNCTUATOR_XOR and_expression[rhs] {
 	TRACE("exclusive-OR-expression", "exclusive-OR-expression ^ AND-expression");
 
-	$$ = ast_exclusive_or_expression_init(
-		$child,
-		$and_expression,
-		&@child,
-		&@and_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_EXCLUSIVE_OR,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -846,14 +848,15 @@ inclusive_or_expression:
 	TRACE("inclusive-OR-expression", "exclusive-OR-expression");
 	$inclusive_or_expression = $exclusive_or_expression;
 }
-| inclusive_or_expression[child] PUNCTUATOR_OR exclusive_or_expression {
+| inclusive_or_expression[lhs] PUNCTUATOR_OR exclusive_or_expression[rhs] {
 	TRACE("inclusive-OR-expression", "inclusive-OR-expression | exclusive-OR-expression");
 
-	$$ = ast_inclusive_or_expression_init(
-		$child,
-		$exclusive_or_expression,
-		&@child,
-		&@exclusive_or_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_INCLUSIVE_OR,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -865,14 +868,15 @@ logical_and_expression:
 	TRACE("logical-AND-expression", "inclusive-OR-expression");
 	$logical_and_expression = $inclusive_or_expression;
 }
-| logical_and_expression[child] PUNCTUATOR_LOGICAL_AND inclusive_or_expression {
+| logical_and_expression[lhs] PUNCTUATOR_LOGICAL_AND inclusive_or_expression[rhs] {
 	TRACE("logical-AND-expression", "logical-AND-expression && inclusive-OR-expression");
 
-	$$ = ast_logical_and_expression_init(
-		$child,
-		$inclusive_or_expression,
-		&@child,
-		&@inclusive_or_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_LOGICAL_AND,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -884,14 +888,15 @@ logical_or_expression:
 	TRACE("logical-OR-expression", "logical-AND-expression");
 	$logical_or_expression = $logical_and_expression;
 }
-| logical_or_expression[child] PUNCTUATOR_LOGICAL_OR logical_and_expression {
+| logical_or_expression[lhs] PUNCTUATOR_LOGICAL_OR logical_and_expression[rhs] {
 	TRACE("logical-OR-expression", "logical-OR-expression || logical-AND-expression");
 
-	$$ = ast_logical_or_expression_init(
-		$child,
-		$logical_and_expression,
-		&@child,
-		&@logical_and_expression);
+	$$ = ast_binary_operator_init(
+		$lhs,
+		$rhs,
+		AST_BINARY_OPERATOR_LOGICAL_OR,
+		&@lhs,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;

@@ -30,27 +30,18 @@
 
 
 typedef enum ast_e {
-	AST_ADDITIVE_EXPRESSION,
-	AST_AND_EXPRESSION,
 	AST_ASSIGNMENT_EXPRESSION,
 	AST_ASSIGNMENT_OPERATOR,
+	AST_BINARY_OPERATOR,
 	AST_CAST_EXPRESSION,
 	AST_CHARACTER_CONSTANT,
 	AST_CONDITIONAL_EXPRESSION,
-	AST_EQUALITY_EXPRESSION,
-	AST_EXCLUSIVE_OR_EXPRESSION,
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
 	AST_IDENTIFIER,
-	AST_INCLUSIVE_OR_EXPRESSION,
 	AST_INTEGER_CONSTANT,
-	AST_LOGICAL_AND_EXPRESSION,
-	AST_LOGICAL_OR_EXPRESSION,
-	AST_MULTIPLICATIVE_EXPRESSION,
 	AST_POINTER,
 	AST_POSTFIX_EXPRESSION,
-	AST_RELATIONAL_EXPRESSION,
-	AST_SHIFT_EXPRESSION,
 	AST_SPECIFIER_QUALIFIER_LIST,
 	AST_STORAGE_CLASS_SPECIFIER,
 	AST_STRING_LITERAL,
@@ -87,27 +78,18 @@ void fprint_location(
 	uint_fast8_t      flags);
 
 
-#include <jkcc/ast/additive_expression.h>
-#include <jkcc/ast/and_expression.h>
 #include <jkcc/ast/assignment_expression.h>
 #include <jkcc/ast/assignment_operator.h>
+#include <jkcc/ast/binary_operator.h>
 #include <jkcc/ast/cast_expression.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/conditional_expression.h>
-#include <jkcc/ast/equality_expression.h>
-#include <jkcc/ast/exclusive_or_expression.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/identifier.h>
-#include <jkcc/ast/inclusive_or_expression.h>
 #include <jkcc/ast/integer_constant.h>
-#include <jkcc/ast/logical_and_expression.h>
-#include <jkcc/ast/logical_or_expression.h>
-#include <jkcc/ast/multiplicative_expression.h>
 #include <jkcc/ast/pointer.h>
 #include <jkcc/ast/postfix_expression.h>
-#include <jkcc/ast/relational_expression.h>
-#include <jkcc/ast/shift_expression.h>
 #include <jkcc/ast/specifier_qualifier_list.h>
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>

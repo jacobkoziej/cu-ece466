@@ -59,7 +59,7 @@ void fprint_ast_conditional_expression(
 	FPRINT_AST_NODE_BEGIN(ast_conditional_expression_t);
 
 	FPRINT_AST_MEMBER(
-		ast_node_str[AST_LOGICAL_OR_EXPRESSION],
+		ast_node_str[AST_BINARY_OPERATOR],
 		node->logical_or_expression);
 	FPRINT_AST_MEMBER(
 		ast_node_str[AST_EXPRESSION],
