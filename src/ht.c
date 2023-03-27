@@ -99,6 +99,53 @@ int ht_init(ht_t *ht, size_t size)
 	return 0;
 }
 
+int ht_insert(ht_t *ht, const void *key, size_t size, void *val)
+{
+	// invalid key size
+	if (!size) return -1;
+
+	if (ht->use >= ht->size / 2)
+		if (rehash(ht)) return -1;
+
+	void *key_buf = malloc(size);
+	if (!key_buf) return -1;
+
+	uint64_t pos = fnv1a_hash(key, size) % ht->size;
+
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+		ht_entry_t *entry = &ht->entries[pos];
+
+		if (entry->key) {
+			if (!(entry->attributes & HT_ATTRIBUTE_DELETED)) {
+				// duplicate entry
+				if (entry->size != size)
+					if (!memcmp(entry->key, key, size))
+						goto error;
+
+				continue;
+			}
+
+			free(entry->key);
+			entry->attributes &= ~HT_ATTRIBUTE_DELETED;
+		}
+
+		memcpy(entry->key = key_buf, key, size);
+
+		entry->val  = val;
+		entry->size = size;
+
+		++ht->use;
+
+		return 0;
+	}
+
+error:
+	free(key_buf);
+
+	// we've somehow traversed the entire hash table
+	return -1;
+}
+
 int ht_rm(ht_t *ht, const void *key, size_t size, void **val)
 {
 	// invalid key size
