@@ -50,6 +50,10 @@ void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry))
 		for (size_t i = 0; i < ht->size; i++)
 			entry_free(&ht->entries[i]);
 
+	for (size_t i = 0; i < ht->size; i++)
+		if (ht->entries[i].key)
+			free(ht->entries[i].key);
+
 	free(ht->entries);
 }
 
