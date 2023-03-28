@@ -39,6 +39,7 @@ typedef enum ast_e {
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
 	AST_GENERIC_ASSOCIATION,
+	AST_GENERIC_ASSOCIATION_LIST,
 	AST_IDENTIFIER,
 	AST_INTEGER_CONSTANT,
 	AST_POINTER,
@@ -87,6 +88,7 @@ void fprint_location(
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/generic_association.h>
+#include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/ast/pointer.h>

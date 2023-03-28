@@ -214,6 +214,7 @@ typedef void* yyscan_t;
 %nterm <ast> character_constant
 %nterm <ast> string_literal
 %nterm <ast> primary_expression
+%nterm <ast> generic_assoc_list
 %nterm <ast> generic_association
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
@@ -366,6 +367,29 @@ primary_expression:
 // 6.5.1.1
 generic_selection:
   %empty
+;
+
+
+// 6.5.1.1
+generic_assoc_list:
+  generic_association {
+	TRACE("generic-assoc-list", "generic-association");
+
+	$generic_assoc_list = ast_generic_association_list_init(
+		$generic_association,
+		&@generic_association);
+	if (!$generic_association) YYNOMEM;
+}
+| generic_assoc_list[child] PUNCTUATOR_COMMA generic_association {
+	TRACE("generic-association", "generic-assoc-list : generic-association");
+
+	$$ = ast_generic_association_list_append(
+		$child,
+		$generic_association,
+		&@generic_association,
+		&parser->error);
+	ERROR($$);
+}
 ;
 
 
