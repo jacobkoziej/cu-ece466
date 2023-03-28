@@ -93,7 +93,7 @@ void fprint_ast_expression(
 	fprintf(
 		stream,
 		"\"%s\" : [\n",
-		ast_node_str[AST_ASSIGNMENT_EXPRESSION]);
+		"expression");
 
 	++level;
 
