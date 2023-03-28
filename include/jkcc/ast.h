@@ -34,7 +34,7 @@ typedef enum ast_e {
 	AST_ASSIGNMENT_EXPRESSION,
 	AST_ASSIGNMENT_OPERATOR,
 	AST_BINARY_OPERATOR,
-	AST_CAST_EXPRESSION,
+	AST_CAST,
 	AST_CHARACTER_CONSTANT,
 	AST_CONDITIONAL_EXPRESSION,
 	AST_EXPRESSION,
@@ -82,7 +82,7 @@ void fprint_location(
 #include <jkcc/ast/assignment_expression.h>
 #include <jkcc/ast/assignment_operator.h>
 #include <jkcc/ast/binary_operator.h>
-#include <jkcc/ast/cast_expression.h>
+#include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/conditional_expression.h>
 #include <jkcc/ast/expression.h>

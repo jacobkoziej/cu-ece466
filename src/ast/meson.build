@@ -7,7 +7,7 @@ jkcc_src += files(
         'assignment_expression.c',
         'assignment_operator.c',
         'binary_operator.c',
-        'cast_expression.c',
+        'cast.c',
         'character_constant.c',
         'conditional_expression.c',
         'expression.c',

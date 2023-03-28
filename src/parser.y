@@ -523,14 +523,14 @@ cast_expression:
 	TRACE("cast-expression", "unary-expression");
 	$cast_expression = $unary_expression;
 }
-| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS cast_expression[child] {
+| PUNCTUATOR_LPARENTHESIS type_name[type] PUNCTUATOR_RPARENTHESIS cast_expression[expression] {
 	TRACE("cast-expression", "( type-name ) cast-expression");
 
-	$$ = ast_cast_expression_init(
-		$child,
-		$type_name,
+	$$ = ast_cast_init(
+		$expression,
+		$type,
 		&@PUNCTUATOR_LPARENTHESIS,
-		&@child);
+		&@expression);
 	if (!$$) YYNOMEM;
 }
 ;
