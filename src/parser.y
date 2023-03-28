@@ -214,6 +214,7 @@ typedef void* yyscan_t;
 %nterm <ast> character_constant
 %nterm <ast> string_literal
 %nterm <ast> primary_expression
+%nterm <ast> generic_selection
 %nterm <ast> generic_assoc_list
 %nterm <ast> generic_association
 %nterm <ast> postfix_expression
@@ -355,19 +356,24 @@ primary_expression:
 	TRACE("primary-expression", "( expression )");
 	$primary_expression = $expression;
 }
-/*
 | generic_selection {
 	TRACE("primary-expression", "generic-selection");
 	$primary_expression = $generic_selection;
 }
-*/
 ;
 
 
 // 6.5.1.1
-generic_selection:
-  %empty
-;
+generic_selection: KEYWORD__GENERIC PUNCTUATOR_LPARENTHESIS assignment_expression[expression] PUNCTUATOR_COMMA generic_assoc_list[list] PUNCTUATOR_RPARENTHESIS {
+	TRACE("generic-selection", "_Generic ( assignment-expression , generic-assoc-list )");
+
+	$generic_selection = ast_generic_selection_init(
+		$expression,
+		$list,
+		&@KEYWORD__GENERIC,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$generic_selection) YYNOMEM;
+}
 
 
 // 6.5.1.1
