@@ -19,15 +19,12 @@
 
 #define UNARY_EXPRESSION_INCREMENT (1 << 0)
 #define UNARY_EXPRESSION_DECREMENT (1 << 1)
-#define UNARY_EXPRESSION_SIZEOF    (1 << 2)
-#define UNARY_EXPRESSION__ALIGNOF  (1 << 3)
 
 
 typedef struct ast_unary_expression_s {
 	ast_t        *unary_expression;
 	ast_t        *unary_operator;
 	ast_t        *cast_expression;
-	ast_t        *type_name;
 	uint_fast8_t  flags;
 	location_t    location;
 	ast_t         ast;
@@ -38,7 +35,6 @@ ast_t *ast_unary_expression_init(
 	ast_t        *unary_expression,
 	ast_t        *unary_operator,
 	ast_t        *cast_expression,
-	ast_t        *type_name,
 	uint_fast8_t  flags,
 	location_t   *location_start,
 	location_t   *location_end);

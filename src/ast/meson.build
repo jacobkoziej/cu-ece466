@@ -3,6 +3,7 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 jkcc_src += files(
+        'alignof.c',
         'assignment_expression.c',
         'assignment_operator.c',
         'binary_operator.c',

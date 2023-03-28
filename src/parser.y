@@ -468,7 +468,6 @@ unary_expression:
 		$child,
 		NULL,
 		NULL,
-		NULL,
 		UNARY_EXPRESSION_INCREMENT,
 		&@PUNCTUATOR_INCREMENT,
 		&@child);
@@ -479,7 +478,6 @@ unary_expression:
 
 	$$ = ast_unary_expression_init(
 		$child,
-		NULL,
 		NULL,
 		NULL,
 		UNARY_EXPRESSION_DECREMENT,
@@ -494,7 +492,6 @@ unary_expression:
 		NULL,
 		$unary_operator,
 		$cast_expression,
-		NULL,
 		0,
 		&@unary_operator,
 		&@cast_expression);
@@ -518,15 +515,11 @@ unary_expression:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$unary_expression) YYNOMEM;
 }
-| KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS {
+| KEYWORD__ALIGNOF PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
 	TRACE("unary-expression", "_Alignof ( type-name )");
 
-	$unary_expression = ast_unary_expression_init(
-		NULL,
-		NULL,
-		NULL,
-		$type_name,
-		UNARY_EXPRESSION__ALIGNOF,
+	$unary_expression = ast_alignof_init(
+		$operand,
 		&@KEYWORD__ALIGNOF,
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$unary_expression) YYNOMEM;

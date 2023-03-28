@@ -18,6 +18,7 @@
 
 
 void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
+	ast_alignof_free,
 	ast_assignment_expression_free,
 	ast_assignment_operator_free,
 	ast_binary_operator_free,
@@ -47,6 +48,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	const ast_t  *ast,
 	size_t        level,
 	uint_fast8_t  flags) = {
+	fprint_ast_alignof,
 	fprint_ast_assignment_expression,
 	fprint_ast_assignment_operator,
 	fprint_ast_binary_operator,
@@ -73,6 +75,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 
 
 char *ast_node_str[AST_NODES_TOTAL] = {
+	"alignof",
 	"assignment-expression",
 	"assignment-operator",
 	"binary-operator",

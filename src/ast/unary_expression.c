@@ -20,7 +20,6 @@ ast_t *ast_unary_expression_init(
 	ast_t        *unary_expression,
 	ast_t        *unary_operator,
 	ast_t        *cast_expression,
-	ast_t        *type_name,
 	uint_fast8_t  flags,
 	location_t   *location_start,
 	location_t   *location_end)
@@ -30,7 +29,6 @@ ast_t *ast_unary_expression_init(
 	node->unary_expression   = unary_expression;
 	node->unary_operator     = unary_operator;
 	node->cast_expression    = cast_expression;
-	node->type_name          = type_name;
 
 	node->flags = flags;
 
@@ -51,7 +49,6 @@ void ast_unary_expression_free(ast_t *ast)
 	AST_NODE_FREE(node->unary_expression);
 	AST_NODE_FREE(node->unary_operator);
 	AST_NODE_FREE(node->cast_expression);
-	AST_NODE_FREE(node->type_name);
 
 	free(node);
 }
@@ -73,9 +70,6 @@ void fprint_ast_unary_expression(
 	FPRINT_AST_MEMBER(
 		ast_node_str[AST_CAST_EXPRESSION],
 		node->cast_expression);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_TYPE_NAME],
-		node->type_name);
 
 	INDENT(stream, level);
 	fprintf(
@@ -90,22 +84,6 @@ void fprint_ast_unary_expression(
 		stream,
 		"\"decrement\" : %s,\n",
 		(node->flags & UNARY_EXPRESSION_DECREMENT)
-		? "true"
-		: "false");
-
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"sizeof\"    : %s,\n",
-		(node->flags & UNARY_EXPRESSION_SIZEOF)
-		? "true"
-		: "false");
-
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"_Alignof\"  : %s,\n",
-		(node->flags & UNARY_EXPRESSION__ALIGNOF)
 		? "true"
 		: "false");
 

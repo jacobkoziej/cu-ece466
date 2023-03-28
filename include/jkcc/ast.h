@@ -30,6 +30,7 @@
 
 
 typedef enum ast_e {
+	AST_ALIGNOF,
 	AST_ASSIGNMENT_EXPRESSION,
 	AST_ASSIGNMENT_OPERATOR,
 	AST_BINARY_OPERATOR,
@@ -79,6 +80,7 @@ void fprint_location(
 	uint_fast8_t      flags);
 
 
+#include <jkcc/ast/alignof.h>
 #include <jkcc/ast/assignment_expression.h>
 #include <jkcc/ast/assignment_operator.h>
 #include <jkcc/ast/binary_operator.h>
