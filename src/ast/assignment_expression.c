@@ -58,9 +58,11 @@ void fprint_ast_assignment_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_assignment_expression_t);
 
+	/* TODO: fix unary_expression deprecation
 	FPRINT_AST_MEMBER(
 		ast_node_str[AST_UNARY_EXPRESSION],
 		node->unary_expression);
+	*/
 	FPRINT_AST_MEMBER(
 		ast_node_str[AST_ASSIGNMENT_OPERATOR],
 		node->assignment_operator);

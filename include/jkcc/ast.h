@@ -42,7 +42,6 @@ typedef enum ast_e {
 	AST_IDENTIFIER,
 	AST_INTEGER_CONSTANT,
 	AST_POINTER,
-	AST_POSTFIX_EXPRESSION,
 	AST_SIZEOF,
 	AST_SPECIFIER_QUALIFIER_LIST,
 	AST_STORAGE_CLASS_SPECIFIER,
@@ -51,7 +50,6 @@ typedef enum ast_e {
 	AST_TYPE_QUALIFIER,
 	AST_TYPE_QUALIFIER_LIST,
 	AST_TYPE_SPECIFIER,
-	AST_UNARY_EXPRESSION,
 	AST_UNARY_OPERATOR,
 	AST_NODES_TOTAL,
 } ast_t;
@@ -92,7 +90,6 @@ void fprint_location(
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/ast/pointer.h>
-#include <jkcc/ast/postfix_expression.h>
 #include <jkcc/ast/sizeof.h>
 #include <jkcc/ast/specifier_qualifier_list.h>
 #include <jkcc/ast/storage_class_specifier.h>
@@ -101,7 +98,6 @@ void fprint_location(
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>
-#include <jkcc/ast/unary_expression.h>
 #include <jkcc/ast/unary_operator.h>
 
 

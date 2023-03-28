@@ -30,7 +30,6 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_identifier_free,
 	ast_integer_constant_free,
 	ast_pointer_free,
-	ast_postfix_expression_free,
 	ast_sizeof_free,
 	ast_specifier_qualifier_list_free,
 	ast_storage_class_specifier_free,
@@ -39,7 +38,6 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_type_qualifier_free,
 	ast_type_qualifier_list_free,
 	ast_type_specifier_free,
-	ast_unary_expression_free,
 	ast_unary_operator_free,
 };
 
@@ -60,7 +58,6 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	fprint_ast_identifier,
 	fprint_ast_integer_constant,
 	fprint_ast_pointer,
-	fprint_ast_postfix_expression,
 	fprint_ast_sizeof,
 	fprint_ast_specifier_qualifier_list,
 	fprint_ast_storage_class_specifier,
@@ -69,7 +66,6 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	fprint_ast_type_qualifier,
 	fprint_ast_type_qualifier_list,
 	fprint_ast_type_specifier,
-	fprint_ast_unary_expression,
 	fprint_ast_unary_operator,
 };
 
@@ -87,7 +83,6 @@ char *ast_node_str[AST_NODES_TOTAL] = {
 	"identifier",
 	"integer-constant",
 	"pointer",
-	"postfix-expression",
 	"sizeof",
 	"specifier-qualifier-list",
 	"storage-class-specifier",
@@ -96,7 +91,6 @@ char *ast_node_str[AST_NODES_TOTAL] = {
 	"type-qualifier",
 	"type-qualifier-list",
 	"type-specifier",
-	"unary-expression",
 	"unary-operator",
 };
 

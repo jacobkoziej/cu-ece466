@@ -15,7 +15,6 @@ jkcc_src += files(
         'identifier.c',
         'integer_constant.c',
         'pointer.c',
-        'postfix_expression.c',
         'sizeof.c',
         'specifier_qualifier_list.c',
         'storage_class_specifier.c',
@@ -24,6 +23,5 @@ jkcc_src += files(
         'type_qualifier.c',
         'type_qualifier_list.c',
         'type_specifier.c',
-        'unary_expression.c',
         'unary_operator.c',
 )

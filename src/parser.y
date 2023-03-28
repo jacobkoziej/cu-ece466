@@ -95,6 +95,7 @@ typedef void* yyscan_t;
 
 
 %union{
+	int                   val;
 	identifier_t          identifier;
 	integer_constant_t    integer_constant;
 	floating_constant_t   floating_constant;
@@ -215,7 +216,7 @@ typedef void* yyscan_t;
 %nterm <ast> primary_expression
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
-%nterm <ast> unary_operator
+%nterm <val> unary_operator
 %nterm <ast> cast_expression
 %nterm <ast> multiplicative_expression
 %nterm <ast> additive_expression
@@ -373,85 +374,51 @@ postfix_expression:
 	TRACE("postfix-expression", "primary-expression");
 	$postfix_expression = $primary_expression;
 }
-// | postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET
+/*
+| postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET {
+	TRACE("postfix-expression", "postfix-expression [ expression ]");
+}
 | postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( )");
-
-	$$ = ast_postfix_expression_init(
-		$child,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		POSTFIX_EXPRESSION_PARENTHESIS,
-		&@child,
-		&@PUNCTUATOR_RPARENTHESIS);
-	if (!$$) YYNOMEM;
 }
-// | postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS
+| postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("postfix-expression", "postfix-expression ( argument-expression-list )");
+}
 | postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS identifier {
 	TRACE("postfix-expression", "postfix-expression . identifier");
-
-	$$ = ast_postfix_expression_init(
-		$child,
-		NULL,
-		NULL,
-		$identifier,
-		NULL,
-		NULL,
-		0,
-		&@child,
-		&@identifier);
-	if (!$$) YYNOMEM;
 }
-| postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
+| postfix_expression PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
 	TRACE("postfix-expression", "postfix-expression -> identifier");
-
-	$$ = ast_postfix_expression_init(
-		$child,
-		NULL,
-		NULL,
-		$identifier,
-		NULL,
-		NULL,
-		POSTFIX_EXPRESSION_DEREFERENCE,
-		&@child,
-		&@identifier);
-	if (!$$) YYNOMEM;
 }
-| postfix_expression[child] PUNCTUATOR_INCREMENT[increment] {
+*/
+| postfix_expression[operand] PUNCTUATOR_INCREMENT {
 	TRACE("postfix-expression", "postfix-expression ++");
 
-	$$ = ast_postfix_expression_init(
-		$child,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		POSTFIX_EXPRESSION_INCREMENT,
-		&@child,
-		&@increment);
+	$$ = ast_unary_operator_init(
+		$operand,
+		AST_UNARY_OPERATOR_INCREMENT,
+		&@operand,
+		&@PUNCTUATOR_INCREMENT);
 	if (!$$) YYNOMEM;
 }
-| postfix_expression[child] PUNCTUATOR_DECREMENT[decrement] {
+| postfix_expression[operand] PUNCTUATOR_DECREMENT {
 	TRACE("postfix-expression", "postfix-expression --");
 
-	$$ = ast_postfix_expression_init(
-		$child,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		POSTFIX_EXPRESSION_DECREMENT,
-		&@child,
-		&@decrement);
+	$$ = ast_unary_operator_init(
+		$operand,
+		AST_UNARY_OPERATOR_DECREMENT,
+		&@operand,
+		&@PUNCTUATOR_DECREMENT);
 	if (!$$) YYNOMEM;
 }
-// | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_RBRACKET
-// | PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_COMMA PUNCTUATOR_RBRACKET
+/*
+| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACE initializer_list PUNCTUATOR_RBRACE {
+	TRACE("postfix-expression", "( type-name ) { initializer-list }");
+}
+| PUNCTUATOR_LPARENTHESIS type_name PUNCTUATOR_RPARENTHESIS PUNCTUATOR_LBRACKET initializer_list PUNCTUATOR_COMMA PUNCTUATOR_RBRACKET {
+	TRACE("postfix-expression", "( type-name ) { initializer-list , }");
+}
+*/
 ;
 
 
@@ -461,41 +428,35 @@ unary_expression:
 	TRACE("unary-expression", "postfix-expression");
 	$unary_expression = $postfix_expression;
 }
-| PUNCTUATOR_INCREMENT unary_expression[child] {
+| PUNCTUATOR_INCREMENT unary_expression[operand] {
 	TRACE("unary-expression", "++ unary-expression");
 
-	$$ = ast_unary_expression_init(
-		$child,
-		NULL,
-		NULL,
-		UNARY_EXPRESSION_INCREMENT,
+	$$ = ast_unary_operator_init(
+		$operand,
+		AST_UNARY_OPERATOR_INCREMENT,
 		&@PUNCTUATOR_INCREMENT,
-		&@child);
+		&@operand);
 	if (!$$) YYNOMEM;
 }
-| PUNCTUATOR_DECREMENT unary_expression[child] {
+| PUNCTUATOR_DECREMENT unary_expression[operand] {
 	TRACE("unary-expression", "-- unary-expression");
 
-	$$ = ast_unary_expression_init(
-		$child,
-		NULL,
-		NULL,
-		UNARY_EXPRESSION_DECREMENT,
+	$$ = ast_unary_operator_init(
+		$operand,
+		AST_UNARY_OPERATOR_DECREMENT,
 		&@PUNCTUATOR_DECREMENT,
-		&@child);
+		&@operand);
 	if (!$$) YYNOMEM;
 }
-| unary_operator cast_expression {
+| unary_operator[operator] cast_expression[operand] {
 	TRACE("unary-expression", "unary-operator cast-expression");
 
-	$$ = ast_unary_expression_init(
-		NULL,
-		$unary_operator,
-		$cast_expression,
-		0,
-		&@unary_operator,
-		&@cast_expression);
-	if (!$$) YYNOMEM;
+	$unary_expression = ast_unary_operator_init(
+		$operand,
+		$operator,
+		&@operator,
+		&@operand);
+	if (!$unary_expression) YYNOMEM;
 }
 | KEYWORD_SIZEOF unary_expression[operand] {
 	TRACE("unary-expression", "sizeof unary-expression");
@@ -509,7 +470,7 @@ unary_expression:
 | KEYWORD_SIZEOF PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
 	TRACE("unary-expression", "sizeof ( type-name )");
 
-	$$ = ast_sizeof_init(
+	$unary_expression = ast_sizeof_init(
 		$operand,
 		&@KEYWORD_SIZEOF,
 		&@PUNCTUATOR_RPARENTHESIS);
@@ -531,51 +492,27 @@ unary_expression:
 unary_operator:
   PUNCTUATOR_AMPERSAND {
 	TRACE("unary-operator", "&");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_AMPERSAND,
-		&@PUNCTUATOR_AMPERSAND);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_AMPERSAND;
 }
 | PUNCTUATOR_ASTERISK {
 	TRACE("unary-operator", "*");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_ASTERISK,
-		&@PUNCTUATOR_ASTERISK);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_ASTERISK;
 }
 | PUNCTUATOR_PLUS {
 	TRACE("unary-operator", "+");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_PLUS,
-		&@PUNCTUATOR_PLUS);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_PLUS;
 }
 | PUNCTUATOR_MINUS {
 	TRACE("unary-operator", "-");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_MINUS,
-		&@PUNCTUATOR_MINUS);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_MINUS;
 }
 | PUNCTUATOR_UNARY_COMPLEMENT {
 	TRACE("unary-operator", "~");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_UNARY_COMPLEMENT,
-		&@PUNCTUATOR_UNARY_COMPLEMENT);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_UNARY_COMPLEMENT;
 }
 | PUNCTUATOR_LOGICAL_NOT {
 	TRACE("unary-operator", "!");
-
-	$unary_operator = ast_unary_operator_init(
-		UNARY_OPERATOR_LOGICAL_NOT,
-		&@PUNCTUATOR_LOGICAL_NOT);
-	if (!$unary_operator) YYNOMEM;
+	$unary_operator = AST_UNARY_OPERATOR_LOGICAL_NOT;
 }
 ;
 
