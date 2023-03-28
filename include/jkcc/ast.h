@@ -35,7 +35,6 @@ typedef enum ast_e {
 	AST_BINARY_OPERATOR,
 	AST_CAST,
 	AST_CHARACTER_CONSTANT,
-	AST_CONDITIONAL_EXPRESSION,
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
 	AST_GENERIC_ASSOCIATION,
@@ -48,6 +47,7 @@ typedef enum ast_e {
 	AST_SPECIFIER_QUALIFIER_LIST,
 	AST_STORAGE_CLASS_SPECIFIER,
 	AST_STRING_LITERAL,
+	AST_TERNARY_OPERATOR,
 	AST_TYPE_NAME,
 	AST_TYPE_QUALIFIER,
 	AST_TYPE_QUALIFIER_LIST,
@@ -85,7 +85,6 @@ void fprint_location(
 #include <jkcc/ast/binary_operator.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
-#include <jkcc/ast/conditional_expression.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/generic_association.h>
@@ -98,6 +97,7 @@ void fprint_location(
 #include <jkcc/ast/specifier_qualifier_list.h>
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>
+#include <jkcc/ast/ternary_operator.h>
 #include <jkcc/ast/type_name.h>
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_qualifier_list.h>

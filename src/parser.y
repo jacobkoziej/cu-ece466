@@ -880,15 +880,15 @@ conditional_expression:
 	TRACE("conditional-expression", "logical-OR-expression");
 	$conditional_expression = $logical_or_expression;
 }
-| logical_or_expression PUNCTUATOR_CONDITIONAL_QUESTION expression PUNCTUATOR_CONDITIONAL_COLON conditional_expression[child] {
+| logical_or_expression[condition] PUNCTUATOR_CONDITIONAL_QUESTION expression[lhs] PUNCTUATOR_CONDITIONAL_COLON conditional_expression[rhs] {
 	TRACE("conditional-expression", "logical-OR-expression ? expression : conditional-expression");
 
-	$$ = ast_conditional_expression_init(
-		$logical_or_expression,
-		$expression,
-		$child,
-		&@logical_or_expression,
-		&@child);
+	$$ = ast_ternary_operator_init(
+		$condition,
+		$lhs,
+		$rhs,
+		&@condition,
+		&@rhs);
 	if (!$$) YYNOMEM;
 }
 ;
