@@ -51,15 +51,7 @@ void fprint_ast_alignof(
 {
 	FPRINT_AST_NODE_BEGIN(ast_alignof_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"operand\" : ");
-	FPRINT_AST_NODE(
-		stream,
-		node->operand,
-		level,
-		AST_PRINT_NO_INDENT_INITIAL |
-		AST_PRINT_NO_TRAILING_NEWLINE);
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER("operand", node->operand);
 
 	FPRINT_AST_NODE_FINISH;
 }

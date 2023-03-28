@@ -58,25 +58,8 @@ void fprint_ast_binary_operator(
 {
 	FPRINT_AST_NODE_BEGIN(ast_binary_operator_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"lhs\" : ");
-	FPRINT_AST_NODE(
-		stream,
-		node->lhs,
-		level,
-		AST_PRINT_NO_INDENT_INITIAL |
-		AST_PRINT_NO_TRAILING_NEWLINE);
-	fprintf(stream, ",\n");
-
-	INDENT(stream, level);
-	fprintf(stream, "\"rhs\" : ");
-	FPRINT_AST_NODE(
-		stream,
-		node->rhs,
-		level,
-		AST_PRINT_NO_INDENT_INITIAL |
-		AST_PRINT_NO_TRAILING_NEWLINE);
-	fprintf(stream, ",\n");
+	FPRINT_AST_MEMBER("lhs", node->lhs);
+	FPRINT_AST_MEMBER("rhs", node->rhs);
 
 	const char *operator;
 	switch (node->operator) {
