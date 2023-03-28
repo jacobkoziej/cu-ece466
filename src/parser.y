@@ -214,6 +214,7 @@ typedef void* yyscan_t;
 %nterm <ast> character_constant
 %nterm <ast> string_literal
 %nterm <ast> primary_expression
+%nterm <ast> generic_association
 %nterm <ast> postfix_expression
 %nterm <ast> unary_expression
 %nterm <val> unary_operator
@@ -365,6 +366,25 @@ primary_expression:
 // 6.5.1.1
 generic_selection:
   %empty
+;
+
+
+// 6.5.1.1
+generic_association:
+  type_name[type] PUNCTUATOR_CONDITIONAL_COLON assignment_expression[expression] {
+	TRACE("generic-association", "type-name : assignment-expression");
+
+	$generic_association = ast_generic_association_init(
+		$type,
+		$expression,
+		&@type,
+		&@expression);
+	if (!$generic_association) YYNOMEM;
+}
+| KEYWORD_DEFAULT PUNCTUATOR_CONDITIONAL_COLON assignment_expression {
+	TRACE("generic-association", "default : assignment-expression");
+	$generic_association = $assignment_expression;
+}
 ;
 
 

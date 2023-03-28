@@ -11,6 +11,7 @@ jkcc_src += files(
         'conditional_expression.c',
         'expression.c',
         'floating_constant.c',
+        'generic_association.c',
         'identifier.c',
         'integer_constant.c',
         'pointer.c',
