@@ -967,19 +967,21 @@ assignment_operator:
 expression:
   assignment_expression {
 	TRACE("expression", "assignment-expression");
-
-	$expression = ast_expression_init(
-		$assignment_expression,
-		&@assignment_expression);
-	if (!$expression) YYNOMEM;
+	$expression = $assignment_expression;
 }
-| expression[child] PUNCTUATOR_COMMA assignment_expression {
+| expression[parent_expression] PUNCTUATOR_COMMA assignment_expression {
 	TRACE("expression", "expression , assignment-expression");
 
-	$$ = ast_expression_append(
-		$child,
-		$assignment_expression,
-		&@assignment_expression);
+	$$ = (*$parent_expression == AST_EXPRESSION)
+		? ast_expression_append(
+			$parent_expression,
+			$assignment_expression,
+			&@assignment_expression)
+		: ast_expression_init(
+			$parent_expression,
+			$assignment_expression,
+			&@parent_expression,
+			&@assignment_expression);
 	if (!$$) YYNOMEM;
 }
 ;

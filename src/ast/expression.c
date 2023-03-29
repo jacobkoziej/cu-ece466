@@ -27,7 +27,7 @@ ast_t *ast_expression_append(
 		ast_expression_t);
 
 	if (vector_append(
-		&node->assignment_expression,
+		&node->expression,
 		&assignment_expression))
 		goto error;
 
@@ -40,28 +40,33 @@ error:
 }
 
 ast_t *ast_expression_init(
+	ast_t      *expression,
 	ast_t      *assignment_expression,
-	location_t *location)
+	location_t *location_start,
+	location_t *location_end)
 {
 	AST_INIT(ast_expression_t);
 
-	if (vector_init(
-		&node->assignment_expression,
-		sizeof(assignment_expression),
-		0))
+	if (vector_init(&node->expression, sizeof(expression), 0))
 		goto error_init;
 
-	if (vector_append(
-		&node->assignment_expression,
-		&assignment_expression))
+	if (vector_append(&node->expression, &expression))
 		goto error_append;
 
-	node->location = *location;
+	if (vector_append(&node->expression, &assignment_expression))
+		goto error_append;
+
+	node->location.file  = location_start->file;
+	node->location.start = location_start->start;
+
+	node->location.end = (location_end)
+		? location_end->end
+		: location_start->end;
 
 	AST_RETURN(AST_EXPRESSION);
 
 error_append:
-	vector_free(&node->assignment_expression);
+	vector_free(&node->expression);
 
 error_init:
 	return NULL;
@@ -71,12 +76,12 @@ void ast_expression_free(ast_t *ast)
 {
 	AST_FREE(ast_expression_t);
 
-	ast_t **assignment_expression = node->assignment_expression.buf;
+	ast_t **expression = node->expression.buf;
 
-	for (size_t i = 0; i < node->assignment_expression.use; i++)
-		AST_NODE_FREE(assignment_expression[i]);
+	for (size_t i = 0; i < node->expression.use; i++)
+		AST_NODE_FREE(expression[i]);
 
-	vector_free(&node->assignment_expression);
+	vector_free(&node->expression);
 
 	free(node);
 }
@@ -97,20 +102,20 @@ void fprint_ast_expression(
 
 	++level;
 
-	ast_t **assignment_expression = node->assignment_expression.buf;
+	ast_t **expression = node->expression.buf;
 
 	size_t pos;
-	for (pos = 0; pos < node->assignment_expression.use - 1; pos++) {
+	for (pos = 0; pos < node->expression.use - 1; pos++) {
 		FPRINT_AST_NODE(
 			stream,
-			assignment_expression[pos],
+			expression[pos],
 			level,
 			AST_PRINT_NO_TRAILING_NEWLINE);
 
 		fprintf(stream, ",\n");
 	}
 
-	FPRINT_AST_NODE(stream, assignment_expression[pos], level, 0);
+	FPRINT_AST_NODE(stream, expression[pos], level, 0);
 
 	--level;
 

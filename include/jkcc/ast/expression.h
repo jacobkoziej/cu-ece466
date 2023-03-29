@@ -19,7 +19,7 @@
 
 
 typedef struct ast_expression_s {
-	vector_t   assignment_expression;
+	vector_t   expression;
 	location_t location;
 	ast_t      ast;
 } ast_expression_t;
@@ -30,8 +30,10 @@ ast_t *ast_expression_append(
 	ast_t        *assignment_expression,
 	location_t   *location);
 ast_t *ast_expression_init(
+	ast_t        *expression,
 	ast_t        *assignment_expression,
-	location_t   *location);
+	location_t   *location_start,
+	location_t   *location_end);
 void ast_expression_free(
 	ast_t        *ast);
 void fprint_ast_expression(
