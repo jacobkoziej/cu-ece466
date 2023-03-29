@@ -30,6 +30,14 @@
 	type *node = malloc(sizeof(*node)); \
 	if (!node) return NULL;
 
+#define AST_NODE_LOCATION                             \
+	node->location.file  = location_start->file;  \
+	node->location.start = location_start->start; \
+                                                      \
+	node->location.end = (location_end)           \
+		? location_end->end                   \
+		: location_start->end;                \
+
 #define AST_RETURN(val)    \
 	node->ast = val;   \
 	return &node->ast;

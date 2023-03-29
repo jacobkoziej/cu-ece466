@@ -26,12 +26,7 @@ ast_t *ast_generic_association_init(
 	node->type       = type;
 	node->expression = expression;
 
-	node->location.file  = location_start->file;
-	node->location.start = location_start->start;
-
-	node->location.end = (location_end)
-		? location_end->end
-		: location_start->end;
+	AST_NODE_LOCATION;
 
 	AST_RETURN(AST_GENERIC_ASSOCIATION);
 }

@@ -30,12 +30,7 @@ ast_t *ast_binary_operator_init(
 
 	node->operator = operator;
 
-	node->location.file  = location_start->file;
-	node->location.start = location_start->start;
-
-	node->location.end = (location_end)
-		? location_end->end
-		: location_start->end;
+	AST_NODE_LOCATION;
 
 	AST_RETURN(AST_BINARY_OPERATOR);
 }
