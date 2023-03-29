@@ -98,30 +98,9 @@ void fprint_ast_generic_association_list(
 {
 	FPRINT_AST_NODE_BEGIN(ast_generic_association_list_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"%s\" : [\n", ast_node_str[AST_GENERIC_ASSOCIATION]);
-
-	++level;
-
-	ast_t **generic_association = node->generic_association.buf;
-
-	size_t pos;
-	for (pos = node->generic_association.use - 1; pos > 0; pos--) {
-		FPRINT_AST_NODE(
-			stream,
-			generic_association[pos],
-			level,
-			AST_PRINT_NO_TRAILING_NEWLINE);
-
-		fprintf(stream, ",\n");
-	}
-
-	FPRINT_AST_NODE(stream, generic_association[pos], level, 0);
-
-	--level;
-
-	INDENT(stream, level);
-	fprintf(stream, "],\n");
+	FPRINT_AST_LIST(
+		ast_node_str[AST_GENERIC_ASSOCIATION],
+		node->generic_association);
 
 	FPRINT_AST_NODE_FINISH;
 }

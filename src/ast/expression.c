@@ -94,33 +94,7 @@ void fprint_ast_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_expression_t);
 
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"%s\" : [\n",
-		"expression");
-
-	++level;
-
-	ast_t **expression = node->expression.buf;
-
-	size_t pos;
-	for (pos = 0; pos < node->expression.use - 1; pos++) {
-		FPRINT_AST_NODE(
-			stream,
-			expression[pos],
-			level,
-			AST_PRINT_NO_TRAILING_NEWLINE);
-
-		fprintf(stream, ",\n");
-	}
-
-	FPRINT_AST_NODE(stream, expression[pos], level, 0);
-
-	--level;
-
-	INDENT(stream, level);
-	fprintf(stream, "],\n");
+	FPRINT_AST_LIST("expression", node->expression);
 
 	FPRINT_AST_NODE_FINISH;
 }
