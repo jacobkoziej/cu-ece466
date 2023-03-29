@@ -105,6 +105,33 @@
 	fprintf(stream, "],\n");                        \
 }
 
+#define FPRINT_AST_REVERSE_LIST(name, member) {         \
+	INDENT(stream, level);                          \
+	fprintf(stream, "\"%s\" : [\n", name);          \
+                                                        \
+	++level;                                        \
+                                                        \
+	ast_t **tmp = member.buf;                       \
+                                                        \
+	size_t pos;                                     \
+	for (pos = member.use - 1; pos > 0; pos--) {    \
+		FPRINT_AST_NODE(                        \
+			stream,                         \
+			tmp[pos],                       \
+			level,                          \
+			AST_PRINT_NO_TRAILING_NEWLINE); \
+                                                        \
+		fprintf(stream, ",\n");                 \
+	}                                               \
+                                                        \
+	FPRINT_AST_NODE(stream, tmp[pos], level, 0);    \
+                                                        \
+	--level;                                        \
+                                                        \
+	INDENT(stream, level);                          \
+	fprintf(stream, "],\n");                        \
+}
+
 #define FPRINT_AST_NODE_FINISH                  \
 	INDENT(stream, level);                  \
 	fprintf(stream, "\"location\" : ");     \

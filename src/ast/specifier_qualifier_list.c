@@ -247,65 +247,15 @@ void fprint_ast_specifier_qualifier_list(
 {
 	FPRINT_AST_NODE_BEGIN(ast_specifier_qualifier_list_t);
 
-	if (node->type_specifier.use) {
-		INDENT(stream, level);
-		fprintf(
-			stream,
-			"\"%s\" : [\n",
-			ast_node_str[AST_TYPE_SPECIFIER]);
+	if (node->type_specifier.use)
+		FPRINT_AST_REVERSE_LIST(
+			ast_node_str[AST_TYPE_SPECIFIER],
+			node->type_specifier);
 
-		++level;
-
-		ast_t **type_specifier = node->type_specifier.buf;
-
-		size_t pos;
-		for (pos = node->type_specifier.use - 1; pos > 0; pos--) {
-			FPRINT_AST_NODE(
-				stream,
-				type_specifier[pos],
-				level,
-				AST_PRINT_NO_TRAILING_NEWLINE);
-
-			fprintf(stream, ",\n");
-		}
-
-		FPRINT_AST_NODE(stream, type_specifier[pos], level, 0);
-
-		--level;
-
-		INDENT(stream, level);
-		fprintf(stream, "],\n");
-	}
-
-	if (node->type_qualifier.use) {
-		INDENT(stream, level);
-		fprintf(
-			stream,
-			"\"%s\" : [\n",
-			ast_node_str[AST_TYPE_QUALIFIER]);
-
-		++level;
-
-		ast_t **type_qualifier = node->type_qualifier.buf;
-
-		size_t pos;
-		for (pos = node->type_qualifier.use - 1; pos > 0; pos--) {
-			FPRINT_AST_NODE(
-				stream,
-				type_qualifier[pos],
-				level,
-				AST_PRINT_NO_TRAILING_NEWLINE);
-
-			fprintf(stream, ",\n");
-		}
-
-		FPRINT_AST_NODE(stream, type_qualifier[pos], level, 0);
-
-		--level;
-
-		INDENT(stream, level);
-		fprintf(stream, "],\n");
-	}
+	if (node->type_qualifier.use)
+		FPRINT_AST_REVERSE_LIST(
+			ast_node_str[AST_TYPE_QUALIFIER],
+			node->type_qualifier);
 
 	FPRINT_AST_NODE_FINISH;
 }
