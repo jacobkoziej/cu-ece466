@@ -73,6 +73,11 @@
 	fprintf(stream, ",\n");                       \
 }
 
+#define FPRINT_AST_FIELD(name, value) {                     \
+	INDENT(stream, level);                              \
+	fprintf(stream, "\"%s\" : \"%s\",\n", name, value); \
+}
+
 #define FPRINT_AST_NODE_FINISH                  \
 	INDENT(stream, level);                  \
 	fprintf(stream, "\"location\" : ");     \

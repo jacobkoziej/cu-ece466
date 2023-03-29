@@ -74,8 +74,7 @@ void fprint_ast_storage_class_specifier(
 			break;
 	}
 
-	INDENT(stream, level);
-	fprintf(stream, "\"specifier\" : \"%s\",\n", specifier);
+	FPRINT_AST_FIELD("specifier", specifier);
 
 	FPRINT_AST_NODE_FINISH;
 }

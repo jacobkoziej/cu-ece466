@@ -46,9 +46,6 @@ void fprint_ast_string_literal(
 {
 	FPRINT_AST_NODE_BEGIN(ast_string_literal_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"encoding\" : \"");
-
 	const char *encoding;
 	const char *prefix;
 	switch (node->string_literal.encoding) {
@@ -81,7 +78,7 @@ void fprint_ast_string_literal(
 			encoding = "(unknown)";
 	}
 
-	fprintf(stream, "%s\",\n", encoding);
+	FPRINT_AST_FIELD("encoding", encoding);
 
 	// escape quotes
 	const char *head = node->string_literal.text.head;

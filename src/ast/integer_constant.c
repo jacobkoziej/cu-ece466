@@ -45,9 +45,6 @@ void fprint_ast_integer_constant(
 {
 	FPRINT_AST_NODE_BEGIN(ast_integer_constant_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"type\"  : \"");
-
 	const char *type;
 	switch (node->integer_constant.type) {
 		case INT:
@@ -78,13 +75,8 @@ void fprint_ast_integer_constant(
 			type = "(unknown)";
 	}
 
-	fprintf(stream, "%s\",\n", type);
-
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"value\" : \"%s\",\n",
-		node->integer_constant.text.head);
+	FPRINT_AST_FIELD("type", type);
+	FPRINT_AST_FIELD("value", node->integer_constant.text.head);
 
 	FPRINT_AST_NODE_FINISH;
 }

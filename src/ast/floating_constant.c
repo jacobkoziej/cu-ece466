@@ -45,9 +45,6 @@ void fprint_ast_floating_constant(
 {
 	FPRINT_AST_NODE_BEGIN(ast_floating_constant_t);
 
-	INDENT(stream, level);
-	fprintf(stream, "\"type\"  : \"");
-
 	const char *type;
 	switch (node->floating_constant.type) {
 		case FLOAT:
@@ -66,13 +63,8 @@ void fprint_ast_floating_constant(
 			type = "(unknown)";
 	}
 
-	fprintf(stream, "%s\",\n", type);
-
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"value\" : \"%s\",\n",
-		node->floating_constant.text.head);
+	FPRINT_AST_FIELD("type", type);
+	FPRINT_AST_FIELD("value", node->floating_constant.text.head);
 
 	FPRINT_AST_NODE_FINISH;
 }

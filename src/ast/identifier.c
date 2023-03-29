@@ -44,11 +44,7 @@ void fprint_ast_identifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_identifier_t);
 
-	INDENT(stream, level);
-	fprintf(
-		stream,
-		"\"identifier\" : \"%s\",\n",
-		node->identifier.text.head);
+	FPRINT_AST_FIELD("identifier", node->identifier.text.head);
 
 	FPRINT_AST_NODE_FINISH;
 }

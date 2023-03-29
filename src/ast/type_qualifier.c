@@ -68,8 +68,7 @@ void fprint_ast_type_qualifier(
 			break;
 	}
 
-	INDENT(stream, level);
-	fprintf(stream, "\"qualifier\" : \"%s\",\n", qualifier);
+	FPRINT_AST_FIELD("qualifier", qualifier);
 
 	FPRINT_AST_NODE_FINISH;
 }

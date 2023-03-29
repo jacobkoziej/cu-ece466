@@ -111,8 +111,7 @@ void fprint_ast_assignment(
 			break;
 	}
 
-	INDENT(stream, level);
-	fprintf(stream, "\"assignment\" : \"%s\",\n", assignment);
+	FPRINT_AST_FIELD("assignment", assignment);
 
 	FPRINT_AST_NODE_FINISH;
 }

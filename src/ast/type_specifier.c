@@ -105,8 +105,7 @@ void fprint_ast_type_specifier(
 		}
 	}
 
-	INDENT(stream, level);
-	fprintf(stream, "\"specifier\" : \"%s\",\n", specifier);
+	FPRINT_AST_FIELD("specifier", specifier);
 
 	FPRINT_AST_NODE_FINISH;
 }

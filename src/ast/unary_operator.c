@@ -103,8 +103,7 @@ void fprint_ast_unary_operator(
 			break;
 	}
 
-	INDENT(stream, level);
-	fprintf(stream, "\"operator\" : \"%s\",\n", operator);
+	FPRINT_AST_FIELD("operator", operator);
 
 	FPRINT_AST_NODE_FINISH;
 }
