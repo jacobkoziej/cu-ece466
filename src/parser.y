@@ -446,7 +446,7 @@ postfix_expression:
 
 	$$ = ast_unary_operator_init(
 		$operand,
-		AST_UNARY_OPERATOR_INCREMENT,
+		AST_UNARY_OPERATOR_POST_INCREMENT,
 		&@operand,
 		&@PUNCTUATOR_INCREMENT);
 	if (!$$) YYNOMEM;
@@ -456,7 +456,7 @@ postfix_expression:
 
 	$$ = ast_unary_operator_init(
 		$operand,
-		AST_UNARY_OPERATOR_DECREMENT,
+		AST_UNARY_OPERATOR_POST_DECREMENT,
 		&@operand,
 		&@PUNCTUATOR_DECREMENT);
 	if (!$$) YYNOMEM;
@@ -483,7 +483,7 @@ unary_expression:
 
 	$$ = ast_unary_operator_init(
 		$operand,
-		AST_UNARY_OPERATOR_INCREMENT,
+		AST_UNARY_OPERATOR_PRE_INCREMENT,
 		&@PUNCTUATOR_INCREMENT,
 		&@operand);
 	if (!$$) YYNOMEM;
@@ -493,7 +493,7 @@ unary_expression:
 
 	$$ = ast_unary_operator_init(
 		$operand,
-		AST_UNARY_OPERATOR_DECREMENT,
+		AST_UNARY_OPERATOR_PRE_DECREMENT,
 		&@PUNCTUATOR_DECREMENT,
 		&@operand);
 	if (!$$) YYNOMEM;

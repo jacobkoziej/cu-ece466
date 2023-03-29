@@ -17,10 +17,10 @@
 
 
 ast_t *ast_unary_operator_init(
-	ast_t        *operand,
-	uint_fast8_t  operator,
-	location_t   *location_start,
-	location_t   *location_end)
+	ast_t         *operand,
+	uint_fast16_t  operator,
+	location_t    *location_start,
+	location_t    *location_end)
 {
 	AST_INIT(ast_unary_operator_t);
 
@@ -82,12 +82,20 @@ void fprint_ast_unary_operator(
 			operator = "!";
 			break;
 
-		case AST_UNARY_OPERATOR_INCREMENT:
-			operator = "++";
+		case AST_UNARY_OPERATOR_PRE_INCREMENT:
+			operator = "++pre";
 			break;
 
-		case AST_UNARY_OPERATOR_DECREMENT:
-			operator = "--";
+		case AST_UNARY_OPERATOR_PRE_DECREMENT:
+			operator = "--pre";
+			break;
+
+		case AST_UNARY_OPERATOR_POST_INCREMENT:
+			operator = "post++";
+			break;
+
+		case AST_UNARY_OPERATOR_POST_DECREMENT:
+			operator = "post--";
 			break;
 
 		default:
