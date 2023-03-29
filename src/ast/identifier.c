@@ -44,7 +44,9 @@ void fprint_ast_identifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_identifier_t);
 
-	FPRINT_AST_FIELD("identifier", node->identifier.text.head);
+	FPRINT_AST_FIELD(
+		ast_node_str[AST_IDENTIFIER],
+		node->identifier.text.head);
 
 	FPRINT_AST_NODE_FINISH;
 }

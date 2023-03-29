@@ -89,7 +89,7 @@ void fprint_ast_expression(
 {
 	FPRINT_AST_NODE_BEGIN(ast_expression_t);
 
-	FPRINT_AST_LIST("expression", node->expression);
+	FPRINT_AST_LIST(ast_node_str[AST_EXPRESSION], node->expression);
 
 	FPRINT_AST_NODE_FINISH;
 }

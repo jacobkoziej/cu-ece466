@@ -106,7 +106,7 @@ void fprint_ast_assignment(
 			break;
 	}
 
-	FPRINT_AST_FIELD("assignment", assignment);
+	FPRINT_AST_FIELD(ast_node_str[AST_ASSIGNMENT], assignment);
 
 	FPRINT_AST_NODE_FINISH;
 }

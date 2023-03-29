@@ -50,7 +50,7 @@ void fprint_ast_generic_association(
 	FPRINT_AST_NODE_BEGIN(ast_generic_association_t);
 
 	FPRINT_AST_MEMBER("type", node->type);
-	FPRINT_AST_MEMBER("expression", node->expression);
+	FPRINT_AST_MEMBER(ast_node_str[AST_EXPRESSION], node->expression);
 
 	FPRINT_AST_NODE_FINISH;
 }
