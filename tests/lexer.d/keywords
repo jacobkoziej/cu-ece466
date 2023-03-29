@@ -40,5 +40,5 @@ _Complex
 _Generic
 _Imaginary
 _Noreturn
-_Static_Assert
-_Thread_Local
+_Static_assert
+_Thread_local

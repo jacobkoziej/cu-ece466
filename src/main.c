@@ -4,8 +4,9 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
+#include <jkcc/private/main.h>
+
 #include <argp.h>
-#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,19 +14,13 @@
 #include <unistd.h>
 
 #include <jkcc/jkcc.h>
+#include <jkcc/parser.h>
 #include <jkcc/trace.h>
-
-#include "vcs-tag.h"
-
-
-#define KEY_COLOR 257
-#define KEY_TRACE 258
+#include <jkcc/vector.h>
+#include <jkcc/version.h>
 
 
-static error_t parse_opt(int key, char *arg, struct argp_state *state);
-
-
-const char *argp_program_version     = VCS_TAG;
+const char *argp_program_version     = JKCC_VERSION;
 const char *argp_program_bug_address = "<jacobkoziej@gmail.com>";
 
 static const struct argp_option options[] = {
@@ -51,6 +46,82 @@ static const struct argp argp = {
 	.args_doc = "[FILE]...",
 };
 
+static jkcc_t jkcc;
+
+
+int main(int argc, char **argv)
+{
+	atexit(cleanup);
+
+	// automatic config
+	jkcc.config.ansi_sgr_stdout = isatty(STDOUT_FILENO);
+	jkcc.config.ansi_sgr_stderr = isatty(STDERR_FILENO);
+
+	const char *JKCC_TRACE = getenv("JKCC_TRACE");
+	if (JKCC_TRACE) {
+		int level = atoi(JKCC_TRACE);
+
+		if (level > JKCC_TRACE_LEVEL_HIGH)
+			level = JKCC_TRACE_LEVEL_HIGH;
+
+		if (level < JKCC_TRACE_LEVEL_NONE)
+			level = JKCC_TRACE_LEVEL_NONE;
+
+		jkcc.config.trace = 1;
+
+		jkcc.trace.stream   = stderr;
+		jkcc.trace.ansi_sgr = jkcc.config.ansi_sgr_stderr;
+		jkcc.trace.level    = level;
+	}
+
+	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
+
+	translation_unit_t *translation_unit;
+
+	if (vector_init(&jkcc.translation_unit, sizeof(translation_unit), 0))
+		return EXIT_FAILURE;
+
+	parser_t parser = {
+		.path  = NULL,
+		.error = NULL,
+		.trace = &jkcc.trace,
+	};
+	size_t processed = 0;
+
+	if (!jkcc.file_count) goto parse_stdin;
+
+	while (processed < jkcc.file_count) {
+		parser.path = jkcc.file[processed];
+
+parse_stdin:
+		translation_unit = parse(&parser);
+		if (!translation_unit) goto error;
+
+		if (vector_append(&jkcc.translation_unit, &translation_unit))
+			goto error;
+
+		++processed;
+	}
+
+	return EXIT_SUCCESS;
+
+error:
+	return EXIT_FAILURE;
+}
+
+
+static void cleanup(void)
+{
+	if (jkcc.translation_unit.buf) {
+		translation_unit_t **translation_unit =
+			jkcc.translation_unit.buf;
+
+		for (size_t i = 0; i < jkcc.translation_unit.use; i++)
+			translation_unit_free(translation_unit[i]);
+
+		vector_free(&jkcc.translation_unit);
+	}
+}
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
@@ -124,35 +195,4 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 	}
 
 	return 0;
-}
-
-
-int main(int argc, char **argv)
-{
-	static jkcc_t jkcc;
-
-	// automatic config
-	jkcc.config.ansi_sgr_stdout = isatty(STDOUT_FILENO);
-	jkcc.config.ansi_sgr_stderr = isatty(STDERR_FILENO);
-
-	const char *JKCC_TRACE = getenv("JKCC_TRACE");
-	if (JKCC_TRACE) {
-		int level = atoi(JKCC_TRACE);
-
-		if (level > JKCC_TRACE_LEVEL_HIGH)
-			level = JKCC_TRACE_LEVEL_HIGH;
-
-		if (level < JKCC_TRACE_LEVEL_NONE)
-			level = JKCC_TRACE_LEVEL_NONE;
-
-		jkcc.config.trace = 1;
-
-		jkcc.trace.stream   = stderr;
-		jkcc.trace.ansi_sgr = jkcc.config.ansi_sgr_stderr;
-		jkcc.trace.level    = level;
-	}
-
-	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
-
-	return EXIT_SUCCESS;
 }
