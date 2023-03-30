@@ -37,6 +37,7 @@ typedef enum ast_e {
 	AST_BINARY_OPERATOR,
 	AST_CAST,
 	AST_CHARACTER_CONSTANT,
+	AST_DEREFERENCE,
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
 	AST_GENERIC_ASSOCIATION,
@@ -90,6 +91,7 @@ void fprint_location(
 #include <jkcc/ast/binary_operator.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
+#include <jkcc/ast/dereference.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/generic_association.h>

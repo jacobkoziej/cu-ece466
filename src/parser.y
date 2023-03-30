@@ -513,6 +513,13 @@ unary_expression:
 				&@operand);
 			break;
 
+		case AST_UNARY_OPERATOR_ASTERISK:
+			$unary_expression = ast_dereference_init(
+				$operand,
+				&@operator,
+				&@operand);
+			break;
+
 		default:
 			$unary_expression = ast_unary_operator_init(
 				$operand,
