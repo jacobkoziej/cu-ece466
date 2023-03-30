@@ -243,6 +243,7 @@ typedef void* yyscan_t;
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
 %nterm <ast> type_name
+%nterm <ast> static_assert_declaration
 
 
 %destructor {
@@ -1318,3 +1319,16 @@ type_name:
 }
 */
 ;
+
+
+// 6.7.10
+static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS constant_expression PUNCTUATOR_COMMA string_literal PUNCTUATOR_RPARENTHESIS PUNCTUATOR_SEMICOLON {
+	TRACE("static_assert_declaration", "_Static_assert ( constant-expression , string-literal ) ;");
+
+	$static_assert_declaration = ast_static_assert_init(
+		$constant_expression,
+		$string_literal,
+		&@KEYWORD__STATIC_ASSERT,
+		&@PUNCTUATOR_SEMICOLON);
+	if (!$static_assert_declaration) YYNOMEM;
+}

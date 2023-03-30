@@ -18,6 +18,7 @@ jkcc_src += files(
         'pointer.c',
         'sizeof.c',
         'specifier_qualifier_list.c',
+        'static_assert.c',
         'storage_class_specifier.c',
         'string_literal.c',
         'ternary_operator.c',
