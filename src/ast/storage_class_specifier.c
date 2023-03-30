@@ -45,27 +45,27 @@ void fprint_ast_storage_class_specifier(
 
 	const char *specifier;
 	switch (node->specifier) {
-		case STORAGE_CLASS_SPECIFIER_TYPEDEF:
+		case AST_STORAGE_CLASS_SPECIFIER_TYPEDEF:
 			specifier = "typedef";
 			break;
 
-		case STORAGE_CLASS_SPECIFIER_EXTERN:
+		case AST_STORAGE_CLASS_SPECIFIER_EXTERN:
 			specifier = "extern";
 			break;
 
-		case STORAGE_CLASS_SPECIFIER_STATIC:
+		case AST_STORAGE_CLASS_SPECIFIER_STATIC:
 			specifier = "static";
 			break;
 
-		case STORAGE_CLASS_SPECIFIER__THREAD_LOCAL:
+		case AST_STORAGE_CLASS_SPECIFIER__THREAD_LOCAL:
 			specifier = "_Thread_local";
 			break;
 
-		case STORAGE_CLASS_SPECIFIER_AUTO:
+		case AST_STORAGE_CLASS_SPECIFIER_AUTO:
 			specifier = "auto";
 			break;
 
-		case STORAGE_CLASS_SPECIFIER_REGISTER:
+		case AST_STORAGE_CLASS_SPECIFIER_REGISTER:
 			specifier = "register";
 			break;
 
