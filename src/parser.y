@@ -390,6 +390,8 @@ generic_assoc_list:
 | generic_assoc_list[child] PUNCTUATOR_COMMA generic_association {
 	TRACE("generic-association", "generic-assoc-list : generic-association");
 
+	parser->error = NULL;
+
 	$$ = ast_generic_association_list_append(
 		$child,
 		$generic_association,
@@ -1170,6 +1172,8 @@ specifier_qualifier_list:
 | type_specifier specifier_qualifier_list[list] {
 	TRACE("specifier-qualifier-list", "type-specifier specifier-qualifier-list");
 
+	parser->error = NULL;
+
 	$$ = ast_specifier_qualifier_list_append(
 		$list,
 		$type_specifier,
@@ -1188,6 +1192,8 @@ specifier_qualifier_list:
 }
 | type_qualifier specifier_qualifier_list[list] {
 	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
+
+	parser->error = NULL;
 
 	$$ = ast_specifier_qualifier_list_append(
 		$list,
