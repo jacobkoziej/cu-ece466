@@ -53,10 +53,6 @@ void fprint_ast_unary_operator(
 
 	const char *operator;
 	switch (node->operator) {
-		case AST_UNARY_OPERATOR_AMPERSAND:
-			operator = "&";
-			break;
-
 		case AST_UNARY_OPERATOR_ASTERISK:
 			operator = "*";
 			break;

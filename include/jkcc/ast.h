@@ -30,6 +30,7 @@
 
 
 typedef enum ast_e {
+	AST_ADDRESSOF,
 	AST_ALIGNOF,
 	AST_ASSIGNMENT,
 	AST_ATOMIC,
@@ -82,6 +83,7 @@ void fprint_location(
 	uint_fast8_t      flags);
 
 
+#include <jkcc/ast/addressof.h>
 #include <jkcc/ast/alignof.h>
 #include <jkcc/ast/assignment.h>
 #include <jkcc/ast/atomic.h>

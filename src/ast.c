@@ -18,6 +18,7 @@
 
 
 void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
+	ast_addressof_free,
 	ast_alignof_free,
 	ast_assignment_free,
 	ast_atomic_free,
@@ -50,6 +51,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 	const ast_t  *ast,
 	size_t        level,
 	uint_fast8_t  flags) = {
+	fprint_ast_addressof,
 	fprint_ast_alignof,
 	fprint_ast_assignment,
 	fprint_ast_atomic,
@@ -79,6 +81,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 
 
 char *ast_node_str[AST_NODES_TOTAL] = {
+	"addressof",
 	"alignof",
 	"assignment",
 	"atomic",

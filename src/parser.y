@@ -505,11 +505,22 @@ unary_expression:
 | unary_operator[operator] cast_expression[operand] {
 	TRACE("unary-expression", "unary-operator cast-expression");
 
-	$unary_expression = ast_unary_operator_init(
-		$operand,
-		$operator,
-		&@operator,
-		&@operand);
+	switch ($operator) {
+		case AST_UNARY_OPERATOR_AMPERSAND:
+			$unary_expression = ast_addressof_init(
+				$operand,
+				&@operator,
+				&@operand);
+			break;
+
+		default:
+			$unary_expression = ast_unary_operator_init(
+				$operand,
+				$operator,
+				&@operator,
+				&@operand);
+			break;
+	}
 	if (!$unary_expression) YYNOMEM;
 }
 | KEYWORD_SIZEOF unary_expression[operand] {

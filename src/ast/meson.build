@@ -3,6 +3,7 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 jkcc_src += files(
+        'addressof.c',
         'alignof.c',
         'assignment.c',
         'atomic.c',
