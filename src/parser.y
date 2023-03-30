@@ -1054,7 +1054,7 @@ type_specifier:
 	TRACE("type-specifier", "void");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_VOID,
+		AST_TYPE_SPECIFIER_VOID,
 		NULL,
 		&@KEYWORD_VOID);
 	if (!$type_specifier) YYNOMEM;
@@ -1063,7 +1063,7 @@ type_specifier:
 	TRACE("type-specifier", "char");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_CHAR,
+		AST_TYPE_SPECIFIER_CHAR,
 		NULL,
 		&@KEYWORD_CHAR);
 	if (!$type_specifier) YYNOMEM;
@@ -1072,7 +1072,7 @@ type_specifier:
 	TRACE("type-specifier", "short");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_SHORT,
+		AST_TYPE_SPECIFIER_SHORT,
 		NULL,
 		&@KEYWORD_SHORT);
 	if (!$type_specifier) YYNOMEM;
@@ -1081,7 +1081,7 @@ type_specifier:
 	TRACE("type-specifier", "int");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_INT,
+		AST_TYPE_SPECIFIER_INT,
 		NULL,
 		&@KEYWORD_INT);
 	if (!$type_specifier) YYNOMEM;
@@ -1090,7 +1090,7 @@ type_specifier:
 	TRACE("type-specifier", "long");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_LONG,
+		AST_TYPE_SPECIFIER_LONG,
 		NULL,
 		&@KEYWORD_LONG);
 	if (!$type_specifier) YYNOMEM;
@@ -1099,7 +1099,7 @@ type_specifier:
 	TRACE("type-specifier", "float");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_FLOAT,
+		AST_TYPE_SPECIFIER_FLOAT,
 		NULL,
 		&@KEYWORD_FLOAT);
 	if (!$type_specifier) YYNOMEM;
@@ -1108,7 +1108,7 @@ type_specifier:
 	TRACE("type-specifier", "double");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_DOUBLE,
+		AST_TYPE_SPECIFIER_DOUBLE,
 		NULL,
 		&@KEYWORD_DOUBLE);
 	if (!$type_specifier) YYNOMEM;
@@ -1117,7 +1117,7 @@ type_specifier:
 	TRACE("type-specifier", "signed");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_SIGNED,
+		AST_TYPE_SPECIFIER_SIGNED,
 		NULL,
 		&@KEYWORD_SIGNED);
 	if (!$type_specifier) YYNOMEM;
@@ -1126,7 +1126,7 @@ type_specifier:
 	TRACE("type-specifier", "unsigned");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_UNSIGNED,
+		AST_TYPE_SPECIFIER_UNSIGNED,
 		NULL,
 		&@KEYWORD_UNSIGNED);
 	if (!$type_specifier) YYNOMEM;
@@ -1135,7 +1135,7 @@ type_specifier:
 	TRACE("type-specifier", "_Bool");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER__BOOL,
+		AST_TYPE_SPECIFIER__BOOL,
 		NULL,
 		&@KEYWORD__BOOL);
 	if (!$type_specifier) YYNOMEM;
@@ -1144,7 +1144,7 @@ type_specifier:
 	TRACE("type-specifier", "_Complex");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER__COMPLEX,
+		AST_TYPE_SPECIFIER__COMPLEX,
 		NULL,
 		&@KEYWORD__COMPLEX);
 	if (!$type_specifier) YYNOMEM;
@@ -1173,7 +1173,6 @@ specifier_qualifier_list:
 	$$ = ast_specifier_qualifier_list_append(
 		$list,
 		$type_specifier,
-		NULL,
 		&@type_specifier,
 		&parser->error);
 	ERROR($$);
@@ -1185,14 +1184,13 @@ specifier_qualifier_list:
 		NULL,
 		$type_qualifier,
 		&@type_qualifier);
-	if (!$$) YYNOMEM;
+	if (!$specifier_qualifier_list) YYNOMEM;
 }
 | type_qualifier specifier_qualifier_list[list] {
 	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
 
 	$$ = ast_specifier_qualifier_list_append(
 		$list,
-		NULL,
 		$type_qualifier,
 		&@type_qualifier,
 		&parser->error);
@@ -1206,7 +1204,7 @@ type_qualifier:
 	TRACE("type-qualifier", "const");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_CONST,
+		AST_TYPE_QUALIFIER_CONST,
 		&@KEYWORD_CONST);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1214,7 +1212,7 @@ type_qualifier:
 	TRACE("type-qualifier", "restrict");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_RESTRICT,
+		AST_TYPE_QUALIFIER_RESTRICT,
 		&@KEYWORD_RESTRICT);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1222,7 +1220,7 @@ type_qualifier:
 	TRACE("type-qualifier", "volatile");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_VOLATILE,
+		AST_TYPE_QUALIFIER_VOLATILE,
 		&@KEYWORD_VOLATILE);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1230,7 +1228,7 @@ type_qualifier:
 	TRACE("type-qualifier", "_Atomic");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER__ATOMIC,
+		AST_TYPE_QUALIFIER__ATOMIC,
 		&@KEYWORD__ATOMIC);
 	if (!$type_qualifier) YYNOMEM;
 }

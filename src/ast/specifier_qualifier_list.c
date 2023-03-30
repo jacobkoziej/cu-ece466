@@ -19,130 +19,132 @@
 #include <jkcc/vector.h>
 
 
-#define TYPE_SPECIFIER_SHORT_INT ( \
-	TYPE_SPECIFIER_SHORT |     \
-	TYPE_SPECIFIER_INT)        \
+#define AST_TYPE_SPECIFIER_SHORT_INT ( \
+	AST_TYPE_SPECIFIER_SHORT |     \
+	AST_TYPE_SPECIFIER_INT)        \
 
-#define TYPE_SPECIFIER_LONG_INT ( \
-	TYPE_SPECIFIER_LONG |     \
-	TYPE_SPECIFIER_INT)
+#define AST_TYPE_SPECIFIER_LONG_INT ( \
+	AST_TYPE_SPECIFIER_LONG |     \
+	AST_TYPE_SPECIFIER_INT)
 
-#define TYPE_SPECIFIER_LONG_LONG_INT ( \
-	TYPE_SPECIFIER_LONG_LONG |     \
-	TYPE_SPECIFIER_LONG |          \
-	TYPE_SPECIFIER_INT)
+#define AST_TYPE_SPECIFIER_LONG_LONG_INT ( \
+	AST_TYPE_SPECIFIER_LONG_LONG |     \
+	AST_TYPE_SPECIFIER_LONG |          \
+	AST_TYPE_SPECIFIER_INT)
 
-#define TYPE_SPECIFIER_DOUBLE__COMPLEX ( \
-	TYPE_SPECIFIER_DOUBLE |          \
-	TYPE_SPECIFIER__COMPLEX)
+#define AST_TYPE_SPECIFIER_DOUBLE__COMPLEX ( \
+	AST_TYPE_SPECIFIER_DOUBLE |          \
+	AST_TYPE_SPECIFIER__COMPLEX)
 
-#define TYPE_SPECIFIER_LONG_DOUBLE__COMPLEX ( \
-	TYPE_SPECIFIER_LONG |                 \
-	TYPE_SPECIFIER_DOUBLE |               \
-	TYPE_SPECIFIER__COMPLEX)
+#define AST_TYPE_SPECIFIER_LONG_DOUBLE__COMPLEX ( \
+	AST_TYPE_SPECIFIER_LONG |                 \
+	AST_TYPE_SPECIFIER_DOUBLE |               \
+	AST_TYPE_SPECIFIER__COMPLEX)
 
 
 ast_t *ast_specifier_qualifier_list_append(
 	ast_t         *specifier_qualifier_list,
-	ast_t         *type_specifier,
-	ast_t         *type_qualifier,
+	ast_t         *type,
 	location_t    *location,
 	const char   **error)
 {
-	ast_specifier_qualifier_list_t *list = (specifier_qualifier_list)
-		? OFFSETOF_AST_NODE(
-			specifier_qualifier_list,
-			ast_specifier_qualifier_list_t)
+	ast_specifier_qualifier_list_t *list = OFFSETOF_AST_NODE(
+		specifier_qualifier_list,
+		ast_specifier_qualifier_list_t);
+
+	ast_type_specifier_t *specifier = (*type == AST_TYPE_SPECIFIER)
+		? OFFSETOF_AST_NODE(type, ast_type_specifier_t)
 		: NULL;
 
-	ast_type_specifier_t *specifier = (type_specifier)
-		? OFFSETOF_AST_NODE(type_specifier, ast_type_specifier_t)
+	ast_type_qualifier_t *qualifier = (*type == AST_TYPE_QUALIFIER)
+		? OFFSETOF_AST_NODE(type, ast_type_qualifier_t)
 		: NULL;
 
-	if (list && specifier) {
-		uint16_t contraints = list->specifier;
+	if (specifier) {
+		uint16_t constraints = list->specifier;
 
 		if (
 			!(specifier->specifier &
-			(TYPE_SPECIFIER_SIGNED | TYPE_SPECIFIER_UNSIGNED)))
-			contraints &= ~(TYPE_SPECIFIER_SIGNED |
-					TYPE_SPECIFIER_UNSIGNED);
+			(AST_TYPE_SPECIFIER_SIGNED |
+				AST_TYPE_SPECIFIER_UNSIGNED)))
+			constraints &= ~(AST_TYPE_SPECIFIER_SIGNED |
+					AST_TYPE_SPECIFIER_UNSIGNED);
 
 		switch (specifier->specifier) {
-			case TYPE_SPECIFIER_VOID:
-				if (contraints)
+			case AST_TYPE_SPECIFIER_VOID:
+				if (constraints)
 					goto multiset_error;
 
 				// void
 				break;
 
-			case TYPE_SPECIFIER_CHAR:
-				if (contraints)
+			case AST_TYPE_SPECIFIER_CHAR:
+				if (constraints)
 					goto multiset_error;
 
 				// char
 				break;
 
-			case TYPE_SPECIFIER_SHORT:
+			case AST_TYPE_SPECIFIER_SHORT:
 				// short int
-				if (contraints & ~TYPE_SPECIFIER_INT)
+				if (constraints & ~AST_TYPE_SPECIFIER_INT)
 					goto multiset_error;
 
 				// short
 				break;
 
-			case TYPE_SPECIFIER_INT:
-				if (contraints)
+			case AST_TYPE_SPECIFIER_INT:
+				if (constraints)
 					goto multiset_error;
 
 				// int
 				break;
 
-			case TYPE_SPECIFIER_LONG:
+			case AST_TYPE_SPECIFIER_LONG:
 				if (
-					contraints &
-					~(TYPE_SPECIFIER_LONG_INT |
-						TYPE_SPECIFIER_DOUBLE__COMPLEX))
+					constraints &
+					~(AST_TYPE_SPECIFIER_LONG_INT |
+						AST_TYPE_SPECIFIER_DOUBLE__COMPLEX))
 					goto multiset_error;
 
 				// long (long (int) | double (_Complex))
 				break;
 
-			case TYPE_SPECIFIER_FLOAT:
-				if (contraints & ~TYPE_SPECIFIER__COMPLEX)
+			case AST_TYPE_SPECIFIER_FLOAT:
+				if (constraints & ~AST_TYPE_SPECIFIER__COMPLEX)
 					goto multiset_error;
 
 				// float (_Complex)
 				break;
 
-			case TYPE_SPECIFIER_DOUBLE:
-				if (contraints & ~TYPE_SPECIFIER__COMPLEX)
+			case AST_TYPE_SPECIFIER_DOUBLE:
+				if (constraints & ~AST_TYPE_SPECIFIER__COMPLEX)
 					goto multiset_error;
 
 				// double (_Complex)
 				break;
 
-			case TYPE_SPECIFIER_SIGNED:
-			case TYPE_SPECIFIER_UNSIGNED:
+			case AST_TYPE_SPECIFIER_SIGNED:
+			case AST_TYPE_SPECIFIER_UNSIGNED:
 				if (
-					contraints &
-					~(TYPE_SPECIFIER_CHAR |
-						TYPE_SPECIFIER_LONG_LONG_INT |
-						TYPE_SPECIFIER_SHORT_INT))
+					constraints &
+					~(AST_TYPE_SPECIFIER_CHAR |
+						AST_TYPE_SPECIFIER_LONG_LONG_INT |
+						AST_TYPE_SPECIFIER_SHORT_INT))
 					goto multiset_error;
 
 				// [signed | unsigned] (short | long | long long) (int)
 				break;
 
-			case TYPE_SPECIFIER__BOOL:
-				if (contraints)
+			case AST_TYPE_SPECIFIER__BOOL:
+				if (constraints)
 					goto multiset_error;
 
 				// _Bool
 				break;
 
-			case TYPE_SPECIFIER__COMPLEX:
-				if (contraints)
+			case AST_TYPE_SPECIFIER__COMPLEX:
+				if (constraints)
 					goto multiset_error;
 
 				// _Complex
@@ -152,24 +154,35 @@ ast_t *ast_specifier_qualifier_list_append(
 				*error = "unkown type";
 				return NULL;
 		}
-	}
 
-	if (type_specifier) {
-		if (vector_append(&list->type_specifier, &type_specifier))
+		if (vector_append(&list->type_specifier, &type))
 			goto vector_error;
 
 		list->specifier |= specifier->specifier;
 	}
 
-	if (type_qualifier)
-		if (vector_append(&list->type_qualifier, &type_qualifier))
+	if (qualifier) {
+		if (list->qualifier & list->qualifier)
+			goto qualifier_error;
+
+		if (vector_append(&list->type_qualifier, &type))
 			goto vector_error;
+
+		list->qualifier |= qualifier->qualifier;
+	}
 
 	list->location.start = location->start;
 
 	return specifier_qualifier_list;
 
 vector_error:
+	// at most one node will be appended,
+	// so it's okay to just return NULL here
+	return NULL;
+
+qualifier_error:
+	*error = "duplicate qualifier";
+
 	return NULL;
 
 multiset_error:
@@ -204,9 +217,16 @@ ast_t *ast_specifier_qualifier_list_init(
 		node->specifier = specifier->specifier;
 	}
 
-	if (type_qualifier)
+	if (type_qualifier) {
 		if (vector_append(&node->type_qualifier, &type_qualifier))
 			goto error_append;
+
+		ast_type_qualifier_t *qualifier = OFFSETOF_AST_NODE(
+			type_qualifier,
+			ast_type_qualifier_t);
+
+		node->qualifier = qualifier->qualifier;
+	}
 
 	node->location = *location;
 

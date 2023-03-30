@@ -55,47 +55,47 @@ void fprint_ast_type_specifier(
 		specifier = "(semantic)";
 	} else {
 		switch (node->specifier) {
-			case TYPE_SPECIFIER_VOID:
+			case AST_TYPE_SPECIFIER_VOID:
 				specifier = "void";
 				break;
 
-			case TYPE_SPECIFIER_CHAR:
+			case AST_TYPE_SPECIFIER_CHAR:
 				specifier = "char";
 				break;
 
-			case TYPE_SPECIFIER_SHORT:
+			case AST_TYPE_SPECIFIER_SHORT:
 				specifier = "short";
 				break;
 
-			case TYPE_SPECIFIER_INT:
+			case AST_TYPE_SPECIFIER_INT:
 				specifier = "int";
 				break;
 
-			case TYPE_SPECIFIER_LONG:
+			case AST_TYPE_SPECIFIER_LONG:
 				specifier = "long";
 				break;
 
-			case TYPE_SPECIFIER_FLOAT:
+			case AST_TYPE_SPECIFIER_FLOAT:
 				specifier = "float";
 				break;
 
-			case TYPE_SPECIFIER_DOUBLE:
+			case AST_TYPE_SPECIFIER_DOUBLE:
 				specifier = "double";
 				break;
 
-			case TYPE_SPECIFIER_SIGNED:
+			case AST_TYPE_SPECIFIER_SIGNED:
 				specifier = "signed";
 				break;
 
-			case TYPE_SPECIFIER_UNSIGNED:
+			case AST_TYPE_SPECIFIER_UNSIGNED:
 				specifier = "unsigned";
 				break;
 
-			case TYPE_SPECIFIER__BOOL:
+			case AST_TYPE_SPECIFIER__BOOL:
 				specifier = "_Bool";
 				break;
 
-			case TYPE_SPECIFIER__COMPLEX:
+			case AST_TYPE_SPECIFIER__COMPLEX:
 				specifier = "_Complex";
 				break;
 

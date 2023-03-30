@@ -23,6 +23,7 @@ typedef struct ast_specifier_qualifier_list_s {
 	vector_t      type_specifier;  // ast_t* ast_type_specifier_t
 	vector_t      type_qualifier;  // ast_t* ast_type_qualifier_t
 	uint_fast16_t specifier;
+	uint_fast8_t  qualifier;
 	location_t    location;
 	ast_t         ast;
 } ast_specifier_qualifier_list_t;
@@ -30,8 +31,7 @@ typedef struct ast_specifier_qualifier_list_s {
 
 ast_t *ast_specifier_qualifier_list_append(
 	ast_t         *specifier_qualifier_list,
-	ast_t         *type_specifier,
-	ast_t         *type_qualifier,
+	ast_t         *type,
 	location_t    *location,
 	const char   **error);
 ast_t *ast_specifier_qualifier_list_init(

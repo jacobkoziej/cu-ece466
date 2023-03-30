@@ -47,19 +47,19 @@ void fprint_ast_type_qualifier(
 
 	const char *qualifier;
 	switch (node->qualifier) {
-		case TYPE_QUALIFIER_CONST:
+		case AST_TYPE_QUALIFIER_CONST:
 			qualifier = "const";
 			break;
 
-		case TYPE_QUALIFIER_RESTRICT:
+		case AST_TYPE_QUALIFIER_RESTRICT:
 			qualifier = "restrict";
 			break;
 
-		case TYPE_QUALIFIER_VOLATILE:
+		case AST_TYPE_QUALIFIER_VOLATILE:
 			qualifier = "volatile";
 			break;
 
-		case TYPE_QUALIFIER__ATOMIC:
+		case AST_TYPE_QUALIFIER__ATOMIC:
 			qualifier = "_Atomic";
 			break;
 
