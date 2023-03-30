@@ -5,6 +5,7 @@
 jkcc_src += files(
         'alignof.c',
         'assignment.c',
+        'atomic.c',
         'binary_operator.c',
         'cast.c',
         'character_constant.c',

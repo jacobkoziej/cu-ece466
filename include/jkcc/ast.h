@@ -32,6 +32,7 @@
 typedef enum ast_e {
 	AST_ALIGNOF,
 	AST_ASSIGNMENT,
+	AST_ATOMIC,
 	AST_BINARY_OPERATOR,
 	AST_CAST,
 	AST_CHARACTER_CONSTANT,
@@ -83,6 +84,7 @@ void fprint_location(
 
 #include <jkcc/ast/alignof.h>
 #include <jkcc/ast/assignment.h>
+#include <jkcc/ast/atomic.h>
 #include <jkcc/ast/binary_operator.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>

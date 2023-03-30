@@ -243,6 +243,7 @@ typedef void* yyscan_t;
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
 %nterm <ast> type_name
+%nterm <ast> atomic_type_specifier
 %nterm <ast> static_assert_declaration
 
 
@@ -1323,6 +1324,21 @@ type_name:
 }
 */
 ;
+
+
+// 6.7.2.4
+atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("atomic-type-specifier", "_Atomic ( type-name )");
+
+	parser->error = NULL;
+
+	$atomic_type_specifier = ast_atomic_init(
+		$operand,
+		&@KEYWORD__ATOMIC,
+		&@PUNCTUATOR_RPARENTHESIS,
+		&parser->error);
+	ERROR($atomic_type_specifier);
+}
 
 
 // 6.7.10
