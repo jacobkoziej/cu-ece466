@@ -18,4 +18,7 @@ typedef struct symbol_table_s {
 } symbol_table_t;
 
 
+symbol_table_t *symbol_init(void);
+
+
 #endif  /* JCC_SYMBOL_H */
