@@ -8,20 +8,35 @@
 #define JKCC_SYMBOL_H
 
 
+#include <stddef.h>
+
+#include <jkcc/ast.h>
 #include <jkcc/ht.h>
 #include <jkcc/list.h>
 #include <jkcc/vector.h>
 
 
+#define SYMBOL_ERROR_NOMEM  (-1)
+#define SYMBOL_ERROR_EXISTS (-2)
+
+
 typedef struct symbol_table_s {
 	ht_t     table;
 	vector_t table_insert_history;  // ast_t*
+	size_t   size;
 	list_t   list;
 } symbol_table_t;
 
 
-symbol_table_t *symbol_init(void);
-void            symbol_free(symbol_table_t *symbol);
+symbol_table_t *symbol_init(
+	void);
+int symbol_insert(
+	symbol_table_t *symbol,
+	const char     *identifier,
+	size_t          len,
+	ast_t          *type);
+void symbol_free(
+	symbol_table_t *symbol);
 
 
 #endif  /* JCC_SYMBOL_H */

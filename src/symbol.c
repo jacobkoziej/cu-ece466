@@ -34,6 +34,31 @@ ht_init_error:
 	return NULL;
 }
 
+int symbol_insert(
+	symbol_table_t *symbol,
+	const char     *key,
+	size_t          len,
+	ast_t          *type)
+{
+	if (ht_exists(&symbol->table, key, len))
+		return SYMBOL_ERROR_EXISTS;
+
+	if (ht_insert(&symbol->table, key, len, type))
+		return SYMBOL_ERROR_NOMEM;
+
+	if (vector_append(&symbol->table_insert_history, &type))
+		goto vector_append_error;
+
+	++symbol->size;
+
+	return 0;
+
+vector_append_error:
+	ht_rm(&symbol->table, key, len, NULL);
+
+	return SYMBOL_ERROR_NOMEM;
+}
+
 void symbol_free(symbol_table_t *symbol)
 {
 	if (!symbol) return;
