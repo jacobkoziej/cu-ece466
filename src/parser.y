@@ -428,10 +428,24 @@ postfix_expression:
 	TRACE("postfix-expression", "primary-expression");
 	$postfix_expression = $primary_expression;
 }
-/*
-| postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET {
+| postfix_expression[operand] PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET {
 	TRACE("postfix-expression", "postfix-expression [ expression ]");
+
+	ast_t *expression = ast_binary_operator_init(
+		$operand,
+		$expression,
+		AST_BINARY_OPERATOR_ADDITION,
+		&@operand,
+		&@PUNCTUATOR_RBRACKET);
+	if (!expression) YYNOMEM;
+
+	$$ = ast_dereference_init(
+		expression,
+		&@operand,
+		&@PUNCTUATOR_RBRACKET);
+	if (!$$) YYNOMEM;
 }
+/*
 | postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( )");
 }
