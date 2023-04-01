@@ -26,3 +26,11 @@ error:
 
 	return NULL;
 }
+
+void symbol_free(symbol_table_t *symbol)
+{
+	if (!symbol) return;
+
+	ht_free(&symbol->table, NULL);
+	free(symbol);
+}
