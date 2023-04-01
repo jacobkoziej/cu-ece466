@@ -10,11 +10,13 @@
 
 #include <jkcc/ht.h>
 #include <jkcc/list.h>
+#include <jkcc/vector.h>
 
 
 typedef struct symbol_table_s {
-	ht_t   table;
-	list_t list;
+	ht_t     table;
+	vector_t table_insert_history;  // ast_t*
+	list_t   list;
 } symbol_table_t;
 
 
