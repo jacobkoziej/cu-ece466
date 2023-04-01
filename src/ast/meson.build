@@ -18,6 +18,7 @@ jkcc_src += files(
         'generic_selection.c',
         'identifier.c',
         'integer_constant.c',
+        'member_access.c',
         'pointer.c',
         'sizeof.c',
         'specifier_qualifier_list.c',

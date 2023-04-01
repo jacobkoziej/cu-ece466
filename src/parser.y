@@ -438,13 +438,33 @@ postfix_expression:
 | postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( argument-expression-list )");
 }
-| postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS identifier {
-	TRACE("postfix-expression", "postfix-expression . identifier");
-}
-| postfix_expression PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
-	TRACE("postfix-expression", "postfix-expression -> identifier");
-}
 */
+| postfix_expression[operand] PUNCTUATOR_MEMBER_ACCESS identifier {
+	TRACE("postfix-expression", "postfix-expression . identifier");
+
+	$$ = ast_member_access_init(
+		$operand,
+		$identifier,
+		&@operand,
+		&@identifier);
+	if (!$$) YYNOMEM;
+}
+| postfix_expression[operand] PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
+	TRACE("postfix-expression", "postfix-expression -> identifier");
+
+	ast_t *operand = ast_dereference_init(
+		$operand,
+		&@operand,
+		&@identifier);
+	if (!operand) YYNOMEM;
+
+	$$ = ast_member_access_init(
+		operand,
+		$identifier,
+		&@operand,
+		&@identifier);
+	if (!$$) YYNOMEM;
+}
 | postfix_expression[operand] PUNCTUATOR_INCREMENT {
 	TRACE("postfix-expression", "postfix-expression ++");
 
