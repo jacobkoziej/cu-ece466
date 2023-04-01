@@ -8,4 +8,14 @@
 #define JKCC_SYMBOL_H
 
 
+#include <jkcc/ht.h>
+#include <jkcc/list.h>
+
+
+typedef struct symbol_table_s {
+	ht_t   table;
+	list_t list;
+} symbol_table_t;
+
+
 #endif  /* JCC_SYMBOL_H */
