@@ -16,8 +16,9 @@
 #include <jkcc/vector.h>
 
 
-#define SYMBOL_ERROR_NOMEM  (-1)
-#define SYMBOL_ERROR_EXISTS (-2)
+#define SYMBOL_ERROR_NOMEM     (-1)
+#define SYMBOL_ERROR_EXISTS    (-2)
+#define SYMBOL_ERROR_NOT_FOUND (-3)
 
 
 typedef struct symbol_table_s {
@@ -31,12 +32,17 @@ typedef struct symbol_table_s {
 symbol_table_t *symbol_init(
 	void);
 int symbol_insert(
-	symbol_table_t *symbol,
-	const char     *identifier,
-	size_t          len,
-	ast_t          *type);
+	symbol_table_t  *symbol,
+	const char      *identifier,
+	size_t           len,
+	ast_t           *type);
 void symbol_free(
-	symbol_table_t *symbol);
+	symbol_table_t  *symbol);
+int symbol_get_identifier(
+	symbol_table_t  *symbol,
+	const char      *identifier,
+	size_t           len,
+	ast_t          **type);
 
 
 #endif  /* JCC_SYMBOL_H */

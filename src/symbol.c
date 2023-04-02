@@ -11,6 +11,7 @@
 
 #include <jkcc/ast.h>
 #include <jkcc/ht.h>
+#include <jkcc/list.h>
 
 
 symbol_table_t *symbol_init(void)
@@ -66,4 +67,26 @@ void symbol_free(symbol_table_t *symbol)
 	ht_free(&symbol->table, NULL);
 	vector_free(&symbol->table_insert_history);
 	free(symbol);
+}
+
+int symbol_get(
+	symbol_table_t  *symbol,
+	const char      *key,
+	size_t           len,
+	ast_t          **type)
+{
+	void *ast;
+
+	// search for symbol, climbing up scopes
+	do {
+		if (!ht_get(&symbol->table, key, len, &ast)) continue;
+
+		if (type) *type = ast;
+
+		return 0;
+	} while (
+		symbol = OFFSETOF_LIST(&symbol->list, symbol_table_t, list),
+		symbol->list.prev);
+
+	return SYMBOL_ERROR_NOT_FOUND;
 }
