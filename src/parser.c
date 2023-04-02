@@ -12,6 +12,7 @@
 
 #include <jkcc/ast.h>
 #include <jkcc/lexer.h>
+#include <jkcc/symbol.h>
 #include <jkcc/vector.h>
 
 #include "y.tab.h"
@@ -29,6 +30,10 @@ translation_unit_t *parse(parser_t *parser)
 	if (!translation_unit) return NULL;
 
 	if (vector_init(&translation_unit->file, sizeof(file), 0)) goto error;
+	if (vector_init(
+		&translation_unit->symbol_table.identifier,
+		sizeof(translation_unit->ast),
+		0)) goto error;
 
 	file = calloc(1, sizeof(*file));
 	if (!file) goto error;
@@ -71,6 +76,19 @@ error:
 		free(file);
 	}
 
+	if (translation_unit->symbol_table.identifier.buf) {
+		symbol_table_t **symbol =
+			translation_unit->symbol_table.identifier.buf;
+
+		for (
+			size_t i = 0;
+			i < translation_unit->symbol_table.identifier.use;
+			i++)
+			symbol_free(symbol[i]);
+
+		vector_free(&translation_unit->symbol_table.identifier);
+	}
+
 	if (translation_unit->file.buf) {
 		file_t **file = translation_unit->file.buf;
 
@@ -100,7 +118,17 @@ void translation_unit_free(translation_unit_t *translation_unit)
 		free(file[i]);
 	}
 
+	symbol_table_t **symbol;
+
+	symbol = translation_unit->symbol_table.identifier.buf;
+	for (
+		size_t i = 0;
+		i < translation_unit->symbol_table.identifier.use;
+		i++)
+		symbol_free(symbol[i]);
+
 	vector_free(&translation_unit->file);
+	vector_free(&translation_unit->symbol_table.identifier);
 
 	free(translation_unit);
 }

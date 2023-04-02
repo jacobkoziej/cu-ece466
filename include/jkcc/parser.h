@@ -9,6 +9,7 @@
 
 
 #include <jkcc/ast.h>
+#include <jkcc/symbol.h>
 #include <jkcc/trace.h>
 #include <jkcc/vector.h>
 
@@ -17,11 +18,17 @@ typedef struct parser_s {
 	const char *path;
 	const char *error;
 	trace_t    *trace;
+	struct {
+		symbol_table_t *identifier;
+	} symbol_table;
 } parser_t;
 
 typedef struct translation_unit_s {
 	ast_t    *ast;
-	vector_t  file;  // file_t*
+	vector_t  file;               // file_t*
+	struct {
+		vector_t identifier;  // ast_t*
+	} symbol_table;
 } translation_unit_t;
 
 
