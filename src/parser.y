@@ -240,6 +240,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
+%nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
 %nterm <ast> type_name
@@ -1292,6 +1293,56 @@ type_qualifier:
 	if (!$type_qualifier) YYNOMEM;
 }
 ;
+
+
+// 6.7.6
+direct_declarator:
+  identifier {
+	TRACE("direct-declarator", "identifier");
+	$direct_declarator = $identifier;
+}
+/*
+| PUNCTUATOR_LPARENTHESIS declarator PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "( declarator )");
+}
+| direct_declarator PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ type-qualifier-list ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ type-qualifier-list assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ static assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC type-qualifier-list assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ static type-qualifier-list assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ type-qualifier-list static assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ * ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "[ type-qualifier-list * ]");
+}
+| direct_declarator PUNCTUATOR_LPARENTHESIS parameter-type-list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "( parameter-type-list )");
+}
+| direct_declarator PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "( )");
+}
+| direct_declarator PUNCTUATOR_LPARENTHESIS identifier-list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "( identifier-list )");
+}
+;
+*/
 
 
 // 6.7.6
