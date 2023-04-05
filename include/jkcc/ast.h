@@ -8,6 +8,7 @@
 #define JKCC_AST_H
 
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -27,6 +28,8 @@
 	flags)
 
 #define AST_NODE_STR(ast) ast_node_str[*ast]
+
+#define OFFSETOF_AST_NODE(node, type) ((type*) (((uintptr_t) node) - offsetof(type, ast)))
 
 
 typedef enum ast_e {

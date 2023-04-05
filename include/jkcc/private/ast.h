@@ -10,7 +10,6 @@
 
 #include <jkcc/ast.h>
 
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,8 +22,6 @@
 	memset(buf, ' ', sizeof(buf));                  \
 	fwrite(buf, sizeof(*buf), sizeof(buf), stream); \
 }
-
-#define OFFSETOF_AST_NODE(node, type) ((type*) (((uintptr_t) node) - offsetof(type, ast)))
 
 #define AST_INIT(type)                      \
 	type *node = malloc(sizeof(*node)); \
