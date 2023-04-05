@@ -12,8 +12,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
-#include <jkcc/string.h>
+#include <jkcc/location.h>
 
 
 #define AST_PRINT_NO_INDENT_INITIAL   (1 << 0)

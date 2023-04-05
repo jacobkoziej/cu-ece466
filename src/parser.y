@@ -15,26 +15,32 @@
 #include <stdbool.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/constant.h>
 #include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
 #include <jkcc/trace.h>
 
 
-#define ERROR(ast) {                              \
-	if (!ast) {                               \
-		if (parser->error) {              \
-			yyerror(                  \
-				&yylloc,          \
-				scanner,          \
-				parser,           \
-				translation_unit, \
-				parser->error);   \
-			YYERROR;                  \
-		} else {                          \
-			YYNOMEM;                  \
-		}                                 \
-	}                                         \
+#define ERROR_ADDR &parser->yyextra_data->error
+
+#define ERROR_RESET parser->yyextra_data->error = NULL
+
+#define ERROR(ast) {                                          \
+	if (!ast) {                                           \
+		if (parser->yyextra_data->error) {            \
+			yyerror(                              \
+				&yylloc,                      \
+				scanner,                      \
+				parser,                       \
+				translation_unit,             \
+				parser->yyextra_data->error); \
+			YYERROR;                              \
+		} else {                                      \
+			YYNOMEM;                              \
+		}                                             \
+	}                                                     \
 }
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
@@ -81,9 +87,9 @@ static void yyerror(
 
 %code requires {
 #include <jkcc/ast.h>
+#include <jkcc/constant.h>
 #include <jkcc/lexer.h>
 #include <jkcc/parser.h>
-#include <jkcc/string.h>
 
 
 #define YYLTYPE location_t
@@ -395,13 +401,13 @@ generic_assoc_list:
 | generic_assoc_list[child] PUNCTUATOR_COMMA generic_association {
 	TRACE("generic-association", "generic-assoc-list : generic-association");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_generic_association_list_append(
 		$child,
 		$generic_association,
 		&@generic_association,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 ;
@@ -1067,13 +1073,13 @@ declaration_specifiers:
 | storage_class_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "storage-class-specifier declaration-specifiers");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$storage_class_specifier,
 		&@storage_class_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | type_specifier {
@@ -1087,13 +1093,13 @@ declaration_specifiers:
 | type_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "type-specifier declaration-specifiers");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$type_specifier,
 		&@type_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | type_qualifier {
@@ -1107,13 +1113,13 @@ declaration_specifiers:
 | type_qualifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "type-qualifier declaration-specifiers");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$type_qualifier,
 		&@type_qualifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | function_specifier {
@@ -1127,13 +1133,13 @@ declaration_specifiers:
 | function_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "function-specifier declaration-specifiers");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$function_specifier,
 		&@function_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | alignment_specifier {
@@ -1147,13 +1153,13 @@ declaration_specifiers:
 | alignment_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "alignment-specifier declaration-specifiers");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$alignment_specifier,
 		&@alignment_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 
@@ -1332,13 +1338,13 @@ specifier_qualifier_list:
 | type_specifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-specifier specifier-qualifier-list");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$type_specifier,
 		&@type_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | type_qualifier {
@@ -1352,13 +1358,13 @@ specifier_qualifier_list:
 | type_qualifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$$ = ast_type_append(
 		$type,
 		$type_qualifier,
 		&@type_qualifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 
@@ -1580,13 +1586,13 @@ type_name:
 atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
 	TRACE("atomic-type-specifier", "_Atomic ( type-name )");
 
-	parser->error = NULL;
+	ERROR_RESET;
 
 	$atomic_type_specifier = ast_atomic_init(
 		$operand,
 		&@KEYWORD__ATOMIC,
 		&@PUNCTUATOR_RPARENTHESIS,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($atomic_type_specifier);
 }
 

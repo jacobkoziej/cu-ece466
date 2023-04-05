@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 #define AST_TYPE_QUALIFIER_CONST    (1 << 0)

@@ -12,6 +12,7 @@
 
 #include <jkcc/ast.h>
 #include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/symbol.h>
 #include <jkcc/vector.h>
 
@@ -53,6 +54,8 @@ translation_unit_t *parse(parser_t *parser)
 		.file           = *(file_t**) translation_unit->file.buf,
 		.file_allocated = &translation_unit->file,
 	};
+
+	parser->yyextra_data = &yyextra_data;
 
 	if (yylex_init_extra(&yyextra_data, &yyscanner)) goto error;
 

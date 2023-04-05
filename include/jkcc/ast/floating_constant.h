@@ -14,7 +14,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/constant.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_floating_constant_s {

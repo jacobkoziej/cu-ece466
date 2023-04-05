@@ -13,7 +13,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_generic_association_s {

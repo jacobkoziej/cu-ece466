@@ -23,7 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <jkcc/constant.h>
 #include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/string.h>
 
 #include "y.tab.h"

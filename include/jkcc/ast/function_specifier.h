@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 #define AST_FUNCTION_SPECIFIER_INLINE    (1 << 0)

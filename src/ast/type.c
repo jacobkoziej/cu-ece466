@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/vector.h>
 
 

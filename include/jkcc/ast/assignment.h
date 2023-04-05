@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 #define AST_ASSIGNMENT_ASSIGNMENT              (1 << 0)

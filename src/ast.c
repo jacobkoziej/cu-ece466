@@ -11,8 +11,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <jkcc/lexer.h>
 #include <jkcc/list.h>
+#include <jkcc/location.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
 

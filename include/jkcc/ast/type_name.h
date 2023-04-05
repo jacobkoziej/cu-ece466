@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_type_name_s {

@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 #define AST_STORAGE_CLASS_SPECIFIER_TYPEDEF       (1 << 0)
