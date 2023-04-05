@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <jkcc/config.h>
 #include <jkcc/lexer.h>
 
 
@@ -137,6 +138,7 @@
 	fprintf(stream, "],\n");                        \
 }
 
+#ifdef JKCC_CONFIG_AST_PRINT_LOCATION
 #define FPRINT_AST_NODE_FINISH                  \
 	INDENT(stream, level);                  \
 	fprintf(stream, "\"location\" : ");     \
@@ -155,6 +157,16 @@
 		AST_NODE_STR(&node->ast));      \
                                                 \
 	FPRINT_AST_FINISH;
+#else  /* JKCC_CONFIG_AST_PRINT_LOCATION */
+#define FPRINT_AST_NODE_FINISH                  \
+	INDENT(stream, level);                  \
+	fprintf(                                \
+		stream,                         \
+		"\"ast-type\" : \"%s\"\n",      \
+		AST_NODE_STR(&node->ast));      \
+                                                \
+	FPRINT_AST_FINISH;
+#endif  /* JKCC_CONFIG_AST_PRINT_LOCATION */
 
 
 #endif  /* JKCC_PRIVATE_AST_H */

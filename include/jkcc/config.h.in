@@ -8,6 +8,7 @@
 #define JKCC_CONFIG_H
 
 
+#mesondefine JKCC_CONFIG_AST_PRINT_LOCATION
 #mesondefine JKCC_CONFIG_OPTION_TRACE
 
 
