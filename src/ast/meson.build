@@ -4,6 +4,7 @@
 
 jkcc_src += files(
         'addressof.c',
+        'alignas.c',
         'alignof.c',
         'assignment.c',
         'atomic.c',

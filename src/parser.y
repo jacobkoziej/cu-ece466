@@ -241,6 +241,7 @@ typedef void* yyscan_t;
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
 %nterm <ast> function_specifier
+%nterm <ast> alignment_specifier
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
@@ -1313,6 +1314,28 @@ function_specifier:
 		AST_FUNCTION_SPECIFIER__NORETURN,
 		&@KEYWORD__NORETURN);
 	if (!$function_specifier) YYNOMEM;
+}
+
+
+// 6.7.5
+alignment_specifier:
+  KEYWORD__ALIGNAS PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("alignment-specifier", "_Alignas ( type-name )");
+
+	$alignment_specifier = ast_alignas_init(
+		$operand,
+		&@KEYWORD__ALIGNAS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$alignment_specifier) YYNOMEM;
+}
+| KEYWORD__ALIGNAS PUNCTUATOR_LPARENTHESIS constant_expression[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("alignment-specifier", "_Alignas ( constant-expression )");
+
+	$alignment_specifier = ast_alignas_init(
+		$operand,
+		&@KEYWORD__ALIGNAS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$alignment_specifier) YYNOMEM;
 }
 
 
