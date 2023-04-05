@@ -40,6 +40,7 @@ typedef enum ast_e {
 	AST_DEREFERENCE,
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
+	AST_FUNCTION_SPECIFIER,
 	AST_GENERIC_ASSOCIATION,
 	AST_GENERIC_ASSOCIATION_LIST,
 	AST_GENERIC_SELECTION,
@@ -95,6 +96,7 @@ void fprint_location(
 #include <jkcc/ast/dereference.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
+#include <jkcc/ast/function_specifier.h>
 #include <jkcc/ast/generic_association.h>
 #include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/generic_selection.h>

@@ -240,6 +240,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
+%nterm <ast> function_specifier
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
@@ -1293,6 +1294,26 @@ type_qualifier:
 	if (!$type_qualifier) YYNOMEM;
 }
 ;
+
+
+// 6.7.4
+function_specifier:
+  KEYWORD_INLINE {
+	TRACE("function-specifier", "inline");
+
+	$function_specifier = ast_function_specifier_init(
+		AST_FUNCTION_SPECIFIER_INLINE,
+		&@KEYWORD_INLINE);
+	if (!$function_specifier) YYNOMEM;
+}
+| KEYWORD__NORETURN {
+	TRACE("function-specifier", "_Noreturn");
+
+	$function_specifier = ast_function_specifier_init(
+		AST_FUNCTION_SPECIFIER__NORETURN,
+		&@KEYWORD__NORETURN);
+	if (!$function_specifier) YYNOMEM;
+}
 
 
 // 6.7.6

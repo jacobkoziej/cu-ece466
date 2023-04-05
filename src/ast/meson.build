@@ -13,6 +13,7 @@ jkcc_src += files(
         'dereference.c',
         'expression.c',
         'floating_constant.c',
+        'function_specifier.c',
         'generic_association.c',
         'generic_association_list.c',
         'generic_selection.c',
