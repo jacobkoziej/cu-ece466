@@ -78,6 +78,11 @@ ast_t *ast_type_append(
 	if (storage_class_specifier) {
 		uint_fast8_t constraints = list->storage_class_specifier;
 
+		if (constraints & ~AST_STORAGE_CLASS_SPECIFIER__THREAD_LOCAL)
+			if (storage_class_specifier->specifier !=
+				AST_STORAGE_CLASS_SPECIFIER__THREAD_LOCAL)
+				goto multiple_storage_class_error;
+
 		if (constraints & storage_class_specifier->specifier)
 			goto duplicate_storage_class_error;
 
@@ -236,6 +241,11 @@ ast_t *ast_type_append(
 vector_error:
 	// at most one node will be appended,
 	// so it's okay to just return NULL here
+	return NULL;
+
+multiple_storage_class_error:
+	*error = "multiple storage class specifiers";
+
 	return NULL;
 
 duplicate_storage_class_error:
