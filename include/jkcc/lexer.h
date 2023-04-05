@@ -31,6 +31,10 @@ typedef struct yyextra_s {
 	int                        prev_yylineno;
 	const char                *error;
 	struct {
+		ast_t *current;
+		ast_t *base;
+	} type;
+	struct {
 		symbol_table_t *identifier;
 	} symbol_table;
 } yyextra_t;

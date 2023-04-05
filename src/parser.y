@@ -43,6 +43,11 @@
 	}                                                     \
 }
 
+#define SET_BASE_TYPE(ast_type) {                      \
+	parser->yyextra_data->type.current = NULL;     \
+	parser->yyextra_data->type.base    = ast_type; \
+}
+
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
 #define YYLLOC_DEFAULT(cur, rhs, n) {                                                \
@@ -1069,6 +1074,8 @@ declaration_specifiers:
 		$storage_class_specifier,
 		&@storage_class_specifier);
 	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
 }
 | storage_class_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "storage-class-specifier declaration-specifiers");
@@ -1081,6 +1088,8 @@ declaration_specifiers:
 		&@storage_class_specifier,
 		ERROR_ADDR);
 	ERROR($$);
+
+	SET_BASE_TYPE($$);
 }
 | type_specifier {
 	TRACE("declaration-specifiers", "type-specifier");
@@ -1089,6 +1098,8 @@ declaration_specifiers:
 		$type_specifier,
 		&@type_specifier);
 	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
 }
 | type_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "type-specifier declaration-specifiers");
@@ -1101,6 +1112,8 @@ declaration_specifiers:
 		&@type_specifier,
 		ERROR_ADDR);
 	ERROR($$);
+
+	SET_BASE_TYPE($$);
 }
 | type_qualifier {
 	TRACE("declaration-specifiers", "type-qualifier");
@@ -1109,6 +1122,8 @@ declaration_specifiers:
 		$type_qualifier,
 		&@type_qualifier);
 	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
 }
 | type_qualifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "type-qualifier declaration-specifiers");
@@ -1121,6 +1136,8 @@ declaration_specifiers:
 		&@type_qualifier,
 		ERROR_ADDR);
 	ERROR($$);
+
+	SET_BASE_TYPE($$);
 }
 | function_specifier {
 	TRACE("declaration-specifiers", "function-specifier");
@@ -1129,6 +1146,8 @@ declaration_specifiers:
 		$function_specifier,
 		&@function_specifier);
 	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
 }
 | function_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "function-specifier declaration-specifiers");
@@ -1141,6 +1160,8 @@ declaration_specifiers:
 		&@function_specifier,
 		ERROR_ADDR);
 	ERROR($$);
+
+	SET_BASE_TYPE($$);
 }
 | alignment_specifier {
 	TRACE("declaration-specifiers", "alignment-specifier");
@@ -1149,6 +1170,8 @@ declaration_specifiers:
 		$alignment_specifier,
 		&@alignment_specifier);
 	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
 }
 | alignment_specifier declaration_specifiers[type] {
 	TRACE("declaration-specifiers", "alignment-specifier declaration-specifiers");
@@ -1161,6 +1184,8 @@ declaration_specifiers:
 		&@alignment_specifier,
 		ERROR_ADDR);
 	ERROR($$);
+
+	SET_BASE_TYPE($$);
 }
 
 
