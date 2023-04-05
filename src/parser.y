@@ -236,6 +236,7 @@ typedef void* yyscan_t;
 %nterm <val> assignment_operator
 %nterm <ast> expression
 %nterm <ast> constant_expression
+%nterm <ast> declaration_specifiers
 %nterm <ast> storage_class_specifier
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
@@ -1053,6 +1054,110 @@ constant_expression: conditional_expression {
 }
 
 
+// 6.7
+declaration_specifiers:
+  storage_class_specifier {
+	TRACE("declaration-specifiers", "storage-class-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$storage_class_specifier,
+		&@storage_class_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+}
+| storage_class_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "storage-class-specifier declaration-specifiers");
+
+	parser->error = NULL;
+
+	$$ = ast_type_append(
+		$type,
+		$storage_class_specifier,
+		&@storage_class_specifier,
+		&parser->error);
+	ERROR($$);
+}
+| type_specifier {
+	TRACE("declaration-specifiers", "type-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$type_specifier,
+		&@type_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+}
+| type_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "type-specifier declaration-specifiers");
+
+	parser->error = NULL;
+
+	$$ = ast_type_append(
+		$type,
+		$type_specifier,
+		&@type_specifier,
+		&parser->error);
+	ERROR($$);
+}
+| type_qualifier {
+	TRACE("declaration-specifiers", "type-qualifier");
+
+	$declaration_specifiers = ast_type_init(
+		$type_qualifier,
+		&@type_qualifier);
+	if (!$declaration_specifiers) YYNOMEM;
+}
+| type_qualifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "type-qualifier declaration-specifiers");
+
+	parser->error = NULL;
+
+	$$ = ast_type_append(
+		$type,
+		$type_qualifier,
+		&@type_qualifier,
+		&parser->error);
+	ERROR($$);
+}
+| function_specifier {
+	TRACE("declaration-specifiers", "function-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$function_specifier,
+		&@function_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+}
+| function_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "function-specifier declaration-specifiers");
+
+	parser->error = NULL;
+
+	$$ = ast_type_append(
+		$type,
+		$function_specifier,
+		&@function_specifier,
+		&parser->error);
+	ERROR($$);
+}
+| alignment_specifier {
+	TRACE("declaration-specifiers", "alignment-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$alignment_specifier,
+		&@alignment_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+}
+| alignment_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "alignment-specifier declaration-specifiers");
+
+	parser->error = NULL;
+
+	$$ = ast_type_append(
+		$type,
+		$alignment_specifier,
+		&@alignment_specifier,
+		&parser->error);
+	ERROR($$);
+}
+
+
 // 6.7.1
 storage_class_specifier:
   KEYWORD_TYPEDEF {
@@ -1219,19 +1324,18 @@ specifier_qualifier_list:
   type_specifier {
 	TRACE("specifier-qualifier-list", "type-specifier");
 
-	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
+	$specifier_qualifier_list = ast_type_init(
 		$type_specifier,
-		NULL,
 		&@type_specifier);
 	if (!$specifier_qualifier_list) YYNOMEM;
 }
-| type_specifier specifier_qualifier_list[list] {
+| type_specifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-specifier specifier-qualifier-list");
 
 	parser->error = NULL;
 
-	$$ = ast_specifier_qualifier_list_append(
-		$list,
+	$$ = ast_type_append(
+		$type,
 		$type_specifier,
 		&@type_specifier,
 		&parser->error);
@@ -1240,19 +1344,18 @@ specifier_qualifier_list:
 | type_qualifier {
 	TRACE("specifier-qualifier-list", "type-qualifier");
 
-	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
-		NULL,
+	$specifier_qualifier_list = ast_type_init(
 		$type_qualifier,
 		&@type_qualifier);
 	if (!$specifier_qualifier_list) YYNOMEM;
 }
-| type_qualifier specifier_qualifier_list[list] {
+| type_qualifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
 
 	parser->error = NULL;
 
-	$$ = ast_specifier_qualifier_list_append(
-		$list,
+	$$ = ast_type_append(
+		$type,
 		$type_qualifier,
 		&@type_qualifier,
 		&parser->error);

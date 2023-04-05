@@ -50,11 +50,11 @@ typedef enum ast_e {
 	AST_MEMBER_ACCESS,
 	AST_POINTER,
 	AST_SIZEOF,
-	AST_SPECIFIER_QUALIFIER_LIST,
 	AST_STATIC_ASSERT,
 	AST_STORAGE_CLASS_SPECIFIER,
 	AST_STRING_LITERAL,
 	AST_TERNARY_OPERATOR,
+	AST_TYPE,
 	AST_TYPE_NAME,
 	AST_TYPE_QUALIFIER,
 	AST_TYPE_QUALIFIER_LIST,
@@ -107,11 +107,11 @@ void fprint_location(
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>
 #include <jkcc/ast/sizeof.h>
-#include <jkcc/ast/specifier_qualifier_list.h>
 #include <jkcc/ast/static_assert.h>
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>
 #include <jkcc/ast/ternary_operator.h>
+#include <jkcc/ast/type.h>
 #include <jkcc/ast/type_name.h>
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_qualifier_list.h>

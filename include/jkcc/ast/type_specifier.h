@@ -22,7 +22,7 @@
 #define AST_TYPE_SPECIFIER_SHORT                     (1 << 2)
 #define AST_TYPE_SPECIFIER_INT                       (1 << 3)
 #define AST_TYPE_SPECIFIER_LONG                      (1 << 4)
-#define AST_TYPE_SPECIFIER_LONG_LONG                 (1 << 5)   // multiset for ast_specifier_qualifier_list_t
+#define AST_TYPE_SPECIFIER_LONG_LONG                 (1 << 5)
 #define AST_TYPE_SPECIFIER_FLOAT                     (1 << 6)
 #define AST_TYPE_SPECIFIER_DOUBLE                    (1 << 7)
 #define AST_TYPE_SPECIFIER_SIGNED                    (1 << 8)
