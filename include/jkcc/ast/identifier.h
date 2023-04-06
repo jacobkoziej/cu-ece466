@@ -16,12 +16,14 @@
 
 #include <jkcc/constant.h>
 #include <jkcc/location.h>
+#include <jkcc/string.h>
 
 
 typedef struct ast_identifier_s {
-	identifier_t identifier;
-	location_t   location;
-	ast_t        ast;
+	identifier_t  identifier;
+	ast_t        *type;
+	location_t    location;
+	ast_t         ast;
 } ast_identifier_t;
 
 
@@ -30,6 +32,11 @@ ast_t *ast_identifier_init(
 	location_t   *location);
 void ast_identifier_free(
 	ast_t        *ast);
+const string_t *ast_identifier_get_string(
+	ast_t        *identifier);
+void ast_identifier_set_type(
+	ast_t        *identifier,
+	ast_t        *type);
 void fprint_ast_identifier(
 	FILE         *stream,
 	const ast_t  *ast,

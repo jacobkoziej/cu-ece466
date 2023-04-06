@@ -43,6 +43,8 @@
 	}                                                     \
 }
 
+#define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
+
 #define GET_CURRENT_TYPE                             \
 	parser->yyextra_data->type.current =         \
 		(parser->yyextra_data->type.current) \
@@ -56,6 +58,10 @@
 
 #define SET_CURRENT_TYPE(ast_type) {                   \
 	parser->yyextra_data->type.current = ast_type; \
+}
+
+#define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
+	parser->yyextra_data->identifier = ast_identifier; \
 }
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
@@ -259,6 +265,7 @@ typedef void* yyscan_t;
 %nterm <ast> constant_expression
 %nterm <ast> declaration_specifiers
 %nterm <ast> storage_class_specifier
+%nterm <ast> init_declarator
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
@@ -312,6 +319,8 @@ identifier: IDENTIFIER {
 
 	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
 	if (!$identifier) YYNOMEM;
+
+	SET_CURRENT_IDENTIFIER($identifier);
 }
 
 
@@ -1200,6 +1209,40 @@ declaration_specifiers:
 }
 
 
+
+// 6.7
+init_declarator:
+  declarator {
+	TRACE("init-declarator", "declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *identifier = GET_CURRENT_IDENTIFIER;
+
+	if (parse_insert_identifier(parser, identifier, type)) YYNOMEM;
+
+	$init_declarator = $declarator;
+}
+/*
+| declarator[lvalue] PUNCTUATOR_ASSIGNMENT initializer[rvalue] {
+	TRACE("init-declarator", "declarator = initializer");
+
+	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *identifier = GET_CURRENT_IDENTIFIER;
+
+	if (parse_insert_identifier(parser, identifier, type)) YYNOMEM;
+
+	$init_declarator = ast_assignment_init(
+		lvalue,
+		rvalue,
+		AST_ASSIGNMENT_ASSIGNMENT,
+		&@lvalue,
+		&@rvalue);
+	if ($$) YYNOMEM;
+}
+*/
+;
+
+
 // 6.7.1
 storage_class_specifier:
   KEYWORD_TYPEDEF {
@@ -1509,10 +1552,11 @@ direct_declarator:
 	TRACE("direct-declarator", "identifier");
 	$direct_declarator = $identifier;
 }
-/*
 | PUNCTUATOR_LPARENTHESIS declarator PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "( declarator )");
+	$direct_declarator = $declarator;
 }
+/*
 | direct_declarator PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ ]");
 }

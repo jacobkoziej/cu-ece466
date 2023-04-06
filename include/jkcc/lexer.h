@@ -30,6 +30,7 @@ typedef struct yyextra_s {
 	enum character_constant_e  character_constant_type;
 	int                        prev_yylineno;
 	const char                *error;
+	ast_t                     *identifier;
 	struct {
 		ast_t *current;
 		ast_t *base;

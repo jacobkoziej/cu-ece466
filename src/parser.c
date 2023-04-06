@@ -101,6 +101,19 @@ error:
 	return NULL;
 }
 
+int parse_insert_identifier(
+	parser_t *parser,
+	ast_t    *identifier,
+	ast_t    *type)
+{
+	symbol_table_t *symbol = parser->yyextra_data->symbol_table.identifier;
+
+	ast_identifier_set_type(identifier, type);
+	const string_t *key = ast_identifier_get_string(identifier);
+
+	return symbol_insert(symbol, key->head, key->tail - key->head, type);
+}
+
 void translation_unit_free(translation_unit_t *translation_unit)
 {
 	if (!translation_unit) return;

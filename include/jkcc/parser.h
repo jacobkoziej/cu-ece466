@@ -30,8 +30,14 @@ typedef struct translation_unit_s {
 } translation_unit_t;
 
 
-translation_unit_t *parse(parser_t *parser);
-void                translation_unit_free(translation_unit_t *translation_unit);
+translation_unit_t *parse(
+	parser_t           *parser);
+int parse_insert_identifier(
+	parser_t           *parser,
+	ast_t              *identifier,
+	ast_t              *type);
+void translation_unit_free(
+	translation_unit_t *translation_unit);
 
 
 #endif  /* JKCC_PARSER_H */

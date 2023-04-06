@@ -23,6 +23,7 @@ ast_t *ast_identifier_init(identifier_t *identifier, location_t *location)
 	AST_INIT(ast_identifier_t);
 
 	node->identifier = *identifier;
+	node->type       =  NULL;
 	node->location   = *location;
 
 	AST_RETURN(AST_IDENTIFIER);
@@ -37,6 +38,27 @@ void ast_identifier_free(ast_t *ast)
 	free(node);
 }
 
+const string_t *ast_identifier_get_string(
+	ast_t *identifier)
+{
+	ast_identifier_t *ast_identifier = OFFSETOF_AST_NODE(
+		identifier,
+		ast_identifier_t);
+
+	return &ast_identifier->identifier.IDENTIFIER;
+}
+
+void ast_identifier_set_type(
+	ast_t *identifier,
+	ast_t *type)
+{
+	ast_identifier_t *ast_identifier = OFFSETOF_AST_NODE(
+		identifier,
+		ast_identifier_t);
+
+	ast_identifier->type = type;
+}
+
 void fprint_ast_identifier(
 	FILE         *stream,
 	const ast_t  *ast,
@@ -48,6 +70,9 @@ void fprint_ast_identifier(
 	FPRINT_AST_FIELD(
 		ast_node_str[AST_IDENTIFIER],
 		node->identifier.text.head);
+	FPRINT_AST_MEMBER(
+		ast_node_str[AST_TYPE],
+		node->type);
 
 	FPRINT_AST_NODE_FINISH;
 }
