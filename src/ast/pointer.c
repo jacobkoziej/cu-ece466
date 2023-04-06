@@ -16,6 +16,20 @@
 #include <jkcc/location.h>
 
 
+void ast_pointer_append(
+	ast_t *pointer,
+	ast_t *type)
+{
+	ast_pointer_t *ast_pointer;
+
+	do {
+		ast_pointer = OFFSETOF_AST_NODE(pointer, ast_pointer_t);
+		pointer = ast_pointer->pointer;
+	} while (ast_pointer->pointer);
+
+	ast_pointer->pointer = type;
+}
+
 ast_t *ast_pointer_init(
 	ast_t      *pointer,
 	ast_t      *type_qualifier_list,
@@ -34,7 +48,12 @@ void ast_pointer_free(ast_t *ast)
 {
 	AST_FREE(ast_pointer_t);
 
-	AST_NODE_FREE(node->pointer);
+	// ast_pointer_t only references ast_type_t,
+	// we want to avoid a double free here
+	if (node->pointer)
+		if (*node->pointer == AST_POINTER)
+			AST_NODE_FREE(node->pointer);
+
 	AST_NODE_FREE(node->type_qualifier_list);
 
 	free(node);

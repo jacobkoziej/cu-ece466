@@ -43,9 +43,19 @@
 	}                                                     \
 }
 
+#define GET_CURRENT_TYPE                             \
+	parser->yyextra_data->type.current =         \
+		(parser->yyextra_data->type.current) \
+		? parser->yyextra_data->type.current \
+		: parser->yyextra_data->type.base    \
+
 #define SET_BASE_TYPE(ast_type) {                      \
 	parser->yyextra_data->type.current = NULL;     \
 	parser->yyextra_data->type.base    = ast_type; \
+}
+
+#define SET_CURRENT_TYPE(ast_type) {                   \
+	parser->yyextra_data->type.current = ast_type; \
 }
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
@@ -254,6 +264,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_qualifier
 %nterm <ast> function_specifier
 %nterm <ast> alignment_specifier
+%nterm <ast> declarator
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
@@ -1474,6 +1485,25 @@ alignment_specifier:
 
 
 // 6.7.6
+declarator:
+  direct_declarator {
+	TRACE("declarator", "direct-declarator");
+	$declarator = $direct_declarator;
+}
+| pointer direct_declarator {
+	TRACE("declarator", "pointer direct-declarator");
+
+	$declarator = $direct_declarator;
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	ast_pointer_append($pointer, type);
+	SET_CURRENT_TYPE($pointer);
+}
+;
+
+
+// 6.7.6
 direct_declarator:
   identifier {
 	TRACE("direct-declarator", "identifier");
@@ -1543,7 +1573,7 @@ pointer:
 | PUNCTUATOR_ASTERISK pointer[child] {
 	TRACE("pointer", "* pointer");
 
-	$$ = ast_pointer_init(NULL, $child, &@PUNCTUATOR_ASTERISK);
+	$$ = ast_pointer_init($child, NULL, &@PUNCTUATOR_ASTERISK);
 	if (!$$) YYNOMEM;
 }
 | PUNCTUATOR_ASTERISK type_qualifier_list pointer[child] {

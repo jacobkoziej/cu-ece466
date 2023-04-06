@@ -25,6 +25,9 @@ typedef struct ast_pointer_s {
 } ast_pointer_t;
 
 
+void ast_pointer_append(
+	ast_t        *pointer,
+	ast_t        *type);
 ast_t *ast_pointer_init(
 	ast_t        *pointer,
 	ast_t        *type_qualifier_list,
