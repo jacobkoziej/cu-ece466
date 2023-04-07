@@ -65,7 +65,13 @@ void symbol_free(symbol_table_t *symbol)
 	if (!symbol) return;
 
 	ht_free(&symbol->table, NULL);
+
+	ast_t **type = symbol->table_insert_history.buf;
+	for (size_t i = 0; i < symbol->table_insert_history.use; i++)
+		if (*type[i] == AST_POINTER) AST_NODE_FREE(type[i]);
+
 	vector_free(&symbol->table_insert_history);
+
 	free(symbol);
 }
 

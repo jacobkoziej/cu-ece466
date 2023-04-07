@@ -45,7 +45,15 @@
 
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
+#define GET_BASE_STORAGE_CLASS parser->yyextra_data->storage_class.base
+
 #define GET_BASE_TYPE parser->yyextra_data->type.base
+
+#define GET_CURRENT_STORAGE_CLASS                             \
+	parser->yyextra_data->storage_class.current =         \
+		(parser->yyextra_data->storage_class.current) \
+		? parser->yyextra_data->storage_class.current \
+		: parser->yyextra_data->storage_class.base    \
 
 #define GET_CURRENT_TYPE                             \
 	parser->yyextra_data->type.current =         \
@@ -58,12 +66,20 @@
 	parser->yyextra_data->type.base    = ast_type; \
 }
 
+#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                   \
+	parser->yyextra_data->storage_class.current = new_storage_class; \
+}
+
 #define SET_CURRENT_TYPE(ast_type) {                   \
 	parser->yyextra_data->type.current = ast_type; \
 }
 
 #define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
 	parser->yyextra_data->identifier = ast_identifier; \
+}
+
+#define RESET_BASE_STORAGE_CLASS {                         \
+	SET_CURRENT_STORAGE_CLASS(GET_BASE_STORAGE_CLASS); \
 }
 
 #define RESET_BASE_TYPE SET_CURRENT_TYPE(GET_BASE_TYPE)
@@ -267,6 +283,7 @@ typedef void* yyscan_t;
 %nterm <val> assignment_operator
 %nterm <ast> expression
 %nterm <ast> constant_expression
+%nterm <ast> declaration
 %nterm <ast> declaration_specifiers
 %nterm <ast> storage_class_specifier
 %nterm <ast> init_declarator_list
@@ -1091,6 +1108,41 @@ constant_expression: conditional_expression {
 
 
 // 6.7
+declaration:
+  declaration_specifiers PUNCTUATOR_SEMICOLON {
+	TRACE("declaration", "declaration-specifiers ;");
+
+	$declaration = ast_declaration_init(
+		$declaration_specifiers,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declaration_specifiers,
+		&@PUNCTUATOR_SEMICOLON);
+	if (!$declaration) YYNOMEM;
+
+	RESET_BASE_STORAGE_CLASS;
+}
+| declaration_specifiers init_declarator_list PUNCTUATOR_SEMICOLON {
+	TRACE("declaration", "declaration-specifiers init-declarator-list ;");
+
+	$declaration = ast_declaration_init(
+		$declaration_specifiers,
+		$init_declarator_list,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declaration_specifiers,
+		&@PUNCTUATOR_SEMICOLON);
+	if (!$declaration) YYNOMEM;
+
+	RESET_BASE_STORAGE_CLASS;
+}
+| static_assert_declaration {
+	TRACE("declaration", "static_assert-declaration");
+	$declaration = $static_assert_declaration;
+}
+;
+
+
+// 6.7
 declaration_specifiers:
   storage_class_specifier {
 	TRACE("declaration-specifiers", "storage-class-specifier");
@@ -1293,6 +1345,8 @@ storage_class_specifier:
 		AST_STORAGE_CLASS_SPECIFIER_EXTERN,
 		&@KEYWORD_EXTERN);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_EXTERN);
 }
 | KEYWORD_STATIC {
 	TRACE("storage-class-specifier", "static");
@@ -1301,6 +1355,8 @@ storage_class_specifier:
 		AST_STORAGE_CLASS_SPECIFIER_STATIC,
 		&@KEYWORD_STATIC);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_STATIC);
 }
 | KEYWORD__THREAD_LOCAL {
 	TRACE("storage-class-specifier", "_Thread_local");
@@ -1317,6 +1373,8 @@ storage_class_specifier:
 		AST_STORAGE_CLASS_SPECIFIER_AUTO,
 		&@KEYWORD_AUTO);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_AUTO);
 }
 | KEYWORD_REGISTER {
 	TRACE("storage-class-specifier", "register");
@@ -1325,6 +1383,8 @@ storage_class_specifier:
 		AST_STORAGE_CLASS_SPECIFIER_REGISTER,
 		&@KEYWORD_REGISTER);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_REGISTER);
 }
 ;
 

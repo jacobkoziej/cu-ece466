@@ -11,6 +11,7 @@ jkcc_src += files(
         'binary_operator.c',
         'cast.c',
         'character_constant.c',
+        'declaration.c',
         'dereference.c',
         'expression.c',
         'floating_constant.c',

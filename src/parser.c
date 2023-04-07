@@ -64,7 +64,10 @@ translation_unit_t *parse(parser_t *parser)
 	yyextra_t yyextra_data = {
 		.file           = *(file_t**) translation_unit->file.buf,
 		.file_allocated = &translation_unit->file,
-		.symbol_table   = {
+		.storage_class  = {
+			.base = AST_DECLARATION_EXTERN,
+		},
+		.symbol_table = {
 			.identifier = *(symbol_table_t**)
 				translation_unit->symbol_table.identifier.buf,
 		},
@@ -118,8 +121,6 @@ void translation_unit_free(translation_unit_t *translation_unit)
 {
 	if (!translation_unit) return;
 
-	AST_NODE_FREE(translation_unit->ast);
-
 	file_t **file = translation_unit->file.buf;
 
 	for (size_t i = 0; i < translation_unit->file.use; i++) {
@@ -138,6 +139,8 @@ void translation_unit_free(translation_unit_t *translation_unit)
 
 	vector_free(&translation_unit->file);
 	vector_free(&translation_unit->symbol_table.identifier);
+
+	AST_NODE_FREE(translation_unit->ast);
 
 	free(translation_unit);
 }

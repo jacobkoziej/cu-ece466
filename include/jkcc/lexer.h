@@ -32,6 +32,10 @@ typedef struct yyextra_s {
 	const char                *error;
 	ast_t                     *identifier;
 	struct {
+		uint_fast8_t current;
+		uint_fast8_t base;
+	} storage_class;
+	struct {
 		ast_t *current;
 		ast_t *base;
 	} type;
