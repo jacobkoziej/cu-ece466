@@ -45,6 +45,8 @@
 
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
+#define GET_BASE_TYPE parser->yyextra_data->type.base
+
 #define GET_CURRENT_TYPE                             \
 	parser->yyextra_data->type.current =         \
 		(parser->yyextra_data->type.current) \
@@ -63,6 +65,8 @@
 #define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
 	parser->yyextra_data->identifier = ast_identifier; \
 }
+
+#define RESET_BASE_TYPE SET_CURRENT_TYPE(GET_BASE_TYPE)
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
@@ -265,6 +269,7 @@ typedef void* yyscan_t;
 %nterm <ast> constant_expression
 %nterm <ast> declaration_specifiers
 %nterm <ast> storage_class_specifier
+%nterm <ast> init_declarator_list
 %nterm <ast> init_declarator
 %nterm <ast> type_specifier
 %nterm <ast> specifier_qualifier_list
@@ -1207,6 +1212,34 @@ declaration_specifiers:
 
 	SET_BASE_TYPE($$);
 }
+
+
+// 6.7
+init_declarator_list:
+  init_declarator {
+	TRACE("init-declarator-list", "init-declarator");
+	$init_declarator_list = $init_declarator;
+
+	RESET_BASE_TYPE;
+}
+| init_declarator_list[list] PUNCTUATOR_COMMA init_declarator {
+	TRACE("init-declarator-list", "init-declarator-list , init-declarator");
+
+	$$ = (*$list == AST_INIT_DECLARATOR_LIST)
+		? ast_init_declarator_list_append(
+			$list,
+			$init_declarator,
+			&@init_declarator)
+		: ast_init_declarator_list_init(
+			$list,
+			$init_declarator,
+			&@init_declarator,
+			&@init_declarator);
+	if (!$$) YYNOMEM;
+
+	RESET_BASE_TYPE;
+}
+;
 
 
 

@@ -48,6 +48,7 @@ typedef enum ast_e {
 	AST_GENERIC_ASSOCIATION_LIST,
 	AST_GENERIC_SELECTION,
 	AST_IDENTIFIER,
+	AST_INIT_DECLARATOR_LIST,
 	AST_INTEGER_CONSTANT,
 	AST_MEMBER_ACCESS,
 	AST_POINTER,
@@ -105,6 +106,7 @@ void fprint_location(
 #include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/generic_selection.h>
 #include <jkcc/ast/identifier.h>
+#include <jkcc/ast/init_declarator_list.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>
