@@ -1633,8 +1633,19 @@ declarator:
 
 	ast_t *type = GET_CURRENT_TYPE;
 
-	ast_pointer_append($pointer, type);
-	SET_CURRENT_TYPE($pointer);
+	switch (*type) {
+		case AST_ARRAY:
+			ast_array_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_TYPE:
+			ast_pointer_append($pointer, type);
+			SET_CURRENT_TYPE($pointer);
+			break;
+
+		default:
+			break;
+	}
 }
 ;
 
@@ -1649,19 +1660,67 @@ direct_declarator:
 	TRACE("direct-declarator", "( declarator )");
 	$direct_declarator = $declarator;
 }
-/*
-| direct_declarator PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ ]");
+| direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
-| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list PUNCTUATOR_RBRACKET {
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
-| direct_declarator PUNCTUATOR_LBRACKET assignment-expression PUNCTUATOR_RBRACKET {
+| direct_declarator[array] PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
-| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list assignment-expression PUNCTUATOR_RBRACKET {
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
+/*
 | direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ static assignment-expression ]");
 }
@@ -1671,12 +1730,38 @@ direct_declarator:
 | direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ type-qualifier-list static assignment-expression ]");
 }
-| direct_declarator PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+*/
+| direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
-| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "[ type-qualifier-list * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
 }
+/*
 | direct_declarator PUNCTUATOR_LPARENTHESIS parameter-type-list PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "( parameter-type-list )");
 }
