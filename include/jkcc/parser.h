@@ -24,6 +24,7 @@ typedef struct parser_s {
 typedef struct translation_unit_s {
 	ast_t    *ast;
 	vector_t  file;               // file_t*
+	vector_t  base_type;          // ast_t*
 	scope_t  *symbol_table;
 } translation_unit_t;
 

@@ -108,17 +108,6 @@ void symbol_free(symbol_table_t *symbol)
 
 	ht_free(&symbol->table, NULL);
 
-	/*
-	 * Array, pointer, and function AST types all use references to
-	 * the same base type AST node.  We only want to free the types
-	 * here which are unique to each identifier.  The freeing of the
-	 * base type is handled by ast_declaration_free().
-	 */
-	ast_t **type = symbol->table_insert_history.buf;
-	for (size_t i = 0; i < symbol->table_insert_history.use; i++)
-		if (*type[i] == AST_POINTER || *type[i] == AST_ARRAY)
-			AST_NODE_FREE(type[i]);
-
 	vector_free(&symbol->table_insert_history);
 
 	free(symbol);

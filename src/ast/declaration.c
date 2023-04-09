@@ -18,16 +18,18 @@
 
 ast_t *ast_declaration_init(
 	ast_t         *type,
-	ast_t         *init_declarator,
+	ast_t         *identifier,
+	ast_t         *initializer,
 	uint_fast8_t   storage_class,
 	location_t    *location_start,
 	location_t    *location_end)
 {
 	AST_INIT(ast_declaration_t);
 
-	node->type            = type;
-	node->init_declarator = init_declarator;
-	node->storage_class   = storage_class;
+	node->type          = type;
+	node->identifier    = identifier;
+	node->initializer   = initializer;
+	node->storage_class = storage_class;
 
 	AST_NODE_LOCATION;
 
@@ -39,7 +41,8 @@ void ast_declaration_free(ast_t *ast)
 	AST_FREE(ast_declaration_t);
 
 	AST_NODE_FREE(node->type);
-	AST_NODE_FREE(node->init_declarator);
+	AST_NODE_FREE(node->identifier);
+	AST_NODE_FREE(node->initializer);
 
 	free(node);
 }
@@ -53,9 +56,8 @@ void fprint_ast_declaration(
 	FPRINT_AST_NODE_BEGIN(ast_declaration_t);
 
 	FPRINT_AST_MEMBER(ast_node_str[AST_TYPE], node->type);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_INIT_DECLARATOR_LIST],
-		node->init_declarator);
+	FPRINT_AST_MEMBER(ast_node_str[AST_IDENTIFIER], node->identifier);
+	FPRINT_AST_MEMBER("initializer", node->initializer);
 
 	const char *storage_class;
 	switch (node->storage_class) {

@@ -42,6 +42,7 @@ typedef enum ast_e {
 	AST_CAST,
 	AST_CHARACTER_CONSTANT,
 	AST_DECLARATION,
+	AST_DECLARATION_LIST,
 	AST_DEREFERENCE,
 	AST_EXPRESSION,
 	AST_FLOATING_CONSTANT,
@@ -50,7 +51,6 @@ typedef enum ast_e {
 	AST_GENERIC_ASSOCIATION_LIST,
 	AST_GENERIC_SELECTION,
 	AST_IDENTIFIER,
-	AST_INIT_DECLARATOR_LIST,
 	AST_INTEGER_CONSTANT,
 	AST_MEMBER_ACCESS,
 	AST_POINTER,
@@ -102,6 +102,7 @@ void fprint_location(
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/declaration.h>
+#include <jkcc/ast/declaration_list.h>
 #include <jkcc/ast/dereference.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
@@ -110,7 +111,6 @@ void fprint_location(
 #include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/generic_selection.h>
 #include <jkcc/ast/identifier.h>
-#include <jkcc/ast/init_declarator_list.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>

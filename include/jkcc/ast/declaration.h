@@ -26,7 +26,8 @@
 
 typedef struct ast_declaration_s {
 	ast_t         *type;
-	ast_t         *init_declarator;
+	ast_t         *identifier;
+	ast_t         *initializer;
 	uint_fast8_t   storage_class;
 	location_t     location;
 	ast_t          ast;
@@ -35,7 +36,8 @@ typedef struct ast_declaration_s {
 
 ast_t *ast_declaration_init(
 	ast_t         *type,
-	ast_t         *init_declarator,
+	ast_t         *identifier,
+	ast_t         *initializer,
 	uint_fast8_t   storage_class,
 	location_t    *location_start,
 	location_t    *location_end);

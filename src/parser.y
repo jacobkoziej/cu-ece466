@@ -43,6 +43,11 @@
 	}                                                     \
 }
 
+#define APPEND_BASE_TYPE(ast_type) {                                \
+	if (vector_append(&translation_unit->base_type, &ast_type)) \
+		YYNOMEM;                                            \
+}
+
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
 #define GET_BASE_STORAGE_CLASS parser->yyextra_data->storage_class.base
@@ -1121,28 +1126,16 @@ constant_expression: conditional_expression {
 declaration:
   declaration_specifiers PUNCTUATOR_SEMICOLON {
 	TRACE("declaration", "declaration-specifiers ;");
+	$declaration = $declaration_specifiers;
 
-	$declaration = ast_declaration_init(
-		$declaration_specifiers,
-		NULL,
-		GET_CURRENT_STORAGE_CLASS,
-		&@declaration_specifiers,
-		&@PUNCTUATOR_SEMICOLON);
-	if (!$declaration) YYNOMEM;
-
+	APPEND_BASE_TYPE($declaration_specifiers);
 	RESET_BASE_STORAGE_CLASS;
 }
 | declaration_specifiers init_declarator_list PUNCTUATOR_SEMICOLON {
 	TRACE("declaration", "declaration-specifiers init-declarator-list ;");
+	$declaration = $init_declarator_list;
 
-	$declaration = ast_declaration_init(
-		$declaration_specifiers,
-		$init_declarator_list,
-		GET_CURRENT_STORAGE_CLASS,
-		&@declaration_specifiers,
-		&@PUNCTUATOR_SEMICOLON);
-	if (!$declaration) YYNOMEM;
-
+	APPEND_BASE_TYPE($declaration_specifiers);
 	RESET_BASE_STORAGE_CLASS;
 }
 | static_assert_declaration {
@@ -1281,25 +1274,21 @@ init_declarator_list:
   init_declarator {
 	TRACE("init-declarator-list", "init-declarator");
 	$init_declarator_list = $init_declarator;
-
-	RESET_BASE_TYPE;
 }
-| init_declarator_list[list] PUNCTUATOR_COMMA init_declarator {
+| init_declarator_list[list] PUNCTUATOR_COMMA init_declarator[declaration] {
 	TRACE("init-declarator-list", "init-declarator-list , init-declarator");
 
-	$$ = (*$list == AST_INIT_DECLARATOR_LIST)
-		? ast_init_declarator_list_append(
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
 			$list,
-			$init_declarator,
-			&@init_declarator)
-		: ast_init_declarator_list_init(
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
 			$list,
-			$init_declarator,
-			&@init_declarator,
-			&@init_declarator);
+			$declaration,
+			&@list,
+			&@declaration);
 	if (!$$) YYNOMEM;
-
-	RESET_BASE_TYPE;
 }
 ;
 
@@ -1307,18 +1296,28 @@ init_declarator_list:
 
 // 6.7
 init_declarator:
-  declarator {
+  declarator[identifier] {
 	TRACE("init-declarator", "declarator");
 
 	ast_t *type = GET_CURRENT_TYPE;
-	ast_t *identifier = GET_CURRENT_IDENTIFIER;
 
 	if (symbol_insert_identifier(
 		translation_unit->symbol_table->current.identifier,
-		identifier,
+		$identifier,
 		type)) YYNOMEM;
 
-	$init_declarator = $declarator;
+	$init_declarator = ast_declaration_init(
+		type,
+		$identifier,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@identifier,
+		&@identifier);
+	if (!$init_declarator) YYNOMEM;
+
+	ast_identifier_set_type($identifier, type);
+
+	RESET_BASE_TYPE;
 }
 /*
 | declarator[lvalue] PUNCTUATOR_ASSIGNMENT initializer[rvalue] {
@@ -1336,6 +1335,8 @@ init_declarator:
 		&@lvalue,
 		&@rvalue);
 	if ($$) YYNOMEM;
+
+	RESET_BASE_TYPE;
 }
 */
 ;
