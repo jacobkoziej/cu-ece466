@@ -17,8 +17,6 @@
 #include <jkcc/location.h>
 #include <jkcc/vector.h>
 
-#include "y.tab.h"
-
 
 ast_t *ast_type_qualifier_list_append(
 	ast_t      *type_qualifier_list,

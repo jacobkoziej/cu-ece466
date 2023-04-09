@@ -15,8 +15,6 @@
 
 #include <jkcc/location.h>
 
-#include "y.tab.h"
-
 
 ast_t *ast_type_qualifier_init(
 	uint_fast8_t  qualifier,
