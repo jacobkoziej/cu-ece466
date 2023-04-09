@@ -61,6 +61,12 @@
 		? parser->yyextra_data->type.current \
 		: parser->yyextra_data->type.base    \
 
+#define GET_IDENTIFIER_TYPE(ast_identifier, ast_type)               \
+	symbol_get_identifier(                                      \
+		translation_unit->symbol_table->current.identifier, \
+		ast_identifier,                                     \
+		ast_type)
+
 #define SET_BASE_TYPE(ast_type) {                      \
 	parser->yyextra_data->type.current = NULL;     \
 	parser->yyextra_data->type.base    = ast_type; \
@@ -341,6 +347,10 @@ identifier: IDENTIFIER {
 
 	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
 	if (!$identifier) YYNOMEM;
+
+	ast_t *type;
+	if (!GET_IDENTIFIER_TYPE($identifier, &type))
+		ast_identifier_set_type($identifier, type);
 
 	SET_CURRENT_IDENTIFIER($identifier);
 }
@@ -1303,7 +1313,10 @@ init_declarator:
 	ast_t *type = GET_CURRENT_TYPE;
 	ast_t *identifier = GET_CURRENT_IDENTIFIER;
 
-	if (parse_insert_identifier(parser, identifier, type)) YYNOMEM;
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->current.identifier,
+		identifier,
+		type)) YYNOMEM;
 
 	$init_declarator = $declarator;
 }

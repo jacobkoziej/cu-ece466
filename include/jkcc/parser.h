@@ -24,18 +24,12 @@ typedef struct parser_s {
 typedef struct translation_unit_s {
 	ast_t    *ast;
 	vector_t  file;               // file_t*
-	struct {
-		vector_t identifier;  // ast_t*
-	} symbol_table;
+	scope_t  *symbol_table;
 } translation_unit_t;
 
 
 translation_unit_t *parse(
 	parser_t           *parser);
-int parse_insert_identifier(
-	parser_t           *parser,
-	ast_t              *identifier,
-	ast_t              *type);
 void translation_unit_free(
 	translation_unit_t *translation_unit);
 

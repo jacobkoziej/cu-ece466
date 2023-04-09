@@ -14,6 +14,48 @@
 #include <jkcc/list.h>
 
 
+scope_t *scope_init(void)
+{
+	scope_t *scope = calloc(1, sizeof(*scope));
+	if (!scope) return NULL;
+
+	scope->current.identifier = symbol_init();
+	if (!scope->current.identifier) goto error;
+
+	if (vector_init(
+		&scope->history.identifier,
+		sizeof(scope->history.identifier),
+		0)) goto error;
+	if (vector_append(
+		&scope->history.identifier,
+		&scope->current.identifier)) goto error;
+
+	return scope;
+
+error:
+	symbol_free(scope->current.identifier);
+
+	vector_free(&scope->history.identifier);
+
+	return NULL;
+}
+
+void scope_free(
+	scope_t *scope)
+{
+	if (!scope) return;
+
+	symbol_table_t **symbol;
+
+	symbol = scope->history.identifier.buf;
+	for (size_t i = 0; i < scope->history.identifier.use; i++)
+		symbol_free(symbol[i]);
+
+	vector_free(&scope->history.identifier);
+
+	free(scope);
+}
+
 symbol_table_t *symbol_init(void)
 {
 	symbol_table_t *symbol = calloc(1, sizeof(*symbol));
@@ -82,19 +124,20 @@ void symbol_free(symbol_table_t *symbol)
 	free(symbol);
 }
 
-int symbol_get(
+int symbol_get_identifier(
 	symbol_table_t  *symbol,
-	const char      *key,
-	size_t           len,
+	ast_t           *identifier,
 	ast_t          **type)
 {
-	void *ast;
+	void           *ast;
+	const string_t *key = ast_identifier_get_string(identifier);
+	size_t          len = key->tail - key->head;
 
 	// search for symbol, climbing up scopes
 	do {
-		if (!ht_get(&symbol->table, key, len, &ast)) continue;
+		if (!ht_get(&symbol->table, key->head, len, &ast)) continue;
 
-		if (type) *type = ast;
+		*type = ast;
 
 		return 0;
 	} while (
@@ -102,4 +145,15 @@ int symbol_get(
 		symbol->list.prev);
 
 	return SYMBOL_ERROR_NOT_FOUND;
+}
+
+int symbol_insert_identifier(
+	symbol_table_t *symbol,
+	ast_t          *identifier,
+	ast_t          *type)
+{
+	ast_identifier_set_type(identifier, type);
+	const string_t *key = ast_identifier_get_string(identifier);
+
+	return symbol_insert(symbol, key->head, key->tail - key->head, type);
 }

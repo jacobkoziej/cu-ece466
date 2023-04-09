@@ -24,7 +24,6 @@ translation_unit_t *parse(parser_t *parser)
 {
 	translation_unit_t *translation_unit;
 	file_t             *file;
-	symbol_table_t     *identifier_symbol_table;
 	yyscan_t            yyscanner = NULL;
 	FILE               *stream    = NULL;
 
@@ -32,10 +31,6 @@ translation_unit_t *parse(parser_t *parser)
 	if (!translation_unit) return NULL;
 
 	if (vector_init(&translation_unit->file, sizeof(file), 0)) goto error;
-	if (vector_init(
-		&translation_unit->symbol_table.identifier,
-		sizeof(translation_unit->ast),
-		0)) goto error;
 
 	file = calloc(1, sizeof(*file));
 	if (!file) goto error;
@@ -48,15 +43,8 @@ translation_unit_t *parse(parser_t *parser)
 	// avoid a double free in error recovery
 	file = NULL;
 
-	identifier_symbol_table = symbol_init();
-	if (!identifier_symbol_table) goto error;
-
-	if (vector_append(
-		&translation_unit->symbol_table.identifier,
-		&identifier_symbol_table)) goto error;
-
-	// avoid a double free in error recovery
-	identifier_symbol_table = NULL;
+	translation_unit->symbol_table = scope_init();
+	if (!translation_unit->symbol_table) goto error;
 
 	stream = (parser->path) ? fopen(parser->path, "r") : stdin;
 	if (!stream) goto error;
@@ -64,12 +52,9 @@ translation_unit_t *parse(parser_t *parser)
 	yyextra_t yyextra_data = {
 		.file           = *(file_t**) translation_unit->file.buf,
 		.file_allocated = &translation_unit->file,
+		.symbol_table   = translation_unit->symbol_table,
 		.storage_class  = {
 			.base = AST_DECLARATION_EXTERN,
-		},
-		.symbol_table = {
-			.identifier = *(symbol_table_t**)
-				translation_unit->symbol_table.identifier.buf,
 		},
 	};
 
@@ -92,7 +77,7 @@ error:
 
 	if (stream && (stream != stdin)) fclose(stream);
 
-	symbol_free(identifier_symbol_table);
+	scope_free(translation_unit->symbol_table);
 
 	if (file) {
 		if (file->path) free(file->path);
@@ -102,19 +87,6 @@ error:
 	free(translation_unit);
 
 	return NULL;
-}
-
-int parse_insert_identifier(
-	parser_t *parser,
-	ast_t    *identifier,
-	ast_t    *type)
-{
-	symbol_table_t *symbol = parser->yyextra_data->symbol_table.identifier;
-
-	ast_identifier_set_type(identifier, type);
-	const string_t *key = ast_identifier_get_string(identifier);
-
-	return symbol_insert(symbol, key->head, key->tail - key->head, type);
 }
 
 void translation_unit_free(translation_unit_t *translation_unit)
@@ -128,17 +100,9 @@ void translation_unit_free(translation_unit_t *translation_unit)
 		free(file[i]);
 	}
 
-	symbol_table_t **symbol;
-
-	symbol = translation_unit->symbol_table.identifier.buf;
-	for (
-		size_t i = 0;
-		i < translation_unit->symbol_table.identifier.use;
-		i++)
-		symbol_free(symbol[i]);
-
 	vector_free(&translation_unit->file);
-	vector_free(&translation_unit->symbol_table.identifier);
+
+	scope_free(translation_unit->symbol_table);
 
 	AST_NODE_FREE(translation_unit->ast);
 

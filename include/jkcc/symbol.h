@@ -28,7 +28,20 @@ typedef struct symbol_table_s {
 	list_t   list;
 } symbol_table_t;
 
+typedef struct scope_s {
+	struct {
+		symbol_table_t *identifier;
+	} current;
+	struct {
+		vector_t identifier;         // ast_t*
+	} history;
+} scope_t;
 
+
+scope_t *scope_init(
+	void);
+void scope_free(
+	scope_t         *scope);
 symbol_table_t *symbol_init(
 	void);
 int symbol_insert(
@@ -40,9 +53,12 @@ void symbol_free(
 	symbol_table_t  *symbol);
 int symbol_get_identifier(
 	symbol_table_t  *symbol,
-	const char      *identifier,
-	size_t           len,
+	ast_t           *identifier,
 	ast_t          **type);
+int symbol_insert_identifier(
+	symbol_table_t  *symbol,
+	ast_t           *identifier,
+	ast_t           *type);
 
 
 #endif  /* JCC_SYMBOL_H */
