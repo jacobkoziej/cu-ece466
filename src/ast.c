@@ -17,7 +17,7 @@
 #include <jkcc/string.h>
 
 
-void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
+void (*const ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_addressof_free,
 	ast_alignas_free,
 	ast_alignof_free,
@@ -53,7 +53,7 @@ void (*ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	ast_unary_operator_free,
 };
 
-void (*fprint_ast_node[AST_NODES_TOTAL])(
+void (*const fprint_ast_node[AST_NODES_TOTAL])(
 	FILE         *stream,
 	const ast_t  *ast,
 	size_t        level,
@@ -94,7 +94,7 @@ void (*fprint_ast_node[AST_NODES_TOTAL])(
 };
 
 
-char *ast_node_str[AST_NODES_TOTAL] = {
+const char *const ast_node_str[AST_NODES_TOTAL] = {
 	"addressof",
 	"alignas",
 	"alignof",
