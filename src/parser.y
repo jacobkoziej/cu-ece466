@@ -308,6 +308,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> parameter_declaration
 %nterm <ast> identifier_list
 %nterm <ast> type_name
 %nterm <ast> atomic_type_specifier
@@ -1844,6 +1845,51 @@ type_qualifier_list:
 		&@type_qualifier);
 	if (!$$) YYNOMEM;
 }
+;
+
+
+// 6.7.6
+parameter_declaration:
+  declaration_specifiers declarator {
+	TRACE("parameter-declaration", "declaration-specifiers declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->current.identifier,
+		$declarator,
+		type)) YYNOMEM;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		$declarator,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declarator,
+		&@declarator);
+	if (!$parameter_declaration) YYNOMEM;
+
+	ast_identifier_set_type($declarator, type);
+	APPEND_BASE_TYPE($declaration_specifiers);
+}
+/*
+| declaration_specifiers abstract_declarator {
+	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		$abstract_declarator,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@abstract_declarator,
+		&@abstract_declarator);
+	if (!$parameter_declaration) YYNOMEM;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+}
+*/
 ;
 
 
