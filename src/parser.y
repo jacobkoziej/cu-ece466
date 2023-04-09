@@ -308,6 +308,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> identifier_list
 %nterm <ast> type_name
 %nterm <ast> atomic_type_specifier
 %nterm <ast> static_assert_declaration
@@ -1841,6 +1842,23 @@ type_qualifier_list:
 		$list,
 		$type_qualifier,
 		&@type_qualifier);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.7.6
+identifier_list:
+  identifier {
+	TRACE("identifier-list", "identifier");
+
+	$identifier_list = ast_identifier_list_init($identifier, &@identifier);
+	if (!$identifier_list) YYNOMEM;
+}
+| identifier_list[list] PUNCTUATOR_COMMA identifier {
+	TRACE("identifier-list", "identifier-list , identifier");
+
+	$$ = ast_identifier_list_append($list, $identifier, &@identifier);
 	if (!$$) YYNOMEM;
 }
 ;

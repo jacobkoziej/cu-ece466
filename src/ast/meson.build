@@ -22,6 +22,7 @@ jkcc_src += files(
         'generic_association_list.c',
         'generic_selection.c',
         'identifier.c',
+        'identifier_list.c',
         'integer_constant.c',
         'member_access.c',
         'pointer.c',
