@@ -40,7 +40,15 @@ void ast_declaration_free(ast_t *ast)
 {
 	AST_FREE(ast_declaration_t);
 
-	AST_NODE_FREE(node->type);
+	switch (*node->type) {
+		case AST_ARRAY:
+		case AST_POINTER:
+			AST_NODE_FREE(node->type);
+			break;
+
+		default:
+			break;
+	}
 	AST_NODE_FREE(node->identifier);
 	AST_NODE_FREE(node->initializer);
 

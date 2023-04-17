@@ -51,8 +51,15 @@ void ast_pointer_free(ast_t *ast)
 	// ast_pointer_t only references ast_type_t,
 	// we want to avoid a double free here
 	if (node->pointer)
-		if (*node->pointer == AST_POINTER)
-			AST_NODE_FREE(node->pointer);
+		switch (*node->pointer) {
+			case AST_ARRAY:
+			case AST_POINTER:
+				AST_NODE_FREE(node->pointer);
+				break;
+
+			default:
+				break;
+		}
 
 	AST_NODE_FREE(node->type_qualifier_list);
 
