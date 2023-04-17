@@ -22,10 +22,9 @@
 
 
 typedef struct symbol_table_s {
-	ht_t     table;
-	vector_t table_insert_history;  // ast_t*
-	size_t   size;
-	list_t   list;
+	ht_t   table;
+	size_t size;
+	list_t list;
 } symbol_table_t;
 
 typedef struct scope_s {

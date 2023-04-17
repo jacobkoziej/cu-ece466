@@ -63,13 +63,7 @@ symbol_table_t *symbol_init(void)
 
 	if (ht_init(&symbol->table, 0)) goto ht_init_error;
 
-	if (vector_init(&symbol->table_insert_history, sizeof(ast_t*), 0))
-		goto vector_init_error;
-
 	return symbol;
-
-vector_init_error:
-	ht_free(&symbol->table, NULL);
 
 ht_init_error:
 	free(symbol);
@@ -89,17 +83,9 @@ int symbol_insert(
 	if (ht_insert(&symbol->table, key, len, type))
 		return SYMBOL_ERROR_NOMEM;
 
-	if (vector_append(&symbol->table_insert_history, &type))
-		goto vector_append_error;
-
 	++symbol->size;
 
 	return 0;
-
-vector_append_error:
-	ht_rm(&symbol->table, key, len, NULL);
-
-	return SYMBOL_ERROR_NOMEM;
 }
 
 void symbol_free(symbol_table_t *symbol)
@@ -107,8 +93,6 @@ void symbol_free(symbol_table_t *symbol)
 	if (!symbol) return;
 
 	ht_free(&symbol->table, NULL);
-
-	vector_free(&symbol->table_insert_history);
 
 	free(symbol);
 }
