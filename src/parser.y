@@ -89,6 +89,10 @@
 	parser->yyextra_data->identifier = ast_identifier; \
 }
 
+#define SET_VARIADIC_PARAMETER(variadic) {                   \
+	parser->yyextra_data->variadic_parameter = variadic; \
+}
+
 #define RESET_BASE_STORAGE_CLASS {                         \
 	SET_CURRENT_STORAGE_CLASS(GET_BASE_STORAGE_CLASS); \
 }
@@ -308,6 +312,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> parameter_type_list
 %nterm <ast> parameter_list
 %nterm <ast> parameter_declaration
 %nterm <ast> identifier_list
@@ -1843,6 +1848,21 @@ type_qualifier_list:
 		$type_qualifier,
 		&@type_qualifier);
 	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.7.6
+parameter_type_list:
+  parameter_list {
+	TRACE("parameter-type-list", "parameter-list");
+	$parameter_type_list = $parameter_list;
+	SET_VARIADIC_PARAMETER(false);
+}
+| parameter_list PUNCTUATOR_COMMA PUNCTUATOR_VARIADIC {
+	TRACE("parameter-type-list", "parameter-list , ...");
+	$parameter_type_list = $parameter_list;
+	SET_VARIADIC_PARAMETER(true);
 }
 ;
 

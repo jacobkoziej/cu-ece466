@@ -8,6 +8,7 @@
 #define JKCC_LEXER_H
 
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -31,6 +32,7 @@ typedef struct yyextra_s {
 	int                        prev_yylineno;
 	const char                *error;
 	ast_t                     *identifier;
+	bool                       variadic_parameter;
 	scope_t                   *symbol_table;
 	struct {
 		uint_fast8_t current;
