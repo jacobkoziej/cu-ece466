@@ -308,6 +308,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> parameter_list
 %nterm <ast> parameter_declaration
 %nterm <ast> identifier_list
 %nterm <ast> type_name
@@ -1841,6 +1842,30 @@ type_qualifier_list:
 		$list,
 		$type_qualifier,
 		&@type_qualifier);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.7.6
+parameter_list:
+  parameter_declaration {
+	TRACE("parameter-list", "parameter-declaration");
+
+	$parameter_list = ast_declaration_list_init(
+		NULL,
+		$parameter_declaration,
+		&@parameter_declaration,
+		&@parameter_declaration);
+	if (!$parameter_list) YYNOMEM;
+}
+| parameter_list[list] PUNCTUATOR_COMMA parameter_declaration {
+	TRACE("parameter-list", "parameter-list , parameter-declaration");
+
+	$$ = ast_declaration_list_append(
+		$list,
+		$parameter_declaration,
+		&@parameter_declaration);
 	if (!$$) YYNOMEM;
 }
 ;
