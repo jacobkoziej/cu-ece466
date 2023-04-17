@@ -1317,8 +1317,6 @@ init_declarator:
 		&@identifier);
 	if (!$init_declarator) YYNOMEM;
 
-	ast_identifier_set_type($identifier, type);
-
 	RESET_BASE_TYPE;
 }
 /*
@@ -1869,7 +1867,6 @@ parameter_declaration:
 		&@declarator);
 	if (!$parameter_declaration) YYNOMEM;
 
-	ast_identifier_set_type($declarator, type);
 	APPEND_BASE_TYPE($declaration_specifiers);
 }
 /*
