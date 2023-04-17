@@ -45,8 +45,9 @@ ast_t *ast_declaration_list_init(
 	if (vector_init(&node->declaration, sizeof(declaration_list), 0))
 		goto error_init;
 
-	if (vector_append(&node->declaration, &declaration_list))
-		goto error_append;
+	if (declaration_list)
+		if (vector_append(&node->declaration, &declaration_list))
+			goto error_append;
 
 	if (vector_append(&node->declaration, &declaration))
 		goto error_append;
