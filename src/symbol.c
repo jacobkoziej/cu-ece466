@@ -67,14 +67,19 @@ int symbol_get_identifier(
 
 	// search for symbol, climbing up scopes
 	do {
-		if (!ht_get(&symbol->table, key->head, len, &ast)) continue;
+		if (ht_get(&symbol->table, key->head, len, &ast)) {
+			if (!symbol->list.prev) break;
+
+			continue;
+		}
 
 		*type = ast;
 
 		return 0;
-	} while (
-		symbol = OFFSETOF_LIST(&symbol->list, symbol_table_t, list),
-		symbol->list.prev);
+	} while ((symbol = OFFSETOF_LIST(
+		symbol->list.prev,
+		symbol_table_t,
+		list)));
 
 	return SYMBOL_ERROR_NOT_FOUND;
 }
