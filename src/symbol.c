@@ -24,7 +24,7 @@ scope_t *scope_init(void)
 
 	if (vector_init(
 		&scope->history.identifier,
-		sizeof(scope->history.identifier),
+		sizeof(scope->current.identifier),
 		0)) goto error;
 	if (vector_append(
 		&scope->history.identifier,
