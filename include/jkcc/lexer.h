@@ -18,8 +18,8 @@
 #include <jkcc/constant.h>
 #include <jkcc/list.h>
 #include <jkcc/location.h>
+#include <jkcc/scope.h>
 #include <jkcc/string.h>
-#include <jkcc/symbol.h>
 #include <jkcc/vector.h>
 
 

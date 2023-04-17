@@ -13,7 +13,7 @@
 #include <jkcc/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/location.h>
-#include <jkcc/symbol.h>
+#include <jkcc/scope.h>
 #include <jkcc/vector.h>
 
 #include "y.tab.h"

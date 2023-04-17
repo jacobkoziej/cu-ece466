@@ -10,7 +10,7 @@
 
 #include <jkcc/ast.h>
 #include <jkcc/lexer.h>
-#include <jkcc/symbol.h>
+#include <jkcc/scope.h>
 #include <jkcc/trace.h>
 #include <jkcc/vector.h>
 
