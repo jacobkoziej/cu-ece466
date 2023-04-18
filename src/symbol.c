@@ -15,6 +15,19 @@
 #include <jkcc/string.h>
 
 
+int symbol_check_identifier_collision(
+	symbol_table_t *symbol,
+	ast_t          *identifier)
+{
+	const string_t *key = ast_identifier_get_string(identifier);
+	size_t          len = key->tail - key->head;
+
+	if (ht_exists(&symbol->table, key->head, len))
+		return SYMBOL_ERROR_EXISTS;
+
+	return 0;
+}
+
 symbol_table_t *symbol_init(void)
 {
 	symbol_table_t *symbol = calloc(1, sizeof(*symbol));

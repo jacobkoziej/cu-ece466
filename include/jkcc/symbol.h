@@ -27,6 +27,9 @@ typedef struct symbol_table_s {
 } symbol_table_t;
 
 
+int symbol_check_identifier_collision(
+	symbol_table_t  *symbol,
+	ast_t           *identifier);
 symbol_table_t *symbol_init(
 	void);
 int symbol_insert(
