@@ -20,6 +20,7 @@
 #include <jkcc/location.h>
 #include <jkcc/parser.h>
 #include <jkcc/string.h>
+#include <jkcc/symbol.h>
 #include <jkcc/trace.h>
 
 
@@ -46,6 +47,21 @@
 #define APPEND_BASE_TYPE(ast_type) {                                \
 	if (vector_append(&translation_unit->base_type, &ast_type)) \
 		YYNOMEM;                                            \
+}
+
+#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                \
+	if (symbol_check_identifier_collision(                      \
+		translation_unit->symbol_table->current.identifier, \
+		ast_identifier))                                    \
+	{                                                           \
+		yyerror(                                            \
+			&yylloc,                                    \
+			scanner,                                    \
+			parser,                                     \
+			translation_unit,                           \
+			"redeclaration of identifier");             \
+		YYERROR;                                            \
+	}                                                           \
 }
 
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
@@ -360,6 +376,8 @@ identifier: IDENTIFIER {
 
 	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
 	if (!$identifier) YYNOMEM;
+
+	CHECK_IDENTIFIER_COLLISION($identifier);
 
 	ast_t *type;
 	if (!GET_IDENTIFIER_TYPE($identifier, &type))
