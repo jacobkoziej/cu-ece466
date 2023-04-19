@@ -1721,7 +1721,7 @@ direct_declarator:
 	$$ = $array;
 }
 | direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ type-qualifier-list ]");
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list ]");
 
 	ast_t *array = ast_array_init(
 		GET_CURRENT_TYPE,
@@ -1736,7 +1736,7 @@ direct_declarator:
 	$$ = $array;
 }
 | direct_declarator[array] PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ assignment-expression ]");
+	TRACE("direct-declarator", "direct-declarator [ assignment-expression ]");
 
 	ast_t *array = ast_array_init(
 		GET_CURRENT_TYPE,
@@ -1751,7 +1751,7 @@ direct_declarator:
 	$$ = $array;
 }
 | direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ type-qualifier-list assignment-expression ]");
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list assignment-expression ]");
 
 	ast_t *array = ast_array_init(
 		GET_CURRENT_TYPE,
@@ -1767,17 +1767,17 @@ direct_declarator:
 }
 /*
 | direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ static assignment-expression ]");
+	TRACE("direct-declarator", "direct-declarator [ static assignment-expression ]");
 }
 | direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC type-qualifier-list assignment-expression PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ static type-qualifier-list assignment-expression ]");
+	TRACE("direct-declarator", "direct-declarator [ static type-qualifier-list assignment-expression ]");
 }
 | direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ type-qualifier-list static assignment-expression ]");
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list static assignment-expression ]");
 }
 */
 | direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ * ]");
+	TRACE("direct-declarator", "direct-declarator [ * ]");
 
 	ast_t *array = ast_array_init(
 		GET_CURRENT_TYPE,
@@ -1792,7 +1792,7 @@ direct_declarator:
 	$$ = $array;
 }
 | direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
-	TRACE("direct-declarator", "[ type-qualifier-list * ]");
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list * ]");
 
 	ast_t *array = ast_array_init(
 		GET_CURRENT_TYPE,
