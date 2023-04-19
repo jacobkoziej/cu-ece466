@@ -66,6 +66,11 @@
 	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE)) \
 		fprintf(stream, "\n");
 
+#define FPRINT_AST_BOOL(name, value) {                                     \
+	INDENT(stream, level);                                             \
+	fprintf(stream, "\"%s\" : %s,\n", name, value ? "true" : "false"); \
+}
+
 #define FPRINT_AST_MEMBER(type, member) if (member) { \
 	INDENT(stream, level);                        \
 	fprintf(stream, "\"%s\" : ", type);           \

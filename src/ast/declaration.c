@@ -42,6 +42,7 @@ void ast_declaration_free(ast_t *ast)
 
 	switch (*node->type) {
 		case AST_ARRAY:
+		case AST_FUNCTION:
 		case AST_POINTER:
 			AST_NODE_FREE(node->type);
 			break;

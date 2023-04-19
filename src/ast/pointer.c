@@ -53,6 +53,7 @@ void ast_pointer_free(ast_t *ast)
 	if (node->pointer)
 		switch (*node->pointer) {
 			case AST_ARRAY:
+			case AST_FUNCTION:
 			case AST_POINTER:
 				AST_NODE_FREE(node->pointer);
 				break;

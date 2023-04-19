@@ -1679,6 +1679,10 @@ declarator:
 			ast_array_prepend_pointer(type, $pointer);
 			break;
 
+		case AST_FUNCTION:
+			ast_function_prepend_pointer(type, $pointer);
+			break;
+
 		case AST_TYPE:
 			ast_pointer_append($pointer, type);
 			SET_CURRENT_TYPE($pointer);
@@ -1802,18 +1806,55 @@ direct_declarator:
 
 	$$ = $array;
 }
-/*
-| direct_declarator PUNCTUATOR_LPARENTHESIS parameter-type-list PUNCTUATOR_RPARENTHESIS {
-	TRACE("direct-declarator", "( parameter-type-list )");
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list function_scope_pop PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
 }
-| direct_declarator PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
-	TRACE("direct-declarator", "( )");
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
 }
-| direct_declarator PUNCTUATOR_LPARENTHESIS identifier-list PUNCTUATOR_RPARENTHESIS {
-	TRACE("direct-declarator", "( identifier-list )");
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS identifier_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( identifier-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$identifier_list,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
 }
 ;
-*/
 
 
 // 6.7.6
@@ -2025,4 +2066,20 @@ static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS consta
 		&@KEYWORD__STATIC_ASSERT,
 		&@PUNCTUATOR_SEMICOLON);
 	if (!$static_assert_declaration) YYNOMEM;
+}
+
+
+/* mid-rule actions */
+
+
+function_scope_push: %empty {
+	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+
+	translation_unit->symbol_table->context.base.storage_class =
+		AST_DECLARATION_ARGUMENT;
+}
+
+
+function_scope_pop: %empty {
+	scope_pop(translation_unit->symbol_table);
 }
