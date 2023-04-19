@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <jkcc/symbol.h>
 #include <jkcc/vector.h>
@@ -58,4 +59,32 @@ void scope_free(scope_t *scope)
 	vector_free(&scope->history.identifier);
 
 	free(scope);
+}
+
+int scope_push(scope_t *scope)
+{
+	symbol_table_t *symbol;
+
+	symbol = symbol_init();
+	if (!symbol) return -1;
+
+	symbol->list.prev = &scope->context.current.identifier->list;
+
+	if (vector_append(&scope->history.context, &scope->context))
+		goto context_error;
+	if (vector_append(&scope->history.identifier, &symbol))
+		goto identifier_error;
+
+	memset(&scope->context, 0, sizeof(scope->context));
+	scope->context.current.identifier = symbol;
+
+	return 0;
+
+identifier_error:
+	vector_pop(&scope->history.context, NULL);
+
+context_error:
+	symbol_free(symbol);
+
+	return SYMBOL_ERROR_NOMEM;
 }
