@@ -37,6 +37,8 @@ scope_t *scope_init(
 	void);
 void scope_free(
 	scope_t *scope);
+void scope_pop(
+	scope_t *scope);
 int scope_push(
 	scope_t *scope);
 

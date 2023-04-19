@@ -61,6 +61,13 @@ void scope_free(scope_t *scope)
 	free(scope);
 }
 
+void scope_pop(scope_t *scope)
+{
+	void *context = &scope->context;
+
+	vector_pop(&scope->history.context, &context);
+}
+
 int scope_push(scope_t *scope)
 {
 	symbol_table_t *symbol;
