@@ -19,6 +19,7 @@
 #include <jkcc/lexer.h>
 #include <jkcc/location.h>
 #include <jkcc/parser.h>
+#include <jkcc/scope.h>
 #include <jkcc/string.h>
 #include <jkcc/symbol.h>
 #include <jkcc/trace.h>
@@ -49,56 +50,58 @@
 		YYNOMEM;                                            \
 }
 
-#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                \
-	if (symbol_check_identifier_collision(                      \
-		translation_unit->symbol_table->current.identifier, \
-		ast_identifier))                                    \
-	{                                                           \
-		yyerror(                                            \
-			&yylloc,                                    \
-			scanner,                                    \
-			parser,                                     \
-			translation_unit,                           \
-			"redeclaration of identifier");             \
-		YYERROR;                                            \
-	}                                                           \
+#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                        \
+	if (symbol_check_identifier_collision(                              \
+		translation_unit->symbol_table->context.current.identifier, \
+		ast_identifier))                                            \
+	{                                                                   \
+		yyerror(                                                    \
+			&yylloc,                                            \
+			scanner,                                            \
+			parser,                                             \
+			translation_unit,                                   \
+			"redeclaration of identifier");                     \
+		YYERROR;                                                    \
+	}                                                                   \
 }
 
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
-#define GET_BASE_STORAGE_CLASS parser->yyextra_data->storage_class.base
+#define GET_BASE_STORAGE_CLASS parser->yyextra_data->symbol_table->context.base.storage_class
 
-#define GET_BASE_TYPE parser->yyextra_data->type.base
+#define GET_BASE_TYPE parser->yyextra_data->symbol_table->context.base.type
 
-#define GET_CURRENT_STORAGE_CLASS                             \
-	parser->yyextra_data->storage_class.current =         \
-		(parser->yyextra_data->storage_class.current) \
-		? parser->yyextra_data->storage_class.current \
-		: parser->yyextra_data->storage_class.base    \
+#define GET_CURRENT_STORAGE_CLASS                                                   \
+	parser->yyextra_data->symbol_table->context.current.storage_class =         \
+		(parser->yyextra_data->symbol_table->context.current.storage_class) \
+		? parser->yyextra_data->symbol_table->context.current.storage_class \
+		: parser->yyextra_data->symbol_table->context.base.storage_class    \
 
-#define GET_CURRENT_TYPE                             \
-	parser->yyextra_data->type.current =         \
-		(parser->yyextra_data->type.current) \
-		? parser->yyextra_data->type.current \
-		: parser->yyextra_data->type.base    \
+#define GET_CURRENT_TYPE                                                   \
+	parser->yyextra_data->symbol_table->context.current.type =         \
+		(parser->yyextra_data->symbol_table->context.current.type) \
+		? parser->yyextra_data->symbol_table->context.current.type \
+		: parser->yyextra_data->symbol_table->context.base.type    \
 
-#define GET_IDENTIFIER_TYPE(ast_identifier, ast_type)               \
-	symbol_get_identifier(                                      \
-		translation_unit->symbol_table->current.identifier, \
-		ast_identifier,                                     \
+#define GET_IDENTIFIER_TYPE(ast_identifier, ast_type)                       \
+	symbol_get_identifier(                                              \
+		translation_unit->symbol_table->context.current.identifier, \
+		ast_identifier,                                             \
 		ast_type)
 
-#define SET_BASE_TYPE(ast_type) {                      \
-	parser->yyextra_data->type.current = NULL;     \
-	parser->yyextra_data->type.base    = ast_type; \
+#define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
+
+#define SET_BASE_TYPE(ast_type) {                                            \
+	parser->yyextra_data->symbol_table->context.current.type = NULL;     \
+	parser->yyextra_data->symbol_table->context.base.type    = ast_type; \
 }
 
-#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                   \
-	parser->yyextra_data->storage_class.current = new_storage_class; \
+#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                                         \
+	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
 }
 
-#define SET_CURRENT_TYPE(ast_type) {                   \
-	parser->yyextra_data->type.current = ast_type; \
+#define SET_CURRENT_TYPE(ast_type) {                                         \
+	parser->yyextra_data->symbol_table->context.current.type = ast_type; \
 }
 
 #define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
@@ -1328,7 +1331,7 @@ init_declarator:
 	ast_t *type = GET_CURRENT_TYPE;
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->current.identifier,
+		translation_unit->symbol_table->context.current.identifier,
 		$identifier,
 		type)) YYNOMEM;
 
@@ -1917,7 +1920,7 @@ parameter_declaration:
 	ast_t *type = GET_CURRENT_TYPE;
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->current.identifier,
+		translation_unit->symbol_table->context.current.identifier,
 		$declarator,
 		type)) YYNOMEM;
 

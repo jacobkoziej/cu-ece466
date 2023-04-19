@@ -48,6 +48,9 @@ translation_unit_t *parse(parser_t *parser)
 	translation_unit->symbol_table = scope_init();
 	if (!translation_unit->symbol_table) goto error;
 
+	translation_unit->symbol_table->context.base.storage_class =
+		AST_DECLARATION_EXTERN;
+
 	stream = (parser->path) ? fopen(parser->path, "r") : stdin;
 	if (!stream) goto error;
 
@@ -55,9 +58,6 @@ translation_unit_t *parse(parser_t *parser)
 		.file           = *(file_t**) translation_unit->file.buf,
 		.file_allocated = &translation_unit->file,
 		.symbol_table   = translation_unit->symbol_table,
-		.storage_class  = {
-			.base = AST_DECLARATION_EXTERN,
-		},
 	};
 
 	parser->yyextra_data = &yyextra_data;

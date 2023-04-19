@@ -12,12 +12,23 @@
 #include <jkcc/vector.h>
 
 
-typedef struct scope_s {
+typedef struct context_s {
+	struct {
+		uint_fast8_t  storage_class;
+		ast_t        *type;
+	} base;
 	struct {
 		symbol_table_t *identifier;
+		uint_fast8_t    storage_class;
+		ast_t          *type;
 	} current;
+} context_t;
+
+typedef struct scope_s {
+	context_t context;
 	struct {
-		vector_t identifier;         // ast_t*
+		vector_t context;     // context_t
+		vector_t identifier;  // ast_t*
 	} history;
 } scope_t;
 

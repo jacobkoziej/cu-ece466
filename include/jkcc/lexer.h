@@ -34,14 +34,6 @@ typedef struct yyextra_s {
 	ast_t                     *identifier;
 	bool                       variadic_parameter;
 	scope_t                   *symbol_table;
-	struct {
-		uint_fast8_t current;
-		uint_fast8_t base;
-	} storage_class;
-	struct {
-		ast_t *current;
-		ast_t *base;
-	} type;
 } yyextra_t;
 
 
