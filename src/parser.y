@@ -326,6 +326,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_specifier
 %nterm <val> struct_or_union
 %nterm <ast> specifier_qualifier_list
+%nterm <ast> struct_declarator_list
 %nterm <ast> struct_declarator
 %nterm <ast> type_qualifier
 %nterm <ast> function_specifier
@@ -1629,6 +1630,29 @@ specifier_qualifier_list:
 		&@type_qualifier,
 		ERROR_ADDR);
 	ERROR($$);
+}
+
+
+// 6.7.2.1
+struct_declarator_list:
+  struct_declarator {
+	TRACE("struct-declarator-list", "struct-declarator");
+	$struct_declarator_list = $struct_declarator;
+}
+| struct_declarator_list[list] PUNCTUATOR_COMMA struct_declarator[declaration] {
+	TRACE("struct-declarator-list", "struct-declarator-list , struct-declarator");
+
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
+			$list,
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
+			$list,
+			$declaration,
+			&@list,
+			&@declaration);
+	if (!$$) YYNOMEM;
 }
 
 
