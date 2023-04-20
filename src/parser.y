@@ -326,6 +326,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_specifier
 %nterm <val> struct_or_union
 %nterm <ast> specifier_qualifier_list
+%nterm <ast> struct_declarator
 %nterm <ast> type_qualifier
 %nterm <ast> function_specifier
 %nterm <ast> alignment_specifier
@@ -1629,6 +1630,39 @@ specifier_qualifier_list:
 		ERROR_ADDR);
 	ERROR($$);
 }
+
+
+// 6.7.2.1
+struct_declarator:
+  declarator[identifier] {
+	TRACE("struct-declarator", "declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->context.current.identifier,
+		$identifier,
+		type)) YYNOMEM;
+
+	$struct_declarator = ast_declaration_init(
+		type,
+		$identifier,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@identifier,
+		&@identifier);
+	if (!$struct_declarator) YYNOMEM;
+
+	RESET_BASE_TYPE;
+}
+/*
+| PUNCTUATOR_CONDITIONAL_COLON constant_expression {
+	TRACE("struct-declarator", ": constant-expression");
+}
+| declarator PUNCTUATOR_CONDITIONAL_COLON constant_expression {
+	TRACE("struct-declarator", "declarator : constant-expression");
+}
+*/
 
 
 // 6.7.3
