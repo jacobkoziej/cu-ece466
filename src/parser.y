@@ -324,6 +324,7 @@ typedef void* yyscan_t;
 %nterm <ast> init_declarator_list
 %nterm <ast> init_declarator
 %nterm <ast> type_specifier
+%nterm <val> struct_or_union
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> type_qualifier
 %nterm <ast> function_specifier
@@ -1570,6 +1571,19 @@ type_specifier:
 // | struct_or_union_specifier
 // | enum_specifier
 // | typedef_name
+;
+
+
+// 6.7.2.1
+struct_or_union:
+  KEYWORD_STRUCT {
+	TRACE("struct-or-union", "struct");
+	$struct_or_union = AST_STRUCT_STRUCT;
+}
+| KEYWORD_UNION {
+	TRACE("struct-or-union", "union");
+	$struct_or_union = AST_STRUCT_UNION;
+}
 ;
 
 
