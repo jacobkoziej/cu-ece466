@@ -325,6 +325,7 @@ typedef void* yyscan_t;
 %nterm <ast> init_declarator
 %nterm <ast> type_specifier
 %nterm <val> struct_or_union
+%nterm <ast> struct_declaration
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> struct_declarator_list
 %nterm <ast> struct_declarator
@@ -1590,6 +1591,25 @@ struct_or_union:
 
 
 // 6.7.2.1
+struct_declaration:
+  specifier_qualifier_list PUNCTUATOR_SEMICOLON {
+	TRACE("struct-declaration", "specifier-qualifier-list ;");
+	$struct_declaration = $specifier_qualifier_list;
+}
+| specifier_qualifier_list set_base_type struct_declarator_list PUNCTUATOR_SEMICOLON {
+	TRACE("struct-declaration", "specifier-qualifier-list struct-declarator-list ;");
+	$struct_declaration = $struct_declarator_list;
+
+	APPEND_BASE_TYPE($specifier_qualifier_list);
+	RESET_BASE_STORAGE_CLASS;
+}
+| static_assert_declaration {
+	TRACE("struct-declaration", "static_assert-declaration");
+	$struct_declaration = $static_assert_declaration;
+}
+
+
+// 6.7.2.1
 specifier_qualifier_list:
   type_specifier {
 	TRACE("specifier-qualifier-list", "type-specifier");
@@ -2189,4 +2209,9 @@ function_scope_push: %empty {
 
 function_scope_pop: %empty {
 	scope_pop(translation_unit->symbol_table);
+}
+
+
+set_base_type: %empty {
+	SET_BASE_TYPE($<ast>0);
 }
