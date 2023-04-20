@@ -40,6 +40,7 @@ typedef enum ast_e {
 	AST_ASSIGNMENT,
 	AST_ATOMIC,
 	AST_BINARY_OPERATOR,
+	AST_CALL,
 	AST_CAST,
 	AST_CHARACTER_CONSTANT,
 	AST_DECLARATION,
@@ -103,6 +104,7 @@ void fprint_location(
 #include <jkcc/ast/assignment.h>
 #include <jkcc/ast/atomic.h>
 #include <jkcc/ast/binary_operator.h>
+#include <jkcc/ast/call.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/declaration.h>

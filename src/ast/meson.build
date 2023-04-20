@@ -11,6 +11,7 @@ jkcc_src += files(
         'assignment.c',
         'atomic.c',
         'binary_operator.c',
+        'call.c',
         'cast.c',
         'character_constant.c',
         'declaration.c',

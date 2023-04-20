@@ -547,14 +547,26 @@ postfix_expression:
 		&@PUNCTUATOR_RBRACKET);
 	if (!$$) YYNOMEM;
 }
-/*
-| postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+| postfix_expression[expression] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( )");
+
+	$$ = ast_call_init(
+		$expression,
+		NULL,
+		&@expression,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$$) YYNOMEM;
 }
-| postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS {
+| postfix_expression[expression] PUNCTUATOR_LPARENTHESIS argument_expression_list[argument_list] PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( argument-expression-list )");
+
+	$$ = ast_call_init(
+		$expression,
+		$argument_list,
+		&@expression,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$$) YYNOMEM;
 }
-*/
 | postfix_expression[operand] PUNCTUATOR_MEMBER_ACCESS identifier {
 	TRACE("postfix-expression", "postfix-expression . identifier");
 
