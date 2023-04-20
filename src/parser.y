@@ -299,6 +299,7 @@ typedef void* yyscan_t;
 %nterm <ast> generic_assoc_list
 %nterm <ast> generic_association
 %nterm <ast> postfix_expression
+%nterm <ast> argument_expression_list
 %nterm <ast> unary_expression
 %nterm <val> unary_operator
 %nterm <ast> cast_expression
@@ -608,6 +609,28 @@ postfix_expression:
 	TRACE("postfix-expression", "( type-name ) { initializer-list , }");
 }
 */
+;
+
+
+// 6.5.2
+argument_expression_list:
+  assignment_expression[argument] {
+	TRACE("argument-expression-list", "assignment-expression");
+
+	$argument_expression_list = ast_argument_list_init(
+		$argument,
+		&@argument);
+	if (!$argument_expression_list) YYNOMEM;
+}
+| argument_expression_list[list] PUNCTUATOR_COMMA assignment_expression[argument] {
+	TRACE("argument-expression-list", "argument-expression-list , assignment-expression");
+
+	$$ = ast_argument_list_append(
+		$list,
+		$argument,
+		&@argument);
+	if (!$$) YYNOMEM;
+}
 ;
 
 

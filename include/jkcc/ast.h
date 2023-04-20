@@ -35,6 +35,7 @@ typedef enum ast_e {
 	AST_ADDRESSOF,
 	AST_ALIGNAS,
 	AST_ALIGNOF,
+	AST_ARGUMENT_LIST,
 	AST_ARRAY,
 	AST_ASSIGNMENT,
 	AST_ATOMIC,
@@ -97,6 +98,7 @@ void fprint_location(
 #include <jkcc/ast/addressof.h>
 #include <jkcc/ast/alignas.h>
 #include <jkcc/ast/alignof.h>
+#include <jkcc/ast/argument_list.h>
 #include <jkcc/ast/array.h>
 #include <jkcc/ast/assignment.h>
 #include <jkcc/ast/atomic.h>
