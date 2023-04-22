@@ -8,7 +8,7 @@
 #define JKCC_AST_DECLARATION_LIST_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>

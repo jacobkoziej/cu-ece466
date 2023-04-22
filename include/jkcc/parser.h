@@ -8,7 +8,7 @@
 #define JKCC_PARSER_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/scope.h>
 #include <jkcc/trace.h>

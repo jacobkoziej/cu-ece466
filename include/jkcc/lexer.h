@@ -15,7 +15,7 @@
 #include <uchar.h>
 #include <wchar.h>
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/constant.h>
 #include <jkcc/list.h>
 #include <jkcc/location.h>

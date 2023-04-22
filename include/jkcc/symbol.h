@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/ht.h>
 #include <jkcc/list.h>
 

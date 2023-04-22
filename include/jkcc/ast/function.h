@@ -8,7 +8,7 @@
 #define JKCC_AST_FUNCTION_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stdbool.h>
 #include <stddef.h>

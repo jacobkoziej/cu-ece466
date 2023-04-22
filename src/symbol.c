@@ -9,7 +9,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
+#include <jkcc/ast/identifier.h>
 #include <jkcc/ht.h>
 #include <jkcc/list.h>
 #include <jkcc/string.h>

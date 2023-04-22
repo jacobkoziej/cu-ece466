@@ -8,7 +8,7 @@
 #define JKCC_AST_CHARACTER_CONSTANT_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>

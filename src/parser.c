@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/lexer.h>
 #include <jkcc/location.h>
 #include <jkcc/scope.h>
