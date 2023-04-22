@@ -22,6 +22,9 @@ scope_t *scope_init(void)
 	scope->context.current.identifier = symbol_init();
 	if (!scope->context.current.identifier) goto error;
 
+	scope->context.current.tag = symbol_init();
+	if (!scope->context.current.tag) goto error;
+
 	if (vector_init(
 		&scope->history.context,
 		sizeof(scope->context),
@@ -30,14 +33,22 @@ scope_t *scope_init(void)
 		&scope->history.identifier,
 		sizeof(scope->context.current.identifier),
 		0)) goto error;
+	if (vector_init(
+		&scope->history.tag,
+		sizeof(scope->context.current.tag),
+		0)) goto error;
 	if (vector_append(
 		&scope->history.identifier,
 		&scope->context.current.identifier)) goto error;
+	if (vector_append(
+		&scope->history.tag,
+		&scope->context.current.tag)) goto error;
 
 	return scope;
 
 error:
 	symbol_free(scope->context.current.identifier);
+	symbol_free(scope->context.current.tag);
 
 	vector_free(&scope->history.context);
 	vector_free(&scope->history.identifier);
@@ -55,8 +66,13 @@ void scope_free(scope_t *scope)
 	for (size_t i = 0; i < scope->history.identifier.use; i++)
 		symbol_free(symbol[i]);
 
+	symbol = scope->history.tag.buf;
+	for (size_t i = 0; i < scope->history.tag.use; i++)
+		symbol_free(symbol[i]);
+
 	vector_free(&scope->history.context);
 	vector_free(&scope->history.identifier);
+	vector_free(&scope->history.tag);
 
 	free(scope);
 }

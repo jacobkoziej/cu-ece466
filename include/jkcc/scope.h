@@ -19,6 +19,7 @@ typedef struct context_s {
 	} base;
 	struct {
 		symbol_table_t *identifier;
+		symbol_table_t *tag;
 		uint_fast8_t    storage_class;
 		ast_t          *type;
 	} current;
@@ -29,6 +30,7 @@ typedef struct scope_s {
 	struct {
 		vector_t context;     // context_t
 		vector_t identifier;  // ast_t*
+		vector_t tag;         // ast_t*
 	} history;
 } scope_t;
 
