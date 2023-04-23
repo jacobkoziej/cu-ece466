@@ -33,6 +33,7 @@ typedef struct yyextra_s {
 	const char                *error;
 	ast_t                     *identifier;
 	bool                       variadic_parameter;
+	uint_fast16_t              identifier_type;
 	scope_t                   *symbol_table;
 } yyextra_t;
 

@@ -83,13 +83,26 @@
 		? parser->yyextra_data->symbol_table->context.current.type \
 		: parser->yyextra_data->symbol_table->context.base.type    \
 
-#define GET_IDENTIFIER_TYPE(ast_identifier, ast_type)                       \
-	symbol_get_identifier(                                              \
-		translation_unit->symbol_table->context.current.identifier, \
-		ast_identifier,                                             \
-		ast_type)
+#define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                                \
+	switch (parser->yyextra_data->identifier_type) {                                     \
+		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:                           \
+			symbol = translation_unit->symbol_table->context.current.tag;        \
+			break;                                                               \
+                                                                                             \
+		default:                                                                     \
+			symbol = translation_unit->symbol_table->context.current.identifier; \
+			break;                                                               \
+	}                                                                                    \
+                                                                                             \
+	parser->yyextra_data->identifier_type = 0;                                           \
+}
+
+#define GET_IDENTIFIER_TYPE(symbol, ast_identifier, ast_type)   \
+	symbol_get_identifier(symbol, ast_identifier, ast_type)
 
 #define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
+
+#define SCOPE_POP scope_pop(translation_unit->symbol_table)
 
 #define SET_BASE_TYPE(ast_type) {                                            \
 	parser->yyextra_data->symbol_table->context.current.type = NULL;     \
@@ -110,6 +123,42 @@
 
 #define SET_VARIADIC_PARAMETER(variadic) {                   \
 	parser->yyextra_data->variadic_parameter = variadic; \
+}
+
+#define STRUCT_INSTALL_TAG(ast_struct, struct_or_union, identifier, struct_or_union_yylloc, identifier_yylloc) { \
+	ast_t *struct_type = ast_struct_init(                                                                    \
+		identifier,                                                                                      \
+		NULL,                                                                                            \
+		NULL,                                                                                            \
+		struct_or_union,                                                                                 \
+		struct_or_union_yylloc,                                                                          \
+		identifier_yylloc);                                                                              \
+	if (!struct_type) YYNOMEM;                                                                               \
+                                                                                                                 \
+	switch (symbol_insert_tag(                                                                               \
+		translation_unit->symbol_table->context.current.tag,                                             \
+		identifier,                                                                                      \
+		struct_type)                                                                                     \
+	) {                                                                                                      \
+		case SYMBOL_ERROR_NOMEM:                                                                         \
+			YYNOMEM;                                                                                 \
+			break;                                                                                   \
+                                                                                                                 \
+		case SYMBOL_ERROR_EXISTS:                                                                        \
+			yyerror(                                                                                 \
+				&yylloc,                                                                         \
+				scanner,                                                                         \
+				parser,                                                                          \
+				translation_unit,                                                                \
+				"redeclaration of struct or union");                                             \
+			YYERROR;                                                                                 \
+			break;                                                                                   \
+                                                                                                                 \
+		default:                                                                                         \
+			break;                                                                                   \
+	}                                                                                                        \
+                                                                                                                 \
+	ast_struct = struct_type;                                                                                \
 }
 
 #define RESET_BASE_STORAGE_CLASS {                         \
@@ -324,7 +373,9 @@ typedef void* yyscan_t;
 %nterm <ast> init_declarator_list
 %nterm <ast> init_declarator
 %nterm <ast> type_specifier
+%nterm <ast> struct_or_union_specifier
 %nterm <val> struct_or_union
+%nterm <ast> struct_declaration_list
 %nterm <ast> struct_declaration
 %nterm <ast> specifier_qualifier_list
 %nterm <ast> struct_declarator_list
@@ -343,6 +394,8 @@ typedef void* yyscan_t;
 %nterm <ast> type_name
 %nterm <ast> atomic_type_specifier
 %nterm <ast> static_assert_declaration
+
+%nterm <ast> struct_install_tag
 
 
 %destructor {
@@ -387,8 +440,11 @@ identifier: IDENTIFIER {
 
 	CHECK_IDENTIFIER_COLLISION($identifier);
 
+	symbol_table_t *symbol;
+	GET_IDENTIFIER_SYMBOL_TABLE(symbol, $identifier)
+
 	ast_t *type;
-	if (!GET_IDENTIFIER_TYPE($identifier, &type))
+	if (!GET_IDENTIFIER_TYPE(symbol, $identifier, &type))
 		ast_identifier_set_type($identifier, type);
 
 	SET_CURRENT_IDENTIFIER($identifier);
@@ -1571,10 +1627,61 @@ type_specifier:
 	if (!$type_specifier) YYNOMEM;
 }
 // | atomic_type_specifier
-// | struct_or_union_specifier
+| struct_or_union_specifier {
+	$type_specifier = ast_type_specifier_init(
+		AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER,
+		$struct_or_union_specifier,
+		&@struct_or_union_specifier);
+	if (!$type_specifier) YYNOMEM;
+}
 // | enum_specifier
 // | typedef_name
 ;
+
+
+// 6.7.2.1
+struct_or_union_specifier:
+  struct_or_union PUNCTUATOR_LBRACKET struct_scope_push struct_declaration_list PUNCTUATOR_RBRACKET {
+	TRACE("struct-or-union-specifier", "struct-or-union { struct-declaration-list }");
+
+	$struct_or_union_specifier = ast_struct_init(
+		NULL,
+		$struct_declaration_list,
+		parser->yyextra_data->symbol_table->context.current.identifier,
+		$struct_or_union,
+		&@struct_or_union,
+		&@PUNCTUATOR_RBRACKET);
+	if (!$struct_or_union_specifier) YYNOMEM;
+
+	SCOPE_POP;
+}
+| struct_or_union identifier struct_install_tag PUNCTUATOR_LBRACE struct_scope_push struct_declaration_list PUNCTUATOR_RBRACE {
+	TRACE("struct-or-union-specifier", "struct-or-union identifier { struct-declaration-list }");
+
+	// handled by struct_install_tag
+	(void) $struct_or_union;
+	(void) $identifier;
+
+	ast_t *ast_struct = $struct_install_tag;
+
+	ast_struct_set_declaration_list(ast_struct, $struct_declaration_list);
+	ast_struct_set_symbol_table(
+		ast_struct,
+		parser->yyextra_data->symbol_table->context.current.identifier);
+
+	$struct_or_union_specifier = ast_struct;
+
+	SCOPE_POP;
+}
+| struct_or_union identifier struct_install_tag {
+	TRACE("struct-or-union-specifier", "struct-or-union identifier");
+
+	// handled by struct_install_tag
+	(void) $struct_or_union;
+	(void) $identifier;
+
+	$struct_or_union_specifier = $struct_install_tag;
+}
 
 
 // 6.7.2.1
@@ -1588,6 +1695,29 @@ struct_or_union:
 	$struct_or_union = AST_STRUCT_UNION;
 }
 ;
+
+
+// 6.7.2.1
+struct_declaration_list:
+  struct_declaration {
+	TRACE("struct-declaration-list", "struct-declaration");
+	$struct_declaration = $struct_declaration_list;
+}
+| struct_declaration_list[list] struct_declaration[declaration] {
+	TRACE("struct-declaration-list", "struct-declaration-list struct-declaration");
+
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
+			$list,
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
+			$list,
+			$declaration,
+			&@list,
+			&@declaration);
+	if (!$$) YYNOMEM;
+}
 
 
 // 6.7.2.1
@@ -1933,7 +2063,7 @@ direct_declarator:
 
 	$$ = $array;
 }
-| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list function_scope_pop PUNCTUATOR_RPARENTHESIS {
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "direct-declarator ( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
@@ -2207,11 +2337,32 @@ function_scope_push: %empty {
 }
 
 
-function_scope_pop: %empty {
-	scope_pop(translation_unit->symbol_table);
+scope_pop: %empty {
+	 SCOPE_POP;
 }
 
 
 set_base_type: %empty {
 	SET_BASE_TYPE($<ast>0);
+}
+
+
+struct_install_tag: %empty {
+	uint_fast8_t  struct_or_union = $<val>-1;
+	ast_t        *identifier      = $<ast>0;
+
+	location_t *struct_or_union_yylloc = &@-1;
+	location_t *identifier_yylloc      = &@0;
+
+	STRUCT_INSTALL_TAG(
+		$struct_install_tag,
+		struct_or_union,
+		identifier,
+		struct_or_union_yylloc,
+		identifier_yylloc);
+}
+
+
+struct_scope_push: %empty {
+	if (scope_push_identifier(translation_unit->symbol_table)) YYNOMEM;
 }
