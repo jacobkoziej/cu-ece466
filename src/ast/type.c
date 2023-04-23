@@ -351,7 +351,7 @@ ast_t *ast_type_init(
 			break;
 
 		case AST_ALIGNAS:
-			vector = &node->function_specifier_vector;
+			vector = &node->alignment_specifier_vector;
 			break;
 
 		default:
