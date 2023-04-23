@@ -32,11 +32,6 @@ int symbol_check_identifier_collision(
 	ast_t           *identifier);
 symbol_table_t *symbol_init(
 	void);
-int symbol_insert(
-	symbol_table_t  *symbol,
-	const char      *identifier,
-	size_t           len,
-	ast_t           *type);
 void symbol_free(
 	symbol_table_t  *symbol);
 int symbol_get_identifier(
@@ -46,6 +41,10 @@ int symbol_get_identifier(
 int symbol_insert_identifier(
 	symbol_table_t  *symbol,
 	ast_t           *identifier,
+	ast_t           *type);
+int symbol_insert_tag(
+	symbol_table_t  *symbol,
+	ast_t           *tag,
 	ast_t           *type);
 
 

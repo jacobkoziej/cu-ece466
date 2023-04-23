@@ -11,6 +11,7 @@
 
 #include <jkcc/ast/ast.h>
 #include <jkcc/ast/identifier.h>
+#include <jkcc/ast/struct.h>
 #include <jkcc/ht.h>
 #include <jkcc/list.h>
 #include <jkcc/string.h>
@@ -106,5 +107,42 @@ int symbol_insert_identifier(
 	ast_identifier_set_type(identifier, type);
 	const string_t *key = ast_identifier_get_string(identifier);
 
-	return symbol_insert(symbol, key->head, key->tail - key->head, type);
+	size_t len = key->tail - key->head;
+
+	if (ht_exists(&symbol->table, key->head, len))
+		return SYMBOL_ERROR_EXISTS;
+
+	if (ht_insert(&symbol->table, key->head, len, type))
+		return SYMBOL_ERROR_NOMEM;
+
+	++symbol->size;
+
+	return 0;
+}
+
+int symbol_insert_tag(
+	symbol_table_t *symbol,
+	ast_t          *tag,
+	ast_t          *type)
+{
+	ast_identifier_set_type(tag, type);
+	const string_t *key = ast_identifier_get_string(tag);
+
+	size_t len = key->tail - key->head;
+
+	void *existing_tag;
+
+	if (!ht_get(&symbol->table, key->head, len, &existing_tag)) {
+		ast_t *declaration_list
+			= ast_struct_get_declaration_list(existing_tag);
+
+		if (declaration_list) return SYMBOL_ERROR_EXISTS;
+	}
+
+	if (ht_insert(&symbol->table, key->head, len, type))
+		return SYMBOL_ERROR_NOMEM;
+
+	++symbol->size;
+
+	return 0;
 }
