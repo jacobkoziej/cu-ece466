@@ -47,60 +47,69 @@ void fprint_ast_type_specifier(
 {
 	FPRINT_AST_NODE_BEGIN(ast_type_specifier_t);
 
+	FPRINT_AST_MEMBER("semantic-type", node->semantic_type)
+
 	const char *specifier;
+	switch (node->specifier) {
+		case AST_TYPE_SPECIFIER_VOID:
+			specifier = "void";
+			break;
 
-	if (node->semantic_type) {
-		specifier = "(semantic)";
-	} else {
-		switch (node->specifier) {
-			case AST_TYPE_SPECIFIER_VOID:
-				specifier = "void";
-				break;
+		case AST_TYPE_SPECIFIER_CHAR:
+			specifier = "char";
+			break;
 
-			case AST_TYPE_SPECIFIER_CHAR:
-				specifier = "char";
-				break;
+		case AST_TYPE_SPECIFIER_SHORT:
+			specifier = "short";
+			break;
 
-			case AST_TYPE_SPECIFIER_SHORT:
-				specifier = "short";
-				break;
+		case AST_TYPE_SPECIFIER_INT:
+			specifier = "int";
+			break;
 
-			case AST_TYPE_SPECIFIER_INT:
-				specifier = "int";
-				break;
+		case AST_TYPE_SPECIFIER_LONG:
+			specifier = "long";
+			break;
 
-			case AST_TYPE_SPECIFIER_LONG:
-				specifier = "long";
-				break;
+		case AST_TYPE_SPECIFIER_FLOAT:
+			specifier = "float";
+			break;
 
-			case AST_TYPE_SPECIFIER_FLOAT:
-				specifier = "float";
-				break;
+		case AST_TYPE_SPECIFIER_DOUBLE:
+			specifier = "double";
+			break;
 
-			case AST_TYPE_SPECIFIER_DOUBLE:
-				specifier = "double";
-				break;
+		case AST_TYPE_SPECIFIER_SIGNED:
+			specifier = "signed";
+			break;
 
-			case AST_TYPE_SPECIFIER_SIGNED:
-				specifier = "signed";
-				break;
+		case AST_TYPE_SPECIFIER_UNSIGNED:
+			specifier = "unsigned";
+			break;
 
-			case AST_TYPE_SPECIFIER_UNSIGNED:
-				specifier = "unsigned";
-				break;
+		case AST_TYPE_SPECIFIER__BOOL:
+			specifier = "_Bool";
+			break;
 
-			case AST_TYPE_SPECIFIER__BOOL:
-				specifier = "_Bool";
-				break;
+		case AST_TYPE_SPECIFIER__COMPLEX:
+			specifier = "_Complex";
+			break;
 
-			case AST_TYPE_SPECIFIER__COMPLEX:
-				specifier = "_Complex";
-				break;
+		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:
+			specifier = "struct-or-union";
+			break;
 
-			default:
-				specifier = "(unknown)";
-				break;
-		}
+		case AST_TYPE_SPECIFIER_ENUM_SPECIFIER:
+			specifier = "enum";
+			break;
+
+		case AST_TYPE_SPECIFIER_TYPEDEF_NAME:
+			specifier = "typedef";
+			break;
+
+		default:
+			specifier = "(unknown)";
+			break;
 	}
 
 	FPRINT_AST_FIELD("specifier", specifier);

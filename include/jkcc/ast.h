@@ -39,6 +39,7 @@
 #include <jkcc/ast/static_assert.h>
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>
+#include <jkcc/ast/struct.h>
 #include <jkcc/ast/ternary_operator.h>
 #include <jkcc/ast/type.h>
 #include <jkcc/ast/type_name.h>

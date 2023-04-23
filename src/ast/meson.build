@@ -33,6 +33,7 @@ jkcc_src += files(
         'static_assert.c',
         'storage_class_specifier.c',
         'string_literal.c',
+        'struct.c',
         'ternary_operator.c',
         'type.c',
         'type_name.c',
