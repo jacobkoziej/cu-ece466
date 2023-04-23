@@ -95,7 +95,8 @@ void translation_unit_free(translation_unit_t *translation_unit)
 {
 	if (!translation_unit) return;
 
-	AST_NODE_FREE(translation_unit->ast);
+	if (translation_unit->ast && *translation_unit->ast != AST_TYPE)
+		AST_NODE_FREE(translation_unit->ast);
 
 	scope_free(translation_unit->symbol_table);
 
@@ -107,7 +108,7 @@ void translation_unit_free(translation_unit_t *translation_unit)
 
 	ast_t **type = translation_unit->base_type.buf;
 	for (size_t i = 0; i < translation_unit->base_type.use; i++)
-		AST_NODE_FREE(type[i]);
+		AST_NODE_FREE(type[translation_unit->base_type.use - i - 1]);
 
 	vector_free(&translation_unit->file);
 	vector_free(&translation_unit->base_type);
