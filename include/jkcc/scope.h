@@ -43,6 +43,8 @@ void scope_pop(
 	scope_t *scope);
 int scope_push(
 	scope_t *scope);
+int scope_push_identifier(
+	scope_t *scope);
 
 
 #endif  /* JCC_SCOPE_H */

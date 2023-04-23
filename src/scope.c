@@ -8,7 +8,6 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <jkcc/symbol.h>
 #include <jkcc/vector.h>
@@ -86,20 +85,63 @@ void scope_pop(scope_t *scope)
 
 int scope_push(scope_t *scope)
 {
-	symbol_table_t *symbol;
+	symbol_table_t *identifier;
+	symbol_table_t *tag;
 
-	symbol = symbol_init();
-	if (!symbol) return -1;
+	identifier = NULL;
+	tag        = NULL;
 
-	symbol->list.prev = &scope->context.current.identifier->list;
+	identifier = symbol_init();
+	if (!identifier) return -1;
+
+	tag = symbol_init();
+	if (!tag) goto symbol_tag_error;
+
+	identifier->list.prev = &scope->context.current.identifier->list;
+	tag->list.prev        = &scope->context.current.tag->list;
+
+	if (vector_append(&scope->history.context, &scope->context))
+		goto vector_context_error;
+	if (vector_append(&scope->history.identifier, &identifier))
+		goto vector_identifier_error;
+	if (vector_append(&scope->history.tag, &tag))
+		goto vector_tag_error;
+
+	scope->context.current.identifier = identifier;
+	scope->context.current.tag        = tag;
+
+	return 0;
+
+vector_tag_error:
+	vector_pop(&scope->history.identifier, NULL);
+
+vector_identifier_error:
+	vector_pop(&scope->history.context, NULL);
+
+vector_context_error:
+	symbol_free(tag);
+
+symbol_tag_error:
+	symbol_free(identifier);
+
+	return SYMBOL_ERROR_NOMEM;
+}
+
+int scope_push_identifier(scope_t *scope)
+{
+	symbol_table_t *identifier;
+
+	identifier = symbol_init();
+	if (!identifier) return -1;
+
+	identifier->list.prev = &scope->context.current.identifier->list;
 
 	if (vector_append(&scope->history.context, &scope->context))
 		goto context_error;
-	if (vector_append(&scope->history.identifier, &symbol))
+	if (vector_append(&scope->history.identifier, &identifier))
 		goto identifier_error;
 
-	memset(&scope->context, 0, sizeof(scope->context));
-	scope->context.current.identifier = symbol;
+	scope->context.current.identifier = identifier;
 
 	return 0;
 
@@ -107,7 +149,7 @@ identifier_error:
 	vector_pop(&scope->history.context, NULL);
 
 context_error:
-	symbol_free(symbol);
+	symbol_free(identifier);
 
 	return SYMBOL_ERROR_NOMEM;
 }
