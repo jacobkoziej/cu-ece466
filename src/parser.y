@@ -394,6 +394,7 @@ typedef void* yyscan_t;
 %nterm <ast> type_name
 %nterm <ast> atomic_type_specifier
 %nterm <ast> abstract_declarator
+%nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
 
 %nterm <ast> struct_install_tag
@@ -2329,7 +2330,6 @@ abstract_declarator:
 	ast_pointer_append($pointer, GET_CURRENT_TYPE);
 	SET_CURRENT_TYPE($pointer);
 }
-/*
 | direct_abstract_declarator {
 	TRACE("abstract-declarator", "direct-abstract-declarator");
 	$abstract_declarator = $direct_abstract_declarator;
@@ -2359,7 +2359,250 @@ abstract_declarator:
 			break;
 	}
 }
+
+
+// 6.7.7
+direct_abstract_declarator:
+/*
+  PUNCTUATOR_LPARENTHESIS abstract_declarator PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( abstract-declarator )");
+	// TODO: handle pointer precedence
+}
 */
+  PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+/*
+| PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ static assignment-expression ]");
+}
+| PUNCTUATOR_LBRACKET KEYWORD_STATIC type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ static type-qualifier-list assignment-expression ]");
+}
+| direct_abstract_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ static assignment-expression ]");
+}
+| direct_abstract_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ static type-qualifier-list assignment-expression ]");
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list static assignment-expression ]");
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list static assignment-expression ]");
+}
+*/
+| PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$direct_abstract_declarator = function;
+}
+| PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$direct_abstract_declarator = function;
+}
+| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
+| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
 
 
 // 6.7.10
