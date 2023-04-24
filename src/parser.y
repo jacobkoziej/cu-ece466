@@ -393,6 +393,7 @@ typedef void* yyscan_t;
 %nterm <ast> identifier_list
 %nterm <ast> type_name
 %nterm <ast> atomic_type_specifier
+%nterm <ast> abstract_declarator
 %nterm <ast> static_assert_declaration
 
 %nterm <ast> struct_install_tag
@@ -2251,7 +2252,6 @@ parameter_declaration:
 
 	APPEND_BASE_TYPE($declaration_specifiers);
 }
-/*
 | declaration_specifiers abstract_declarator {
 	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
 
@@ -2259,17 +2259,18 @@ parameter_declaration:
 
 	$parameter_declaration = ast_declaration_init(
 		type,
-		$abstract_declarator,
+		NULL,
 		NULL,
 		GET_CURRENT_STORAGE_CLASS,
-		&@abstract_declarator,
+		&@declaration_specifiers,
 		&@abstract_declarator);
 	if (!$parameter_declaration) YYNOMEM;
 
 	APPEND_BASE_TYPE($declaration_specifiers);
+
+	// handled by abstract_declarator
+	(void) $abstract_declarator;
 }
-*/
-;
 
 
 // 6.7.6
@@ -2295,19 +2296,13 @@ type_name:
 	TRACE("type-name", "specifier-qualifier-list");
 	$type_name = $specifier_qualifier_list;
 }
-/*
-| specifier_qualifier_list abstract_declarator {
+| specifier_qualifier_list set_base_type abstract_declarator {
 	TRACE("type-name", "specifier-qualifier-list abstract-declarator");
+	$type_name = $abstract_declarator;
 
-	$type_name = ast_type_name_init(
-		$specifier_qualifier_list,
-		$abstract_declarator,
-		&@specifier_qualifier_list,
-		&@abstract_declarator);
-	if (!$type_name) YYNOMEM;
+	// handled by set_base_type
+	(void) $specifier_qualifier_list;
 }
-*/
-;
 
 
 // 6.7.2.4
@@ -2323,6 +2318,48 @@ atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand
 		ERROR_ADDR);
 	ERROR($atomic_type_specifier);
 }
+
+
+// 6.7.7
+abstract_declarator:
+  pointer {
+	TRACE("abstract-declarator", "pointer");
+	$abstract_declarator = $pointer;
+
+	ast_pointer_append($pointer, GET_CURRENT_TYPE);
+	SET_CURRENT_TYPE($pointer);
+}
+/*
+| direct_abstract_declarator {
+	TRACE("abstract-declarator", "direct-abstract-declarator");
+	$abstract_declarator = $direct_abstract_declarator;
+}
+| pointer direct_abstract_declarator {
+	TRACE("abstract-declarator", "pointer direct-abstract-declarator");
+
+	$abstract_declarator = $direct_abstract_declarator;
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	switch (*type) {
+		case AST_ARRAY:
+			ast_array_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_FUNCTION:
+			ast_function_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_TYPE:
+			ast_pointer_append($pointer, type);
+			SET_CURRENT_TYPE($pointer);
+			break;
+
+		default:
+			break;
+	}
+}
+*/
 
 
 // 6.7.10
