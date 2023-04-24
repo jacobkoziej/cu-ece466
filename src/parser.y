@@ -15,27 +15,158 @@
 #include <stdbool.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/constant.h>
 #include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/parser.h>
+#include <jkcc/scope.h>
 #include <jkcc/string.h>
+#include <jkcc/symbol.h>
 #include <jkcc/trace.h>
 
 
-#define ERROR(ast) {                              \
-	if (!ast) {                               \
-		if (parser->error) {              \
-			yyerror(                  \
-				&yylloc,          \
-				scanner,          \
-				parser,           \
-				translation_unit, \
-				parser->error);   \
-			YYERROR;                  \
-		} else {                          \
-			YYNOMEM;                  \
-		}                                 \
-	}                                         \
+#define ERROR_ADDR &parser->yyextra_data->error
+
+#define ERROR_RESET parser->yyextra_data->error = NULL
+
+#define ERROR(ast) {                                          \
+	if (!ast) {                                           \
+		if (parser->yyextra_data->error) {            \
+			yyerror(                              \
+				&yylloc,                      \
+				scanner,                      \
+				parser,                       \
+				translation_unit,             \
+				parser->yyextra_data->error); \
+			YYERROR;                              \
+		} else {                                      \
+			YYNOMEM;                              \
+		}                                             \
+	}                                                     \
 }
+
+#define APPEND_BASE_TYPE(ast_type) {                                \
+	if (vector_append(&translation_unit->base_type, &ast_type)) \
+		YYNOMEM;                                            \
+}
+
+#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                        \
+	if (symbol_check_identifier_collision(                              \
+		translation_unit->symbol_table->context.current.identifier, \
+		ast_identifier))                                            \
+	{                                                                   \
+		yyerror(                                                    \
+			&yylloc,                                            \
+			scanner,                                            \
+			parser,                                             \
+			translation_unit,                                   \
+			"redeclaration of identifier");                     \
+		YYERROR;                                                    \
+	}                                                                   \
+}
+
+#define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
+
+#define GET_BASE_STORAGE_CLASS parser->yyextra_data->symbol_table->context.base.storage_class
+
+#define GET_BASE_TYPE parser->yyextra_data->symbol_table->context.base.type
+
+#define GET_CURRENT_STORAGE_CLASS parser->yyextra_data->symbol_table->context.current.storage_class
+
+#define GET_CURRENT_TYPE                                                   \
+	parser->yyextra_data->symbol_table->context.current.type =         \
+		(parser->yyextra_data->symbol_table->context.current.type) \
+		? parser->yyextra_data->symbol_table->context.current.type \
+		: parser->yyextra_data->symbol_table->context.base.type    \
+
+#define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                                \
+	switch (parser->yyextra_data->identifier_type) {                                     \
+		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:                           \
+			symbol = translation_unit->symbol_table->context.current.tag;        \
+			break;                                                               \
+                                                                                             \
+		default:                                                                     \
+			symbol = translation_unit->symbol_table->context.current.identifier; \
+			break;                                                               \
+	}                                                                                    \
+                                                                                             \
+	parser->yyextra_data->identifier_type = 0;                                           \
+}
+
+#define GET_IDENTIFIER_TYPE(symbol, ast_identifier, ast_type)   \
+	symbol_get_identifier(symbol, ast_identifier, ast_type)
+
+#define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
+
+#define SCOPE_POP scope_pop(translation_unit->symbol_table)
+
+#define SET_BASE_STORAGE_CLASS(new_storage_class) {                                            \
+	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
+	parser->yyextra_data->symbol_table->context.base.storage_class    = new_storage_class; \
+}
+
+#define SET_BASE_TYPE(ast_type) {                                            \
+	parser->yyextra_data->symbol_table->context.current.type = NULL;     \
+	parser->yyextra_data->symbol_table->context.base.type    = ast_type; \
+}
+
+#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                                         \
+	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
+}
+
+#define SET_CURRENT_TYPE(ast_type) {                                         \
+	parser->yyextra_data->symbol_table->context.current.type = ast_type; \
+}
+
+#define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
+	parser->yyextra_data->identifier = ast_identifier; \
+}
+
+#define SET_VARIADIC_PARAMETER(variadic) {                   \
+	parser->yyextra_data->variadic_parameter = variadic; \
+}
+
+#define STRUCT_INSTALL_TAG(ast_struct, struct_or_union, identifier, struct_or_union_yylloc, identifier_yylloc) { \
+	ast_t *struct_type = ast_struct_init(                                                                    \
+		identifier,                                                                                      \
+		NULL,                                                                                            \
+		NULL,                                                                                            \
+		struct_or_union,                                                                                 \
+		struct_or_union_yylloc,                                                                          \
+		identifier_yylloc);                                                                              \
+	if (!struct_type) YYNOMEM;                                                                               \
+                                                                                                                 \
+	switch (symbol_insert_tag(                                                                               \
+		translation_unit->symbol_table->context.current.tag,                                             \
+		identifier,                                                                                      \
+		struct_type)                                                                                     \
+	) {                                                                                                      \
+		case SYMBOL_ERROR_NOMEM:                                                                         \
+			YYNOMEM;                                                                                 \
+			break;                                                                                   \
+                                                                                                                 \
+		case SYMBOL_ERROR_EXISTS:                                                                        \
+			yyerror(                                                                                 \
+				&yylloc,                                                                         \
+				scanner,                                                                         \
+				parser,                                                                          \
+				translation_unit,                                                                \
+				"redeclaration of struct or union");                                             \
+			YYERROR;                                                                                 \
+			break;                                                                                   \
+                                                                                                                 \
+		default:                                                                                         \
+			break;                                                                                   \
+	}                                                                                                        \
+                                                                                                                 \
+	ast_struct = struct_type;                                                                                \
+}
+
+#define RESET_BASE_STORAGE_CLASS {                         \
+	SET_CURRENT_STORAGE_CLASS(GET_BASE_STORAGE_CLASS); \
+}
+
+#define RESET_BASE_TYPE SET_CURRENT_TYPE(GET_BASE_TYPE)
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
@@ -81,9 +212,9 @@ static void yyerror(
 
 %code requires {
 #include <jkcc/ast.h>
+#include <jkcc/constant.h>
 #include <jkcc/lexer.h>
 #include <jkcc/parser.h>
-#include <jkcc/string.h>
 
 
 #define YYLTYPE location_t
@@ -218,6 +349,7 @@ typedef void* yyscan_t;
 %nterm <ast> generic_assoc_list
 %nterm <ast> generic_association
 %nterm <ast> postfix_expression
+%nterm <ast> argument_expression_list
 %nterm <ast> unary_expression
 %nterm <val> unary_operator
 %nterm <ast> cast_expression
@@ -236,13 +368,37 @@ typedef void* yyscan_t;
 %nterm <val> assignment_operator
 %nterm <ast> expression
 %nterm <ast> constant_expression
+%nterm <ast> declaration
+%nterm <ast> declaration_specifiers
 %nterm <ast> storage_class_specifier
+%nterm <ast> init_declarator_list
+%nterm <ast> init_declarator
 %nterm <ast> type_specifier
+%nterm <ast> struct_or_union_specifier
+%nterm <val> struct_or_union
+%nterm <ast> struct_declaration_list
+%nterm <ast> struct_declaration
 %nterm <ast> specifier_qualifier_list
+%nterm <ast> struct_declarator_list
+%nterm <ast> struct_declarator
 %nterm <ast> type_qualifier
+%nterm <ast> function_specifier
+%nterm <ast> alignment_specifier
+%nterm <ast> declarator
+%nterm <ast> direct_declarator
 %nterm <ast> pointer
 %nterm <ast> type_qualifier_list
+%nterm <ast> parameter_type_list
+%nterm <ast> parameter_list
+%nterm <ast> parameter_declaration
+%nterm <ast> identifier_list
 %nterm <ast> type_name
+%nterm <ast> atomic_type_specifier
+%nterm <ast> abstract_declarator
+%nterm <ast> direct_abstract_declarator
+%nterm <ast> static_assert_declaration
+
+%nterm <ast> struct_install_tag
 
 
 %destructor {
@@ -284,6 +440,17 @@ identifier: IDENTIFIER {
 
 	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
 	if (!$identifier) YYNOMEM;
+
+	CHECK_IDENTIFIER_COLLISION($identifier);
+
+	symbol_table_t *symbol;
+	GET_IDENTIFIER_SYMBOL_TABLE(symbol, $identifier)
+
+	ast_t *type;
+	if (!GET_IDENTIFIER_TYPE(symbol, $identifier, &type))
+		ast_identifier_set_type($identifier, type);
+
+	SET_CURRENT_IDENTIFIER($identifier);
 }
 
 
@@ -389,11 +556,13 @@ generic_assoc_list:
 | generic_assoc_list[child] PUNCTUATOR_COMMA generic_association {
 	TRACE("generic-association", "generic-assoc-list : generic-association");
 
+	ERROR_RESET;
+
 	$$ = ast_generic_association_list_append(
 		$child,
 		$generic_association,
 		&@generic_association,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 ;
@@ -424,23 +593,69 @@ postfix_expression:
 	TRACE("postfix-expression", "primary-expression");
 	$postfix_expression = $primary_expression;
 }
-/*
-| postfix_expression PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET {
+| postfix_expression[operand] PUNCTUATOR_LBRACKET expression PUNCTUATOR_RBRACKET {
 	TRACE("postfix-expression", "postfix-expression [ expression ]");
+
+	ast_t *expression = ast_binary_operator_init(
+		$operand,
+		$expression,
+		AST_BINARY_OPERATOR_ADDITION,
+		&@operand,
+		&@PUNCTUATOR_RBRACKET);
+	if (!expression) YYNOMEM;
+
+	$$ = ast_dereference_init(
+		expression,
+		&@operand,
+		&@PUNCTUATOR_RBRACKET);
+	if (!$$) YYNOMEM;
 }
-| postfix_expression[child] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+| postfix_expression[expression] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( )");
+
+	$$ = ast_call_init(
+		$expression,
+		NULL,
+		&@expression,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$$) YYNOMEM;
 }
-| postfix_expression PUNCTUATOR_LPARENTHESIS argument_expression_list PUNCTUATOR_RPARENTHESIS {
+| postfix_expression[expression] PUNCTUATOR_LPARENTHESIS argument_expression_list[argument_list] PUNCTUATOR_RPARENTHESIS {
 	TRACE("postfix-expression", "postfix-expression ( argument-expression-list )");
+
+	$$ = ast_call_init(
+		$expression,
+		$argument_list,
+		&@expression,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$$) YYNOMEM;
 }
-| postfix_expression[child] PUNCTUATOR_MEMBER_ACCESS identifier {
+| postfix_expression[operand] PUNCTUATOR_MEMBER_ACCESS identifier {
 	TRACE("postfix-expression", "postfix-expression . identifier");
+
+	$$ = ast_member_access_init(
+		$operand,
+		$identifier,
+		&@operand,
+		&@identifier);
+	if (!$$) YYNOMEM;
 }
-| postfix_expression PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
+| postfix_expression[operand] PUNCTUATOR_MEMBER_ACCESS_DEREFERENCE identifier {
 	TRACE("postfix-expression", "postfix-expression -> identifier");
+
+	ast_t *operand = ast_dereference_init(
+		$operand,
+		&@operand,
+		&@identifier);
+	if (!operand) YYNOMEM;
+
+	$$ = ast_member_access_init(
+		operand,
+		$identifier,
+		&@operand,
+		&@identifier);
+	if (!$$) YYNOMEM;
 }
-*/
 | postfix_expression[operand] PUNCTUATOR_INCREMENT {
 	TRACE("postfix-expression", "postfix-expression ++");
 
@@ -469,6 +684,28 @@ postfix_expression:
 	TRACE("postfix-expression", "( type-name ) { initializer-list , }");
 }
 */
+;
+
+
+// 6.5.2
+argument_expression_list:
+  assignment_expression[argument] {
+	TRACE("argument-expression-list", "assignment-expression");
+
+	$argument_expression_list = ast_argument_list_init(
+		$argument,
+		&@argument);
+	if (!$argument_expression_list) YYNOMEM;
+}
+| argument_expression_list[list] PUNCTUATOR_COMMA assignment_expression[argument] {
+	TRACE("argument-expression-list", "argument-expression-list , assignment-expression");
+
+	$$ = ast_argument_list_append(
+		$list,
+		$argument,
+		&@argument);
+	if (!$$) YYNOMEM;
+}
 ;
 
 
@@ -501,11 +738,29 @@ unary_expression:
 | unary_operator[operator] cast_expression[operand] {
 	TRACE("unary-expression", "unary-operator cast-expression");
 
-	$unary_expression = ast_unary_operator_init(
-		$operand,
-		$operator,
-		&@operator,
-		&@operand);
+	switch ($operator) {
+		case AST_UNARY_OPERATOR_AMPERSAND:
+			$unary_expression = ast_addressof_init(
+				$operand,
+				&@operator,
+				&@operand);
+			break;
+
+		case AST_UNARY_OPERATOR_ASTERISK:
+			$unary_expression = ast_dereference_init(
+				$operand,
+				&@operator,
+				&@operand);
+			break;
+
+		default:
+			$unary_expression = ast_unary_operator_init(
+				$operand,
+				$operator,
+				&@operator,
+				&@operand);
+			break;
+	}
 	if (!$unary_expression) YYNOMEM;
 }
 | KEYWORD_SIZEOF unary_expression[operand] {
@@ -994,13 +1249,231 @@ constant_expression: conditional_expression {
 }
 
 
+// 6.7
+declaration:
+  declaration_specifiers PUNCTUATOR_SEMICOLON {
+	TRACE("declaration", "declaration-specifiers ;");
+	$declaration = $declaration_specifiers;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+	RESET_BASE_STORAGE_CLASS;
+}
+| declaration_specifiers init_declarator_list PUNCTUATOR_SEMICOLON {
+	TRACE("declaration", "declaration-specifiers init-declarator-list ;");
+	$declaration = $init_declarator_list;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+	RESET_BASE_STORAGE_CLASS;
+}
+| static_assert_declaration {
+	TRACE("declaration", "static_assert-declaration");
+	$declaration = $static_assert_declaration;
+}
+;
+
+
+// 6.7
+declaration_specifiers:
+  storage_class_specifier {
+	TRACE("declaration-specifiers", "storage-class-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$storage_class_specifier,
+		&@storage_class_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
+}
+| storage_class_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "storage-class-specifier declaration-specifiers");
+
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
+		$storage_class_specifier,
+		&@storage_class_specifier,
+		ERROR_ADDR);
+	ERROR($$);
+
+	SET_BASE_TYPE($$);
+}
+| type_specifier {
+	TRACE("declaration-specifiers", "type-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$type_specifier,
+		&@type_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
+}
+| type_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "type-specifier declaration-specifiers");
+
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
+		$type_specifier,
+		&@type_specifier,
+		ERROR_ADDR);
+	ERROR($$);
+
+	SET_BASE_TYPE($$);
+}
+| type_qualifier {
+	TRACE("declaration-specifiers", "type-qualifier");
+
+	$declaration_specifiers = ast_type_init(
+		$type_qualifier,
+		&@type_qualifier);
+	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
+}
+| type_qualifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "type-qualifier declaration-specifiers");
+
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
+		$type_qualifier,
+		&@type_qualifier,
+		ERROR_ADDR);
+	ERROR($$);
+
+	SET_BASE_TYPE($$);
+}
+| function_specifier {
+	TRACE("declaration-specifiers", "function-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$function_specifier,
+		&@function_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
+}
+| function_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "function-specifier declaration-specifiers");
+
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
+		$function_specifier,
+		&@function_specifier,
+		ERROR_ADDR);
+	ERROR($$);
+
+	SET_BASE_TYPE($$);
+}
+| alignment_specifier {
+	TRACE("declaration-specifiers", "alignment-specifier");
+
+	$declaration_specifiers = ast_type_init(
+		$alignment_specifier,
+		&@alignment_specifier);
+	if (!$declaration_specifiers) YYNOMEM;
+
+	SET_BASE_TYPE($declaration_specifiers);
+}
+| alignment_specifier declaration_specifiers[type] {
+	TRACE("declaration-specifiers", "alignment-specifier declaration-specifiers");
+
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
+		$alignment_specifier,
+		&@alignment_specifier,
+		ERROR_ADDR);
+	ERROR($$);
+
+	SET_BASE_TYPE($$);
+}
+
+
+// 6.7
+init_declarator_list:
+  init_declarator {
+	TRACE("init-declarator-list", "init-declarator");
+	$init_declarator_list = $init_declarator;
+}
+| init_declarator_list[list] PUNCTUATOR_COMMA init_declarator[declaration] {
+	TRACE("init-declarator-list", "init-declarator-list , init-declarator");
+
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
+			$list,
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
+			$list,
+			$declaration,
+			&@list,
+			&@declaration);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+
+// 6.7
+init_declarator:
+  declarator[identifier] {
+	TRACE("init-declarator", "declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->context.current.identifier,
+		$identifier,
+		type)) YYNOMEM;
+
+	$init_declarator = ast_declaration_init(
+		type,
+		$identifier,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@identifier,
+		&@identifier);
+	if (!$init_declarator) YYNOMEM;
+
+	RESET_BASE_TYPE;
+}
+/*
+| declarator[lvalue] PUNCTUATOR_ASSIGNMENT initializer[rvalue] {
+	TRACE("init-declarator", "declarator = initializer");
+
+	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *identifier = GET_CURRENT_IDENTIFIER;
+
+	if (parse_insert_identifier(parser, identifier, type)) YYNOMEM;
+
+	$init_declarator = ast_assignment_init(
+		lvalue,
+		rvalue,
+		AST_ASSIGNMENT_ASSIGNMENT,
+		&@lvalue,
+		&@rvalue);
+	if ($$) YYNOMEM;
+
+	RESET_BASE_TYPE;
+}
+*/
+;
+
+
 // 6.7.1
 storage_class_specifier:
   KEYWORD_TYPEDEF {
 	TRACE("storage-class-specifier", "typedef");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER_TYPEDEF,
+		AST_STORAGE_CLASS_SPECIFIER_TYPEDEF,
 		&@KEYWORD_TYPEDEF);
 	if (!$storage_class_specifier) YYNOMEM;
 }
@@ -1008,23 +1481,27 @@ storage_class_specifier:
 	TRACE("storage-class-specifier", "extern");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER_EXTERN,
+		AST_STORAGE_CLASS_SPECIFIER_EXTERN,
 		&@KEYWORD_EXTERN);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_EXPLICIT_EXTERN);
 }
 | KEYWORD_STATIC {
 	TRACE("storage-class-specifier", "static");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER_STATIC,
+		AST_STORAGE_CLASS_SPECIFIER_STATIC,
 		&@KEYWORD_STATIC);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_STATIC);
 }
 | KEYWORD__THREAD_LOCAL {
 	TRACE("storage-class-specifier", "_Thread_local");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER__THREAD_LOCAL,
+		AST_STORAGE_CLASS_SPECIFIER__THREAD_LOCAL,
 		&@KEYWORD__THREAD_LOCAL);
 	if (!$storage_class_specifier) YYNOMEM;
 }
@@ -1032,17 +1509,21 @@ storage_class_specifier:
 	TRACE("storage-class-specifier", "auto");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER_AUTO,
+		AST_STORAGE_CLASS_SPECIFIER_AUTO,
 		&@KEYWORD_AUTO);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_AUTO);
 }
 | KEYWORD_REGISTER {
 	TRACE("storage-class-specifier", "register");
 
 	$storage_class_specifier = ast_storage_class_specifier_init(
-		STORAGE_CLASS_SPECIFIER_REGISTER,
+		AST_STORAGE_CLASS_SPECIFIER_REGISTER,
 		&@KEYWORD_REGISTER);
 	if (!$storage_class_specifier) YYNOMEM;
+
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_REGISTER);
 }
 ;
 
@@ -1053,7 +1534,7 @@ type_specifier:
 	TRACE("type-specifier", "void");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_VOID,
+		AST_TYPE_SPECIFIER_VOID,
 		NULL,
 		&@KEYWORD_VOID);
 	if (!$type_specifier) YYNOMEM;
@@ -1062,7 +1543,7 @@ type_specifier:
 	TRACE("type-specifier", "char");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_CHAR,
+		AST_TYPE_SPECIFIER_CHAR,
 		NULL,
 		&@KEYWORD_CHAR);
 	if (!$type_specifier) YYNOMEM;
@@ -1071,7 +1552,7 @@ type_specifier:
 	TRACE("type-specifier", "short");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_SHORT,
+		AST_TYPE_SPECIFIER_SHORT,
 		NULL,
 		&@KEYWORD_SHORT);
 	if (!$type_specifier) YYNOMEM;
@@ -1080,7 +1561,7 @@ type_specifier:
 	TRACE("type-specifier", "int");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_INT,
+		AST_TYPE_SPECIFIER_INT,
 		NULL,
 		&@KEYWORD_INT);
 	if (!$type_specifier) YYNOMEM;
@@ -1089,7 +1570,7 @@ type_specifier:
 	TRACE("type-specifier", "long");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_LONG,
+		AST_TYPE_SPECIFIER_LONG,
 		NULL,
 		&@KEYWORD_LONG);
 	if (!$type_specifier) YYNOMEM;
@@ -1098,7 +1579,7 @@ type_specifier:
 	TRACE("type-specifier", "float");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_FLOAT,
+		AST_TYPE_SPECIFIER_FLOAT,
 		NULL,
 		&@KEYWORD_FLOAT);
 	if (!$type_specifier) YYNOMEM;
@@ -1107,7 +1588,7 @@ type_specifier:
 	TRACE("type-specifier", "double");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_DOUBLE,
+		AST_TYPE_SPECIFIER_DOUBLE,
 		NULL,
 		&@KEYWORD_DOUBLE);
 	if (!$type_specifier) YYNOMEM;
@@ -1116,7 +1597,7 @@ type_specifier:
 	TRACE("type-specifier", "signed");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_SIGNED,
+		AST_TYPE_SPECIFIER_SIGNED,
 		NULL,
 		&@KEYWORD_SIGNED);
 	if (!$type_specifier) YYNOMEM;
@@ -1125,7 +1606,7 @@ type_specifier:
 	TRACE("type-specifier", "unsigned");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER_UNSIGNED,
+		AST_TYPE_SPECIFIER_UNSIGNED,
 		NULL,
 		&@KEYWORD_UNSIGNED);
 	if (!$type_specifier) YYNOMEM;
@@ -1134,7 +1615,7 @@ type_specifier:
 	TRACE("type-specifier", "_Bool");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER__BOOL,
+		AST_TYPE_SPECIFIER__BOOL,
 		NULL,
 		&@KEYWORD__BOOL);
 	if (!$type_specifier) YYNOMEM;
@@ -1143,16 +1624,122 @@ type_specifier:
 	TRACE("type-specifier", "_Complex");
 
 	$type_specifier = ast_type_specifier_init(
-		TYPE_SPECIFIER__COMPLEX,
+		AST_TYPE_SPECIFIER__COMPLEX,
 		NULL,
 		&@KEYWORD__COMPLEX);
 	if (!$type_specifier) YYNOMEM;
 }
 // | atomic_type_specifier
-// | struct_or_union_specifier
+| struct_or_union_specifier {
+	$type_specifier = ast_type_specifier_init(
+		AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER,
+		$struct_or_union_specifier,
+		&@struct_or_union_specifier);
+	if (!$type_specifier) YYNOMEM;
+}
 // | enum_specifier
 // | typedef_name
 ;
+
+
+// 6.7.2.1
+struct_or_union_specifier:
+  struct_or_union PUNCTUATOR_LBRACKET struct_scope_push struct_declaration_list PUNCTUATOR_RBRACKET {
+	TRACE("struct-or-union-specifier", "struct-or-union { struct-declaration-list }");
+
+	$struct_or_union_specifier = ast_struct_init(
+		NULL,
+		$struct_declaration_list,
+		parser->yyextra_data->symbol_table->context.current.identifier,
+		$struct_or_union,
+		&@struct_or_union,
+		&@PUNCTUATOR_RBRACKET);
+	if (!$struct_or_union_specifier) YYNOMEM;
+
+	SCOPE_POP;
+}
+| struct_or_union identifier struct_install_tag PUNCTUATOR_LBRACE struct_scope_push struct_declaration_list PUNCTUATOR_RBRACE {
+	TRACE("struct-or-union-specifier", "struct-or-union identifier { struct-declaration-list }");
+
+	// handled by struct_install_tag
+	(void) $struct_or_union;
+	(void) $identifier;
+
+	ast_t *ast_struct = $struct_install_tag;
+
+	ast_struct_set_declaration_list(ast_struct, $struct_declaration_list);
+	ast_struct_set_symbol_table(
+		ast_struct,
+		parser->yyextra_data->symbol_table->context.current.identifier);
+
+	$struct_or_union_specifier = ast_struct;
+
+	SCOPE_POP;
+}
+| struct_or_union identifier struct_install_tag {
+	TRACE("struct-or-union-specifier", "struct-or-union identifier");
+
+	// handled by struct_install_tag
+	(void) $struct_or_union;
+	(void) $identifier;
+
+	$struct_or_union_specifier = $struct_install_tag;
+}
+
+
+// 6.7.2.1
+struct_or_union:
+  KEYWORD_STRUCT {
+	TRACE("struct-or-union", "struct");
+	$struct_or_union = AST_STRUCT_STRUCT;
+}
+| KEYWORD_UNION {
+	TRACE("struct-or-union", "union");
+	$struct_or_union = AST_STRUCT_UNION;
+}
+;
+
+
+// 6.7.2.1
+struct_declaration_list:
+  struct_declaration {
+	TRACE("struct-declaration-list", "struct-declaration");
+	$struct_declaration = $struct_declaration_list;
+}
+| struct_declaration_list[list] struct_declaration[declaration] {
+	TRACE("struct-declaration-list", "struct-declaration-list struct-declaration");
+
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
+			$list,
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
+			$list,
+			$declaration,
+			&@list,
+			&@declaration);
+	if (!$$) YYNOMEM;
+}
+
+
+// 6.7.2.1
+struct_declaration:
+  specifier_qualifier_list PUNCTUATOR_SEMICOLON {
+	TRACE("struct-declaration", "specifier-qualifier-list ;");
+	$struct_declaration = $specifier_qualifier_list;
+}
+| specifier_qualifier_list set_base_type struct_declarator_list PUNCTUATOR_SEMICOLON {
+	TRACE("struct-declaration", "specifier-qualifier-list struct-declarator-list ;");
+	$struct_declaration = $struct_declarator_list;
+
+	APPEND_BASE_TYPE($specifier_qualifier_list);
+	RESET_BASE_STORAGE_CLASS;
+}
+| static_assert_declaration {
+	TRACE("struct-declaration", "static_assert-declaration");
+	$struct_declaration = $static_assert_declaration;
+}
 
 
 // 6.7.2.1
@@ -1160,43 +1747,99 @@ specifier_qualifier_list:
   type_specifier {
 	TRACE("specifier-qualifier-list", "type-specifier");
 
-	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
+	$specifier_qualifier_list = ast_type_init(
 		$type_specifier,
-		NULL,
 		&@type_specifier);
 	if (!$specifier_qualifier_list) YYNOMEM;
 }
-| type_specifier specifier_qualifier_list[list] {
+| type_specifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-specifier specifier-qualifier-list");
 
-	$$ = ast_specifier_qualifier_list_append(
-		$list,
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
 		$type_specifier,
-		NULL,
 		&@type_specifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
 | type_qualifier {
 	TRACE("specifier-qualifier-list", "type-qualifier");
 
-	$specifier_qualifier_list = ast_specifier_qualifier_list_init(
-		NULL,
+	$specifier_qualifier_list = ast_type_init(
 		$type_qualifier,
 		&@type_qualifier);
-	if (!$$) YYNOMEM;
+	if (!$specifier_qualifier_list) YYNOMEM;
 }
-| type_qualifier specifier_qualifier_list[list] {
+| type_qualifier specifier_qualifier_list[type] {
 	TRACE("specifier-qualifier-list", "type-qualifier specifier-qualifier-list");
 
-	$$ = ast_specifier_qualifier_list_append(
-		$list,
-		NULL,
+	ERROR_RESET;
+
+	$$ = ast_type_append(
+		$type,
 		$type_qualifier,
 		&@type_qualifier,
-		&parser->error);
+		ERROR_ADDR);
 	ERROR($$);
 }
+
+
+// 6.7.2.1
+struct_declarator_list:
+  struct_declarator {
+	TRACE("struct-declarator-list", "struct-declarator");
+	$struct_declarator_list = $struct_declarator;
+}
+| struct_declarator_list[list] PUNCTUATOR_COMMA struct_declarator[declaration] {
+	TRACE("struct-declarator-list", "struct-declarator-list , struct-declarator");
+
+	$$ = (*$list == AST_DECLARATION_LIST)
+		? ast_declaration_list_append(
+			$list,
+			$declaration,
+			&@declaration)
+		: ast_declaration_list_init(
+			$list,
+			$declaration,
+			&@list,
+			&@declaration);
+	if (!$$) YYNOMEM;
+}
+
+
+// 6.7.2.1
+struct_declarator:
+  declarator[identifier] {
+	TRACE("struct-declarator", "declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->context.current.identifier,
+		$identifier,
+		type)) YYNOMEM;
+
+	$struct_declarator = ast_declaration_init(
+		type,
+		$identifier,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@identifier,
+		&@identifier);
+	if (!$struct_declarator) YYNOMEM;
+
+	RESET_BASE_TYPE;
+}
+/*
+| PUNCTUATOR_CONDITIONAL_COLON constant_expression {
+	TRACE("struct-declarator", ": constant-expression");
+}
+| declarator PUNCTUATOR_CONDITIONAL_COLON constant_expression {
+	TRACE("struct-declarator", "declarator : constant-expression");
+}
+*/
 
 
 // 6.7.3
@@ -1205,7 +1848,7 @@ type_qualifier:
 	TRACE("type-qualifier", "const");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_CONST,
+		AST_TYPE_QUALIFIER_CONST,
 		&@KEYWORD_CONST);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1213,7 +1856,7 @@ type_qualifier:
 	TRACE("type-qualifier", "restrict");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_RESTRICT,
+		AST_TYPE_QUALIFIER_RESTRICT,
 		&@KEYWORD_RESTRICT);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1221,7 +1864,7 @@ type_qualifier:
 	TRACE("type-qualifier", "volatile");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER_VOLATILE,
+		AST_TYPE_QUALIFIER_VOLATILE,
 		&@KEYWORD_VOLATILE);
 	if (!$type_qualifier) YYNOMEM;
 }
@@ -1229,9 +1872,249 @@ type_qualifier:
 	TRACE("type-qualifier", "_Atomic");
 
 	$type_qualifier = ast_type_qualifier_init(
-		TYPE_QUALIFIER__ATOMIC,
+		AST_TYPE_QUALIFIER__ATOMIC,
 		&@KEYWORD__ATOMIC);
 	if (!$type_qualifier) YYNOMEM;
+}
+;
+
+
+// 6.7.4
+function_specifier:
+  KEYWORD_INLINE {
+	TRACE("function-specifier", "inline");
+
+	$function_specifier = ast_function_specifier_init(
+		AST_FUNCTION_SPECIFIER_INLINE,
+		&@KEYWORD_INLINE);
+	if (!$function_specifier) YYNOMEM;
+}
+| KEYWORD__NORETURN {
+	TRACE("function-specifier", "_Noreturn");
+
+	$function_specifier = ast_function_specifier_init(
+		AST_FUNCTION_SPECIFIER__NORETURN,
+		&@KEYWORD__NORETURN);
+	if (!$function_specifier) YYNOMEM;
+}
+
+
+// 6.7.5
+alignment_specifier:
+  KEYWORD__ALIGNAS PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("alignment-specifier", "_Alignas ( type-name )");
+
+	$alignment_specifier = ast_alignas_init(
+		$operand,
+		&@KEYWORD__ALIGNAS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$alignment_specifier) YYNOMEM;
+}
+| KEYWORD__ALIGNAS PUNCTUATOR_LPARENTHESIS constant_expression[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("alignment-specifier", "_Alignas ( constant-expression )");
+
+	$alignment_specifier = ast_alignas_init(
+		$operand,
+		&@KEYWORD__ALIGNAS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!$alignment_specifier) YYNOMEM;
+}
+
+
+// 6.7.6
+declarator:
+  direct_declarator {
+	TRACE("declarator", "direct-declarator");
+	$declarator = $direct_declarator;
+}
+| pointer direct_declarator {
+	TRACE("declarator", "pointer direct-declarator");
+
+	$declarator = $direct_declarator;
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	switch (*type) {
+		case AST_ARRAY:
+			ast_array_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_FUNCTION:
+			ast_function_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_TYPE:
+			ast_pointer_append($pointer, type);
+			SET_CURRENT_TYPE($pointer);
+			break;
+
+		default:
+			break;
+	}
+}
+;
+
+
+// 6.7.6
+direct_declarator:
+  identifier {
+	TRACE("direct-declarator", "identifier");
+	$direct_declarator = $identifier;
+}
+/*
+| PUNCTUATOR_LPARENTHESIS declarator PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "( declarator )");
+	// TODO: handle pointer precedence
+}
+*/
+| direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_declarator[array] PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+/*
+| direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ static assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC type-qualifier-list assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ static type-qualifier-list assignment-expression ]");
+}
+| direct_declarator PUNCTUATOR_LBRACKET type-qualifier-list KEYWORD_STATIC assignment-expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list static assignment-expression ]");
+}
+*/
+| direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list scope_pop PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS identifier_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-declarator", "direct-declarator ( identifier-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$identifier_list,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
 }
 ;
 
@@ -1256,7 +2139,7 @@ pointer:
 | PUNCTUATOR_ASTERISK pointer[child] {
 	TRACE("pointer", "* pointer");
 
-	$$ = ast_pointer_init(NULL, $child, &@PUNCTUATOR_ASTERISK);
+	$$ = ast_pointer_init($child, NULL, &@PUNCTUATOR_ASTERISK);
 	if (!$$) YYNOMEM;
 }
 | PUNCTUATOR_ASTERISK type_qualifier_list pointer[child] {
@@ -1293,28 +2176,485 @@ type_qualifier_list:
 ;
 
 
+// 6.7.6
+parameter_type_list:
+  parameter_list {
+	TRACE("parameter-type-list", "parameter-list");
+	$parameter_type_list = $parameter_list;
+	SET_VARIADIC_PARAMETER(false);
+}
+| parameter_list PUNCTUATOR_COMMA PUNCTUATOR_VARIADIC {
+	TRACE("parameter-type-list", "parameter-list , ...");
+	$parameter_type_list = $parameter_list;
+	SET_VARIADIC_PARAMETER(true);
+}
+;
+
+
+// 6.7.6
+parameter_list:
+  parameter_declaration {
+	TRACE("parameter-list", "parameter-declaration");
+
+	$parameter_list = ast_declaration_list_init(
+		NULL,
+		$parameter_declaration,
+		&@parameter_declaration,
+		&@parameter_declaration);
+	if (!$parameter_list) YYNOMEM;
+}
+| parameter_list[list] PUNCTUATOR_COMMA parameter_declaration {
+	TRACE("parameter-list", "parameter-list , parameter-declaration");
+
+	$$ = ast_declaration_list_append(
+		$list,
+		$parameter_declaration,
+		&@parameter_declaration);
+	if (!$$) YYNOMEM;
+}
+;
+
+
+// 6.7.6
+parameter_declaration:
+  declaration_specifiers declarator {
+	TRACE("parameter-declaration", "declaration-specifiers declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->context.current.identifier,
+		$declarator,
+		type)) YYNOMEM;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		$declarator,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declarator,
+		&@declarator);
+	if (!$parameter_declaration) YYNOMEM;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+}
+| declaration_specifiers {
+	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		NULL,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declaration_specifiers,
+		&@declaration_specifiers);
+	if (!$parameter_declaration) YYNOMEM;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+}
+| declaration_specifiers abstract_declarator {
+	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		NULL,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declaration_specifiers,
+		&@abstract_declarator);
+	if (!$parameter_declaration) YYNOMEM;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+
+	// handled by abstract_declarator
+	(void) $abstract_declarator;
+}
+
+
+// 6.7.6
+identifier_list:
+  identifier {
+	TRACE("identifier-list", "identifier");
+
+	$identifier_list = ast_identifier_list_init($identifier, &@identifier);
+	if (!$identifier_list) YYNOMEM;
+}
+| identifier_list[list] PUNCTUATOR_COMMA identifier {
+	TRACE("identifier-list", "identifier-list , identifier");
+
+	$$ = ast_identifier_list_append($list, $identifier, &@identifier);
+	if (!$$) YYNOMEM;
+}
+;
+
+
 // 6.7.7
 type_name:
   specifier_qualifier_list {
 	TRACE("type-name", "specifier-qualifier-list");
-
-	$type_name = ast_type_name_init(
-		$specifier_qualifier_list,
-		NULL,
-		&@specifier_qualifier_list,
-		NULL);
-	if (!$type_name) YYNOMEM;
+	$type_name = $specifier_qualifier_list;
 }
-/*
-| specifier_qualifier_list abstract_declarator {
+| specifier_qualifier_list set_base_type abstract_declarator {
 	TRACE("type-name", "specifier-qualifier-list abstract-declarator");
+	$type_name = $abstract_declarator;
 
-	$type_name = ast_type_name_init(
-		$specifier_qualifier_list,
-		$abstract_declarator,
-		&@specifier_qualifier_list,
-		&@abstract_declarator);
-	if (!$type_name) YYNOMEM;
+	// handled by set_base_type
+	(void) $specifier_qualifier_list;
+}
+
+
+// 6.7.2.4
+atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
+	TRACE("atomic-type-specifier", "_Atomic ( type-name )");
+
+	ERROR_RESET;
+
+	$atomic_type_specifier = ast_atomic_init(
+		$operand,
+		&@KEYWORD__ATOMIC,
+		&@PUNCTUATOR_RPARENTHESIS,
+		ERROR_ADDR);
+	ERROR($atomic_type_specifier);
+}
+
+
+// 6.7.7
+abstract_declarator:
+  pointer {
+	TRACE("abstract-declarator", "pointer");
+	$abstract_declarator = $pointer;
+
+	ast_pointer_append($pointer, GET_CURRENT_TYPE);
+	SET_CURRENT_TYPE($pointer);
+}
+| direct_abstract_declarator {
+	TRACE("abstract-declarator", "direct-abstract-declarator");
+	$abstract_declarator = $direct_abstract_declarator;
+}
+| pointer direct_abstract_declarator {
+	TRACE("abstract-declarator", "pointer direct-abstract-declarator");
+
+	$abstract_declarator = $direct_abstract_declarator;
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	switch (*type) {
+		case AST_ARRAY:
+			ast_array_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_FUNCTION:
+			ast_function_prepend_pointer(type, $pointer);
+			break;
+
+		case AST_TYPE:
+			ast_pointer_append($pointer, type);
+			SET_CURRENT_TYPE($pointer);
+			break;
+
+		default:
+			break;
+	}
+}
+
+
+// 6.7.7
+direct_abstract_declarator:
+/*
+  PUNCTUATOR_LPARENTHESIS abstract_declarator PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( abstract-declarator )");
+	// TODO: handle pointer precedence
 }
 */
-;
+  PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list assignment-expression ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		$type_qualifier_list,
+		$assignment_expression,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+/*
+| PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ static assignment-expression ]");
+}
+| PUNCTUATOR_LBRACKET KEYWORD_STATIC type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ static type-qualifier-list assignment-expression ]");
+}
+| direct_abstract_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ static assignment-expression ]");
+}
+| direct_abstract_declarator PUNCTUATOR_LBRACKET KEYWORD_STATIC type_qualifier_list assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ static type-qualifier-list assignment-expression ]");
+}
+| PUNCTUATOR_LBRACKET type_qualifier_list KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ type-qualifier-list static assignment-expression ]");
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET type_qualifier_list KEYWORD_STATIC assignment_expression PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list static assignment-expression ]");
+}
+*/
+| PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "[ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$direct_abstract_declarator = array;
+}
+| direct_abstract_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_ASTERISK PUNCTUATOR_RBRACKET {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ * ]");
+
+	ast_t *array = ast_array_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		&@PUNCTUATOR_LBRACKET,
+		&@PUNCTUATOR_RBRACKET);
+	if (!array) YYNOMEM;
+
+	SET_CURRENT_TYPE(array);
+
+	$$ = $array;
+}
+| PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$direct_abstract_declarator = function;
+}
+| PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@PUNCTUATOR_LPARENTHESIS,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$direct_abstract_declarator = function;
+}
+| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		NULL,
+		NULL,
+		false,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
+| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( parameter-type-list )");
+
+	ast_t *function = ast_function_init(
+		GET_CURRENT_TYPE,
+		$parameter_type_list,
+		NULL,
+		GET_VARIADIC_PARAMETER,
+		&@function,
+		&@PUNCTUATOR_RPARENTHESIS);
+	if (!function) YYNOMEM;
+
+	SET_CURRENT_TYPE(function);
+
+	$$ = $function;
+}
+
+
+// 6.7.10
+static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS constant_expression PUNCTUATOR_COMMA string_literal PUNCTUATOR_RPARENTHESIS PUNCTUATOR_SEMICOLON {
+	TRACE("static_assert_declaration", "_Static_assert ( constant-expression , string-literal ) ;");
+
+	$static_assert_declaration = ast_static_assert_init(
+		$constant_expression,
+		$string_literal,
+		&@KEYWORD__STATIC_ASSERT,
+		&@PUNCTUATOR_SEMICOLON);
+	if (!$static_assert_declaration) YYNOMEM;
+}
+
+
+/* mid-rule actions */
+
+
+function_scope_push: %empty {
+	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+
+	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
+}
+
+
+scope_pop: %empty {
+	 SCOPE_POP;
+}
+
+
+set_base_type: %empty {
+	SET_BASE_TYPE($<ast>0);
+}
+
+
+struct_install_tag: %empty {
+	uint_fast8_t  struct_or_union = $<val>-1;
+	ast_t        *identifier      = $<ast>0;
+
+	location_t *struct_or_union_yylloc = &@-1;
+	location_t *identifier_yylloc      = &@0;
+
+	STRUCT_INSTALL_TAG(
+		$struct_install_tag,
+		struct_or_union,
+		identifier,
+		struct_or_union_yylloc,
+		identifier_yylloc);
+}
+
+
+struct_scope_push: %empty {
+	if (scope_push_identifier(translation_unit->symbol_table)) YYNOMEM;
+}

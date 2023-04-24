@@ -25,6 +25,7 @@ typedef struct vector_s {
 int  vector_append(vector_t *vector, void *element);
 void vector_free(vector_t *vector);
 int  vector_init(vector_t *vector, size_t element_size, size_t size);
+void vector_pop(vector_t *vector, void **element);
 int  vector_resize(vector_t *vector, size_t size);
 
 

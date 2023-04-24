@@ -3,6 +3,12 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 option(
+        'ast-print-location',
+        type        : 'boolean',
+        description : 'enable printing of AST node location',
+)
+
+option(
         'trace',
         type        : 'boolean',
         description : 'enable tracing at runtime',

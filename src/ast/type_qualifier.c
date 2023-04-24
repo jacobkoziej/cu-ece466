@@ -4,7 +4,7 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/private/ast.h>
 
@@ -13,9 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <jkcc/lexer.h>
-
-#include "y.tab.h"
+#include <jkcc/location.h>
 
 
 ast_t *ast_type_qualifier_init(
@@ -47,19 +45,19 @@ void fprint_ast_type_qualifier(
 
 	const char *qualifier;
 	switch (node->qualifier) {
-		case TYPE_QUALIFIER_CONST:
+		case AST_TYPE_QUALIFIER_CONST:
 			qualifier = "const";
 			break;
 
-		case TYPE_QUALIFIER_RESTRICT:
+		case AST_TYPE_QUALIFIER_RESTRICT:
 			qualifier = "restrict";
 			break;
 
-		case TYPE_QUALIFIER_VOLATILE:
+		case AST_TYPE_QUALIFIER_VOLATILE:
 			qualifier = "volatile";
 			break;
 
-		case TYPE_QUALIFIER__ATOMIC:
+		case AST_TYPE_QUALIFIER__ATOMIC:
 			qualifier = "_Atomic";
 			break;
 

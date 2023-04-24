@@ -8,21 +8,21 @@
 #define JKCC_AST_STORAGE_CLASS_SPECIFIER_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
-#define STORAGE_CLASS_SPECIFIER_TYPEDEF       (1 << 0)
-#define STORAGE_CLASS_SPECIFIER_EXTERN        (1 << 1)
-#define STORAGE_CLASS_SPECIFIER_STATIC        (1 << 2)
-#define STORAGE_CLASS_SPECIFIER__THREAD_LOCAL (1 << 3)
-#define STORAGE_CLASS_SPECIFIER_AUTO          (1 << 4)
-#define STORAGE_CLASS_SPECIFIER_REGISTER      (1 << 5)
+#define AST_STORAGE_CLASS_SPECIFIER_TYPEDEF       (1 << 0)
+#define AST_STORAGE_CLASS_SPECIFIER_EXTERN        (1 << 1)
+#define AST_STORAGE_CLASS_SPECIFIER_STATIC        (1 << 2)
+#define AST_STORAGE_CLASS_SPECIFIER__THREAD_LOCAL (1 << 3)
+#define AST_STORAGE_CLASS_SPECIFIER_AUTO          (1 << 4)
+#define AST_STORAGE_CLASS_SPECIFIER_REGISTER      (1 << 5)
 
 
 typedef struct ast_storage_class_specifier_s {

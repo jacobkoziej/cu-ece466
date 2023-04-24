@@ -8,13 +8,14 @@
 #define JKCC_AST_CHARACTER_CONSTANT_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/constant.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_character_constant_s {

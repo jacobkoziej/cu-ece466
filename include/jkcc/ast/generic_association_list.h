@@ -8,13 +8,13 @@
 #define JKCC_AST_GENERIC_ASSOCIATION_LIST_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/vector.h>
 
 

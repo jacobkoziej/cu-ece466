@@ -4,7 +4,7 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/private/ast.h>
 
@@ -14,10 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 #include <jkcc/vector.h>
-
-#include "y.tab.h"
 
 
 ast_t *ast_type_qualifier_list_append(

@@ -8,13 +8,14 @@
 #define JKCC_AST_INTEGER_CONSTANT_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/constant.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_integer_constant_s {

@@ -8,13 +8,13 @@
 #define JKCC_AST_BINARY_OPERATOR_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 #define AST_BINARY_OPERATOR_MULTIPLICATION        (1 << 0)

@@ -12,6 +12,7 @@
 #include <cmocka.h>
 
 #include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 #include "y.tab.h"
 #include "lex.yy.h"

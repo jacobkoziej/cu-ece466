@@ -8,25 +8,31 @@
 #define JKCC_PARSER_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
+#include <jkcc/lexer.h>
+#include <jkcc/scope.h>
 #include <jkcc/trace.h>
 #include <jkcc/vector.h>
 
 
 typedef struct parser_s {
 	const char *path;
-	const char *error;
 	trace_t    *trace;
+	yyextra_t  *yyextra_data;
 } parser_t;
 
 typedef struct translation_unit_s {
 	ast_t    *ast;
-	vector_t  file;  // file_t*
+	vector_t  file;               // file_t*
+	vector_t  base_type;          // ast_t*
+	scope_t  *symbol_table;
 } translation_unit_t;
 
 
-translation_unit_t *parse(parser_t *parser);
-void                translation_unit_free(translation_unit_t *translation_unit);
+translation_unit_t *parse(
+	parser_t           *parser);
+void translation_unit_free(
+	translation_unit_t *translation_unit);
 
 
 #endif  /* JKCC_PARSER_H */

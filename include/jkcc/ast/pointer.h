@@ -8,13 +8,13 @@
 #define JKCC_AST_POINTER_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_pointer_s {
@@ -25,6 +25,9 @@ typedef struct ast_pointer_s {
 } ast_pointer_t;
 
 
+void ast_pointer_append(
+	ast_t        *pointer,
+	ast_t        *type);
 ast_t *ast_pointer_init(
 	ast_t        *pointer,
 	ast_t        *type_qualifier_list,

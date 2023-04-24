@@ -8,12 +8,12 @@
 #define JKCC_AST_SIZEOF_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_sizeof_s {

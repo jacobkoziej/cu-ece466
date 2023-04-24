@@ -10,11 +10,11 @@
 
 #include <jkcc/ast.h>
 
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <jkcc/config.h>
 #include <jkcc/lexer.h>
 
 
@@ -23,8 +23,6 @@
 	memset(buf, ' ', sizeof(buf));                  \
 	fwrite(buf, sizeof(*buf), sizeof(buf), stream); \
 }
-
-#define OFFSETOF_AST_NODE(node, type) ((type*) (((uintptr_t) node) - offsetof(type, ast)))
 
 #define AST_INIT(type)                      \
 	type *node = malloc(sizeof(*node)); \
@@ -67,6 +65,11 @@
                                                       \
 	if (!(flags & AST_PRINT_NO_TRAILING_NEWLINE)) \
 		fprintf(stream, "\n");
+
+#define FPRINT_AST_BOOL(name, value) {                                     \
+	INDENT(stream, level);                                             \
+	fprintf(stream, "\"%s\" : %s,\n", name, value ? "true" : "false"); \
+}
 
 #define FPRINT_AST_MEMBER(type, member) if (member) { \
 	INDENT(stream, level);                        \
@@ -140,6 +143,7 @@
 	fprintf(stream, "],\n");                        \
 }
 
+#ifdef JKCC_CONFIG_AST_PRINT_LOCATION
 #define FPRINT_AST_NODE_FINISH                  \
 	INDENT(stream, level);                  \
 	fprintf(stream, "\"location\" : ");     \
@@ -158,6 +162,16 @@
 		AST_NODE_STR(&node->ast));      \
                                                 \
 	FPRINT_AST_FINISH;
+#else  /* JKCC_CONFIG_AST_PRINT_LOCATION */
+#define FPRINT_AST_NODE_FINISH                  \
+	INDENT(stream, level);                  \
+	fprintf(                                \
+		stream,                         \
+		"\"ast-type\" : \"%s\"\n",      \
+		AST_NODE_STR(&node->ast));      \
+                                                \
+	FPRINT_AST_FINISH;
+#endif  /* JKCC_CONFIG_AST_PRINT_LOCATION */
 
 
 #endif  /* JKCC_PRIVATE_AST_H */

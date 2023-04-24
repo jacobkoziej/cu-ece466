@@ -4,7 +4,7 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/private/ast.h>
 
@@ -13,7 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/constant.h>
+#include <jkcc/location.h>
 #include <jkcc/string.h>
 
 

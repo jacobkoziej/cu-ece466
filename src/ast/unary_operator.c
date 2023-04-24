@@ -4,7 +4,7 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 #include <jkcc/ast/unary_operator.h>
 #include <jkcc/private/ast.h>
 
@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 ast_t *ast_unary_operator_init(
@@ -53,14 +53,6 @@ void fprint_ast_unary_operator(
 
 	const char *operator;
 	switch (node->operator) {
-		case AST_UNARY_OPERATOR_AMPERSAND:
-			operator = "&";
-			break;
-
-		case AST_UNARY_OPERATOR_ASTERISK:
-			operator = "*";
-			break;
-
 		case AST_UNARY_OPERATOR_PLUS:
 			operator = "+";
 			break;

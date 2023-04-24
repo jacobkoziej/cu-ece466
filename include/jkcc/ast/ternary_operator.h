@@ -8,13 +8,13 @@
 #define JKCC_AST_TERNARY_OPERATOR_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
 typedef struct ast_ternary_operator_s {

@@ -8,19 +8,19 @@
 #define JKCC_AST_TYPE_QUALIFIER_H
 
 
-#include <jkcc/ast.h>
+#include <jkcc/ast/ast.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#include <jkcc/lexer.h>
+#include <jkcc/location.h>
 
 
-#define TYPE_QUALIFIER_CONST    (1 << 0)
-#define TYPE_QUALIFIER_RESTRICT (1 << 1)
-#define TYPE_QUALIFIER_VOLATILE (1 << 2)
-#define TYPE_QUALIFIER__ATOMIC  (1 << 3)
+#define AST_TYPE_QUALIFIER_CONST    (1 << 0)
+#define AST_TYPE_QUALIFIER_RESTRICT (1 << 1)
+#define AST_TYPE_QUALIFIER_VOLATILE (1 << 2)
+#define AST_TYPE_QUALIFIER__ATOMIC  (1 << 3)
 
 
 typedef struct ast_type_qualifier_s {
