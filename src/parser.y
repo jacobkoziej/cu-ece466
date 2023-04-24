@@ -397,6 +397,7 @@ typedef void* yyscan_t;
 %nterm <ast> abstract_declarator
 %nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
+%nterm <ast> statement
 %nterm <ast> expression_statement
 
 %nterm <ast> struct_install_tag
@@ -2618,6 +2619,38 @@ static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS consta
 		&@PUNCTUATOR_SEMICOLON);
 	if (!$static_assert_declaration) YYNOMEM;
 }
+
+
+// 6.8
+statement:
+/*
+  labeled_statement {
+	TRACE("statement", "labeled-statement");
+	$statement = $labeled_statement;
+}
+| compound_statement {
+	TRACE("statement", "compount-statement");
+	$statement = $compound_statement;
+}
+*/
+  expression_statement {
+	TRACE("statement", "expression-statement");
+	$statement = $expression_statement;
+}
+/*
+| selection_statement {
+	TRACE("statement", "selection-statement");
+	$statement = $selection_statement;
+}
+| iteration_statement {
+	TRACE("statement", "iteration-statement");
+	$statement = $iteration_statement;
+}
+| jump_statement {
+	TRACE("statement", "jump-statement");
+	$statement = $jump_statement;
+}
+*/
 
 
 // 6.8.3
