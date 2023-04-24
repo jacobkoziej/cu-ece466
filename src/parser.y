@@ -338,6 +338,9 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
+%precedence KEYWORD__ATOMIC
+%precedence PUNCTUATOR_LPARENTHESIS
+
 %precedence KEYWORD_IF
 %precedence KEYWORD_ELSE
 
@@ -1636,7 +1639,15 @@ type_specifier:
 		&@KEYWORD__COMPLEX);
 	if (!$type_specifier) YYNOMEM;
 }
-// | atomic_type_specifier
+| atomic_type_specifier {
+	TRACE("type-specifier", "atomic-type-specifier");
+
+	$type_specifier = ast_type_specifier_init(
+		AST_TYPE_SPECIFIER_ATOMIC_TYPE_SPECIFIER,
+		$atomic_type_specifier,
+		&@atomic_type_specifier);
+	if (!$type_specifier) YYNOMEM;
+}
 | struct_or_union_specifier {
 	TRACE("type-specifier", "struct-or-union-specifier");
 
@@ -2319,7 +2330,7 @@ type_name:
 
 
 // 6.7.2.4
-atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS {
+atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand] PUNCTUATOR_RPARENTHESIS %prec KEYWORD__ATOMIC {
 	TRACE("atomic-type-specifier", "_Atomic ( type-name )");
 
 	ERROR_RESET;
