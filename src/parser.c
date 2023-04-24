@@ -48,8 +48,10 @@ translation_unit_t *parse(parser_t *parser)
 	translation_unit->symbol_table = scope_init();
 	if (!translation_unit->symbol_table) goto error;
 
+	translation_unit->symbol_table->context.current.storage_class =
+		AST_DECLARATION_IMPLICIT_EXTERN;
 	translation_unit->symbol_table->context.base.storage_class =
-		AST_DECLARATION_EXTERN;
+		AST_DECLARATION_IMPLICIT_EXTERN;
 
 	stream = (parser->path) ? fopen(parser->path, "r") : stdin;
 	if (!stream) goto error;

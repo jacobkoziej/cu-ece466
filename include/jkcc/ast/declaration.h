@@ -17,11 +17,12 @@
 #include <jkcc/location.h>
 
 
-#define AST_DECLARATION_EXTERN   (1 << 0)
-#define AST_DECLARATION_STATIC   (1 << 1)
-#define AST_DECLARATION_AUTO     (1 << 2)
-#define AST_DECLARATION_REGISTER (1 << 3)
-#define AST_DECLARATION_ARGUMENT (1 << 4)
+#define AST_DECLARATION_IMPLICIT_EXTERN (1 << 0)
+#define AST_DECLARATION_EXPLICIT_EXTERN (1 << 1)
+#define AST_DECLARATION_STATIC          (1 << 2)
+#define AST_DECLARATION_AUTO            (1 << 3)
+#define AST_DECLARATION_REGISTER        (1 << 4)
+#define AST_DECLARATION_ARGUMENT        (1 << 5)
 
 
 typedef struct ast_declaration_s {

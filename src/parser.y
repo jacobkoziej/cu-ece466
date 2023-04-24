@@ -71,11 +71,7 @@
 
 #define GET_BASE_TYPE parser->yyextra_data->symbol_table->context.base.type
 
-#define GET_CURRENT_STORAGE_CLASS                                                   \
-	parser->yyextra_data->symbol_table->context.current.storage_class =         \
-		(parser->yyextra_data->symbol_table->context.current.storage_class) \
-		? parser->yyextra_data->symbol_table->context.current.storage_class \
-		: parser->yyextra_data->symbol_table->context.base.storage_class    \
+#define GET_CURRENT_STORAGE_CLASS parser->yyextra_data->symbol_table->context.current.storage_class
 
 #define GET_CURRENT_TYPE                                                   \
 	parser->yyextra_data->symbol_table->context.current.type =         \
@@ -103,6 +99,11 @@
 #define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
 
 #define SCOPE_POP scope_pop(translation_unit->symbol_table)
+
+#define SET_BASE_STORAGE_CLASS(new_storage_class) {                                            \
+	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
+	parser->yyextra_data->symbol_table->context.base.storage_class    = new_storage_class; \
+}
 
 #define SET_BASE_TYPE(ast_type) {                                            \
 	parser->yyextra_data->symbol_table->context.current.type = NULL;     \
@@ -1484,7 +1485,7 @@ storage_class_specifier:
 		&@KEYWORD_EXTERN);
 	if (!$storage_class_specifier) YYNOMEM;
 
-	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_EXTERN);
+	SET_CURRENT_STORAGE_CLASS(AST_DECLARATION_EXPLICIT_EXTERN);
 }
 | KEYWORD_STATIC {
 	TRACE("storage-class-specifier", "static");
@@ -2624,8 +2625,7 @@ static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS consta
 function_scope_push: %empty {
 	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
 
-	translation_unit->symbol_table->context.base.storage_class =
-		AST_DECLARATION_ARGUMENT;
+	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 }
 
 

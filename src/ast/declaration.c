@@ -70,8 +70,12 @@ void fprint_ast_declaration(
 
 	const char *storage_class;
 	switch (node->storage_class) {
-		case AST_DECLARATION_EXTERN:
-			storage_class = "extern";
+		case AST_DECLARATION_IMPLICIT_EXTERN:
+			storage_class = "implicit-extern";
+			break;
+
+		case AST_DECLARATION_EXPLICIT_EXTERN:
+			storage_class = "explicit-extern";
 			break;
 
 		case AST_DECLARATION_STATIC:
