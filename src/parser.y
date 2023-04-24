@@ -2277,13 +2277,7 @@ identifier_list:
 type_name:
   specifier_qualifier_list {
 	TRACE("type-name", "specifier-qualifier-list");
-
-	$type_name = ast_type_name_init(
-		$specifier_qualifier_list,
-		NULL,
-		&@specifier_qualifier_list,
-		NULL);
-	if (!$type_name) YYNOMEM;
+	$type_name = $specifier_qualifier_list;
 }
 /*
 | specifier_qualifier_list abstract_declarator {

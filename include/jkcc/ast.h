@@ -42,7 +42,6 @@
 #include <jkcc/ast/struct.h>
 #include <jkcc/ast/ternary_operator.h>
 #include <jkcc/ast/type.h>
-#include <jkcc/ast/type_name.h>
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>

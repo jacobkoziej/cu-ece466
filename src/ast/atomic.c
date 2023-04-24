@@ -21,11 +21,7 @@ ast_t *ast_atomic_init(
 	location_t  *location_end,
 	const char **error)
 {
-	ast_type_name_t *type_name = OFFSETOF_AST_NODE(
-		operand,
-		ast_type_name_t);
-
-	ast_type_t *type = OFFSETOF_AST_NODE(type_name->type, ast_type_t);
+	ast_type_t *type = OFFSETOF_AST_NODE(operand, ast_type_t);
 
 	// TODO: add checks for array, function, and atomic types
 

@@ -36,7 +36,6 @@ jkcc_src += files(
         'struct.c',
         'ternary_operator.c',
         'type.c',
-        'type_name.c',
         'type_qualifier.c',
         'type_qualifier_list.c',
         'type_specifier.c',
