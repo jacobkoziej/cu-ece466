@@ -338,6 +338,9 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
+%precedence KEYWORD_ELSE
+%precedence KEYWORD_IF
+
 %nterm <ast> identifier
 %nterm <ast> constant
 %nterm <ast> integer_constant
@@ -399,6 +402,7 @@ typedef void* yyscan_t;
 %nterm <ast> static_assert_declaration
 %nterm <ast> statement
 %nterm <ast> expression_statement
+%nterm <ast> selection_statement
 
 %nterm <ast> struct_install_tag
 
@@ -2637,11 +2641,11 @@ statement:
 	TRACE("statement", "expression-statement");
 	$statement = $expression_statement;
 }
-/*
 | selection_statement {
 	TRACE("statement", "selection-statement");
 	$statement = $selection_statement;
 }
+/*
 | iteration_statement {
 	TRACE("statement", "iteration-statement");
 	$statement = $iteration_statement;
@@ -2662,6 +2666,42 @@ expression_statement:
 | expression PUNCTUATOR_SEMICOLON {
 	TRACE("expression-statement", "expression ;");
 	$expression_statement = $expression;
+}
+
+
+// 6.8.4
+selection_statement:
+  KEYWORD_IF PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS statement %prec KEYWORD_IF {
+	TRACE("selection-statement", "if ( expression ) statement");
+
+	$selection_statement = ast_if_init(
+		$expression,
+		$statement,
+		NULL,
+		&@KEYWORD_IF,
+		&@statement);
+	if (!$selection_statement) YYNOMEM;
+}
+| KEYWORD_IF PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS statement[true_statement] KEYWORD_ELSE statement[false_statement] {
+	TRACE("selection-statement", "if ( expression ) statement else statement");
+
+	$selection_statement = ast_if_init(
+		$expression,
+		$true_statement,
+		$false_statement,
+		&@KEYWORD_IF,
+		&@false_statement);
+	if (!$selection_statement) YYNOMEM;
+}
+| KEYWORD_SWITCH PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("selection-statement", "switch ( expression ) statement");
+
+	$selection_statement = ast_switch_init(
+		$expression,
+		$statement,
+		&@KEYWORD_SWITCH,
+		&@statement);
+	if (!$selection_statement) YYNOMEM;
 }
 
 

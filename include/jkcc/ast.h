@@ -32,6 +32,7 @@
 #include <jkcc/ast/generic_selection.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/identifier_list.h>
+#include <jkcc/ast/if.h>
 #include <jkcc/ast/integer_constant.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>
@@ -40,6 +41,7 @@
 #include <jkcc/ast/storage_class_specifier.h>
 #include <jkcc/ast/string_literal.h>
 #include <jkcc/ast/struct.h>
+#include <jkcc/ast/switch.h>
 #include <jkcc/ast/ternary_operator.h>
 #include <jkcc/ast/type.h>
 #include <jkcc/ast/type_qualifier.h>
