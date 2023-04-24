@@ -404,6 +404,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
 %nterm <ast> statement
+%nterm <ast> block_item
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
@@ -2671,6 +2672,18 @@ statement:
 	$statement = $jump_statement;
 }
 */
+
+
+// 6.8.2
+block_item:
+  declaration {
+	TRACE("block-item", "declaration");
+	$block_item = $declaration;
+}
+| statement {
+	TRACE("block-item", "statement");
+	$block_item = $statement;
+}
 
 
 // 6.8.3
