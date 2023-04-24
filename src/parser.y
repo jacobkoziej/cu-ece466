@@ -2235,6 +2235,22 @@ parameter_declaration:
 
 	APPEND_BASE_TYPE($declaration_specifiers);
 }
+| declaration_specifiers {
+	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
+
+	ast_t *type = GET_CURRENT_TYPE;
+
+	$parameter_declaration = ast_declaration_init(
+		type,
+		NULL,
+		NULL,
+		GET_CURRENT_STORAGE_CLASS,
+		&@declaration_specifiers,
+		&@declaration_specifiers);
+	if (!$parameter_declaration) YYNOMEM;
+
+	APPEND_BASE_TYPE($declaration_specifiers);
+}
 /*
 | declaration_specifiers abstract_declarator {
 	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
