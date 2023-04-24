@@ -447,8 +447,6 @@ identifier: IDENTIFIER {
 	$identifier = ast_identifier_init(&$IDENTIFIER, &@IDENTIFIER);
 	if (!$identifier) YYNOMEM;
 
-	CHECK_IDENTIFIER_COLLISION($identifier);
-
 	symbol_table_t *symbol;
 	GET_IDENTIFIER_SYMBOL_TABLE(symbol, $identifier)
 
@@ -1432,6 +1430,8 @@ init_declarator:
   declarator[identifier] {
 	TRACE("init-declarator", "declarator");
 
+	CHECK_IDENTIFIER_COLLISION($identifier);
+
 	ast_t *type = GET_CURRENT_TYPE;
 
 	if (symbol_insert_identifier(
@@ -1821,6 +1821,8 @@ struct_declarator_list:
 struct_declarator:
   declarator[identifier] {
 	TRACE("struct-declarator", "declarator");
+
+	CHECK_IDENTIFIER_COLLISION($identifier);
 
 	ast_t *type = GET_CURRENT_TYPE;
 
