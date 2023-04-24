@@ -1637,6 +1637,8 @@ type_specifier:
 }
 // | atomic_type_specifier
 | struct_or_union_specifier {
+	TRACE("type-specifier", "struct-or-union-specifier");
+
 	$type_specifier = ast_type_specifier_init(
 		AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER,
 		$struct_or_union_specifier,
