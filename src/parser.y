@@ -338,8 +338,8 @@ typedef void* yyscan_t;
 %token PUNCTUATOR_PREPROCESSOR
 %token PUNCTUATOR_PREPROCESSOR_PASTING
 
-%precedence KEYWORD_ELSE
 %precedence KEYWORD_IF
+%precedence KEYWORD_ELSE
 
 %nterm <ast> identifier
 %nterm <ast> constant
