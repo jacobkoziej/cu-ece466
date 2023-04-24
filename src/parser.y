@@ -1958,10 +1958,12 @@ direct_declarator:
 	TRACE("direct-declarator", "identifier");
 	$direct_declarator = $identifier;
 }
+/*
 | PUNCTUATOR_LPARENTHESIS declarator PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "( declarator )");
-	$direct_declarator = $declarator;
+	// TODO: handle pointer precedence
 }
+*/
 | direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "direct-declarator [ ]");
 
