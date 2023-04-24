@@ -34,6 +34,7 @@ void (*const ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	[AST_DEREFERENCE]              = ast_dereference_free,
 	[AST_EXPRESSION]               = ast_expression_free,
 	[AST_FLOATING_CONSTANT]        = ast_floating_constant_free,
+	[AST_FOR]                      = ast_for_free,
 	[AST_FUNCTION]                 = ast_function_free,
 	[AST_FUNCTION_SPECIFIER]       = ast_function_specifier_free,
 	[AST_GENERIC_ASSOCIATION]      = ast_generic_association_free,
@@ -57,6 +58,7 @@ void (*const ast_node_free[AST_NODES_TOTAL])(ast_t *ast) = {
 	[AST_TYPE_QUALIFIER_LIST]      = ast_type_qualifier_list_free,
 	[AST_TYPE_SPECIFIER]           = ast_type_specifier_free,
 	[AST_UNARY_OPERATOR]           = ast_unary_operator_free,
+	[AST_WHILE]                    = ast_while_free,
 };
 
 void (*const fprint_ast_node[AST_NODES_TOTAL])(
@@ -80,6 +82,7 @@ void (*const fprint_ast_node[AST_NODES_TOTAL])(
 	[AST_DEREFERENCE]              = fprint_ast_dereference,
 	[AST_EXPRESSION]               = fprint_ast_expression,
 	[AST_FLOATING_CONSTANT]        = fprint_ast_floating_constant,
+	[AST_FOR]                      = fprint_ast_for,
 	[AST_FUNCTION]                 = fprint_ast_function,
 	[AST_FUNCTION_SPECIFIER]       = fprint_ast_function_specifier,
 	[AST_GENERIC_ASSOCIATION]      = fprint_ast_generic_association,
@@ -103,6 +106,7 @@ void (*const fprint_ast_node[AST_NODES_TOTAL])(
 	[AST_TYPE_QUALIFIER_LIST]      = fprint_ast_type_qualifier_list,
 	[AST_TYPE_SPECIFIER]           = fprint_ast_type_specifier,
 	[AST_UNARY_OPERATOR]           = fprint_ast_unary_operator,
+	[AST_WHILE]                    = fprint_ast_while,
 };
 
 
@@ -123,6 +127,7 @@ const char *const ast_node_str[AST_NODES_TOTAL] = {
 	[AST_DEREFERENCE]              = "dereference",
 	[AST_EXPRESSION]               = "expression",
 	[AST_FLOATING_CONSTANT]        = "floating-constant",
+	[AST_FOR]                      = "for",
 	[AST_FUNCTION]                 = "function",
 	[AST_FUNCTION_SPECIFIER]       = "function-specifier",
 	[AST_GENERIC_ASSOCIATION]      = "generic-association",
@@ -146,6 +151,7 @@ const char *const ast_node_str[AST_NODES_TOTAL] = {
 	[AST_TYPE_QUALIFIER_LIST]      = "type-qualifier-list",
 	[AST_TYPE_SPECIFIER]           = "type-specifier",
 	[AST_UNARY_OPERATOR]           = "unary-operator",
+	[AST_WHILE]                    = "while",
 };
 
 

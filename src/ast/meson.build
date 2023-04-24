@@ -19,6 +19,7 @@ jkcc_src += files(
         'dereference.c',
         'expression.c',
         'floating_constant.c',
+        'for.c',
         'function.c',
         'function_specifier.c',
         'generic_association.c',
@@ -42,4 +43,5 @@ jkcc_src += files(
         'type_qualifier_list.c',
         'type_specifier.c',
         'unary_operator.c',
+        'while.c',
 )

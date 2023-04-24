@@ -403,6 +403,7 @@ typedef void* yyscan_t;
 %nterm <ast> statement
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
+%nterm <ast> iteration_statement
 
 %nterm <ast> struct_install_tag
 
@@ -2649,11 +2650,11 @@ statement:
 	TRACE("statement", "selection-statement");
 	$statement = $selection_statement;
 }
-/*
 | iteration_statement {
 	TRACE("statement", "iteration-statement");
 	$statement = $iteration_statement;
 }
+/*
 | jump_statement {
 	TRACE("statement", "jump-statement");
 	$statement = $jump_statement;
@@ -2706,6 +2707,176 @@ selection_statement:
 		&@KEYWORD_SWITCH,
 		&@statement);
 	if (!$selection_statement) YYNOMEM;
+}
+
+
+// 6.8.5
+iteration_statement:
+  KEYWORD_WHILE PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "while ( expression ) statement");
+
+	$iteration_statement = ast_while_init(
+		$expression,
+		$statement,
+		false,
+		&@KEYWORD_WHILE,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_DO statement KEYWORD_WHILE PUNCTUATOR_LPARENTHESIS expression PUNCTUATOR_RPARENTHESIS PUNCTUATOR_SEMICOLON {
+	TRACE("iteration-statement", "do statement while ( expression ) ;");
+
+	$iteration_statement = ast_while_init(
+		$expression,
+		$statement,
+		true,
+		&@KEYWORD_WHILE,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS PUNCTUATOR_SEMICOLON PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( ; ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		NULL,
+		NULL,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS PUNCTUATOR_SEMICOLON PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( ; ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		NULL,
+		NULL,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS PUNCTUATOR_SEMICOLON expression[condition] PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( ; expression ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		NULL,
+		$condition,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS PUNCTUATOR_SEMICOLON expression[condition] PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( ; expression ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		NULL,
+		$condition,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS expression[initializer] PUNCTUATOR_SEMICOLON PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( expression ; ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		$initializer,
+		NULL,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS expression[initializer] PUNCTUATOR_SEMICOLON PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( expression ; ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		$initializer,
+		NULL,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS expression[initializer] PUNCTUATOR_SEMICOLON expression[condition] PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( expression ; expression ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		$initializer,
+		$condition,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS expression[initializer] PUNCTUATOR_SEMICOLON expression[condition] PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( expression ; expression ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		$initializer,
+		$condition,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( declaration ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		$declaration,
+		NULL,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( declaration ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		$declaration,
+		NULL,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration expression[condition] PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( declaration expression ; ) statement");
+
+	$iteration_statement = ast_for_init(
+		$declaration,
+		$condition,
+		NULL,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
+}
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration expression[condition] PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+	TRACE("iteration-statement", "for ( declaration expression ; expression ) statement");
+
+	$iteration_statement = ast_for_init(
+		$declaration,
+		$condition,
+		$iteration,
+		$statement,
+		&@KEYWORD_FOR,
+		&@statement);
+	if (!$iteration_statement) YYNOMEM;
 }
 
 

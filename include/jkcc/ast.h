@@ -25,6 +25,7 @@
 #include <jkcc/ast/dereference.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
+#include <jkcc/ast/for.h>
 #include <jkcc/ast/function.h>
 #include <jkcc/ast/function_specifier.h>
 #include <jkcc/ast/generic_association.h>
@@ -48,6 +49,7 @@
 #include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>
 #include <jkcc/ast/unary_operator.h>
+#include <jkcc/ast/while.h>
 
 #include <stddef.h>
 #include <stdint.h>
