@@ -42,17 +42,27 @@ bool ht_exists(ht_t *ht, const void *key, size_t size)
 	return false;
 }
 
-void ht_free(ht_t *ht, void (*entry_free)(ht_entry_t *entry))
+void ht_free(ht_t *ht, void (*entry_free)(void *val))
 {
 	if (!ht) return;
 
 	if (entry_free)
-		for (size_t i = 0; i < ht->size; i++)
-			entry_free(&ht->entries[i]);
+		for (size_t i = 0; i < ht->size; i++) {
+			if (!ht->entries[i].key) continue;
 
-	for (size_t i = 0; i < ht->size; i++)
-		if (ht->entries[i].key)
 			free(ht->entries[i].key);
+			entry_free(&ht->entries[i].val);
+
+			if (!--ht->use) break;
+		}
+	else
+		for (size_t i = 0; i < ht->size; i++) {
+			if (!ht->entries[i].key) continue;
+
+			free(ht->entries[i].key);
+
+			if (!--ht->use) break;
+		}
 
 	free(ht->entries);
 }
