@@ -79,6 +79,8 @@
 		? parser->yyextra_data->symbol_table->context.current.type \
 		: parser->yyextra_data->symbol_table->context.base.type    \
 
+#define GET_FOR_DECLARATION parser->yyextra_data->for_declaration
+
 #define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                                \
 	switch (parser->yyextra_data->identifier_type) {                                     \
 		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:                           \
@@ -120,6 +122,10 @@
 
 #define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
 	parser->yyextra_data->identifier = ast_identifier; \
+}
+
+#define SET_FOR_DECLARATION {                         \
+	parser->yyextra_data->for_declaration = true; \
 }
 
 #define SET_VARIADIC_PARAMETER(variadic) {                   \
@@ -167,6 +173,10 @@
 }
 
 #define RESET_BASE_TYPE SET_CURRENT_TYPE(GET_BASE_TYPE)
+
+#define RESET_FOR_DECLARATION {                        \
+	parser->yyextra_data->for_declaration = false; \
+}
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
 
@@ -2863,7 +2873,7 @@ iteration_statement:
 		&@statement);
 	if (!$iteration_statement) YYNOMEM;
 }
-| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS for_scope_push declaration PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
 	TRACE("iteration-statement", "for ( declaration ; ) statement");
 
 	$iteration_statement = ast_for_init(
@@ -2874,8 +2884,10 @@ iteration_statement:
 		&@KEYWORD_FOR,
 		&@statement);
 	if (!$iteration_statement) YYNOMEM;
+
+	if (GET_FOR_DECLARATION) SCOPE_POP;
 }
-| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS for_scope_push declaration PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
 	TRACE("iteration-statement", "for ( declaration ; expression ) statement");
 
 	$iteration_statement = ast_for_init(
@@ -2886,8 +2898,10 @@ iteration_statement:
 		&@KEYWORD_FOR,
 		&@statement);
 	if (!$iteration_statement) YYNOMEM;
+
+	if (GET_FOR_DECLARATION) SCOPE_POP;
 }
-| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration expression[condition] PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS for_scope_push declaration expression[condition] PUNCTUATOR_SEMICOLON PUNCTUATOR_RPARENTHESIS statement {
 	TRACE("iteration-statement", "for ( declaration expression ; ) statement");
 
 	$iteration_statement = ast_for_init(
@@ -2898,8 +2912,10 @@ iteration_statement:
 		&@KEYWORD_FOR,
 		&@statement);
 	if (!$iteration_statement) YYNOMEM;
+
+	if (GET_FOR_DECLARATION) SCOPE_POP;
 }
-| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS declaration expression[condition] PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
+| KEYWORD_FOR PUNCTUATOR_LPARENTHESIS for_scope_push declaration expression[condition] PUNCTUATOR_SEMICOLON expression[iteration] PUNCTUATOR_RPARENTHESIS statement {
 	TRACE("iteration-statement", "for ( declaration expression ; expression ) statement");
 
 	$iteration_statement = ast_for_init(
@@ -2910,6 +2926,8 @@ iteration_statement:
 		&@KEYWORD_FOR,
 		&@statement);
 	if (!$iteration_statement) YYNOMEM;
+
+	if (GET_FOR_DECLARATION) SCOPE_POP;
 }
 
 
@@ -2917,9 +2935,20 @@ iteration_statement:
 
 
 compound_statement_scope_push: %empty {
+	if (!GET_FOR_DECLARATION) {
+		if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+
+		SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
+	}
+	RESET_FOR_DECLARATION;
+}
+
+
+for_scope_push: %empty {
 	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
+	SET_FOR_DECLARATION;
 }
 
 
@@ -2932,6 +2961,7 @@ function_scope_push: %empty {
 
 scope_pop: %empty {
 	 SCOPE_POP;
+	 RESET_FOR_DECLARATION;
 }
 
 
