@@ -701,18 +701,13 @@ argument_expression_list:
   assignment_expression[argument] {
 	TRACE("argument-expression-list", "assignment-expression");
 
-	$argument_expression_list = ast_argument_list_init(
-		$argument,
-		&@argument);
+	$argument_expression_list = ast_list_init($argument, &@argument);
 	if (!$argument_expression_list) YYNOMEM;
 }
 | argument_expression_list[list] PUNCTUATOR_COMMA assignment_expression[argument] {
 	TRACE("argument-expression-list", "argument-expression-list , assignment-expression");
 
-	$$ = ast_argument_list_append(
-		$list,
-		$argument,
-		&@argument);
+	$$ = ast_list_append($list, $argument, &@argument);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -1414,19 +1409,14 @@ init_declarator_list:
 | init_declarator_list[list] PUNCTUATOR_COMMA init_declarator[declaration] {
 	TRACE("init-declarator-list", "init-declarator-list , init-declarator");
 
-	$$ = (*$list == AST_DECLARATION_LIST)
-		? ast_declaration_list_append(
-			$list,
-			$declaration,
-			&@declaration)
-		: ast_declaration_list_init(
-			$list,
-			$declaration,
-			&@list,
-			&@declaration);
+	ast_t *list = (*$list != AST_LIST)
+		? ast_list_init($list, &@list)
+		: $list;
+	if (!list) YYNOMEM;
+
+	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
-;
 
 
 
@@ -1730,16 +1720,12 @@ struct_declaration_list:
 | struct_declaration_list[list] struct_declaration[declaration] {
 	TRACE("struct-declaration-list", "struct-declaration-list struct-declaration");
 
-	$$ = (*$list == AST_DECLARATION_LIST)
-		? ast_declaration_list_append(
-			$list,
-			$declaration,
-			&@declaration)
-		: ast_declaration_list_init(
-			$list,
-			$declaration,
-			&@list,
-			&@declaration);
+	ast_t *list = (*$list != AST_LIST)
+		? ast_list_init($list, &@list)
+		: $list;
+	if (!list) YYNOMEM;
+
+	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
 
@@ -1816,16 +1802,12 @@ struct_declarator_list:
 | struct_declarator_list[list] PUNCTUATOR_COMMA struct_declarator[declaration] {
 	TRACE("struct-declarator-list", "struct-declarator-list , struct-declarator");
 
-	$$ = (*$list == AST_DECLARATION_LIST)
-		? ast_declaration_list_append(
-			$list,
-			$declaration,
-			&@declaration)
-		: ast_declaration_list_init(
-			$list,
-			$declaration,
-			&@list,
-			&@declaration);
+	ast_t *list = (*$list != AST_LIST)
+		? ast_list_init($list, &@list)
+		: $list;
+	if (!list) YYNOMEM;
+
+	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
 
@@ -2182,7 +2164,7 @@ type_qualifier_list:
   type_qualifier {
 	TRACE("type-qualifier-list", "type-qualifier");
 
-	$type_qualifier_list = ast_type_qualifier_list_init(
+	$type_qualifier_list = ast_list_init(
 		$type_qualifier,
 		&@type_qualifier);
 	if (!$type_qualifier_list) YYNOMEM;
@@ -2190,10 +2172,7 @@ type_qualifier_list:
 | type_qualifier_list[list] type_qualifier {
 	TRACE("type-qualifier-list", "type-qualifier-list type-qualifier");
 
-	$$ = ast_type_qualifier_list_append(
-		$list,
-		$type_qualifier,
-		&@type_qualifier);
+	$$ = ast_list_append($list, $type_qualifier, &@type_qualifier);
 	if (!$$) YYNOMEM;
 }
 ;
@@ -2219,23 +2198,20 @@ parameter_list:
   parameter_declaration {
 	TRACE("parameter-list", "parameter-declaration");
 
-	$parameter_list = ast_declaration_list_init(
-		NULL,
+	$parameter_list = ast_list_init(
 		$parameter_declaration,
-		&@parameter_declaration,
 		&@parameter_declaration);
 	if (!$parameter_list) YYNOMEM;
 }
 | parameter_list[list] PUNCTUATOR_COMMA parameter_declaration {
 	TRACE("parameter-list", "parameter-list , parameter-declaration");
 
-	$$ = ast_declaration_list_append(
+	$$ = ast_list_append(
 		$list,
 		$parameter_declaration,
 		&@parameter_declaration);
 	if (!$$) YYNOMEM;
 }
-;
 
 
 // 6.7.6
@@ -2303,13 +2279,13 @@ identifier_list:
   identifier {
 	TRACE("identifier-list", "identifier");
 
-	$identifier_list = ast_identifier_list_init($identifier, &@identifier);
+	$identifier_list = ast_list_init($identifier, &@identifier);
 	if (!$identifier_list) YYNOMEM;
 }
 | identifier_list[list] PUNCTUATOR_COMMA identifier {
 	TRACE("identifier-list", "identifier-list , identifier");
 
-	$$ = ast_identifier_list_append($list, $identifier, &@identifier);
+	$$ = ast_list_append($list, $identifier, &@identifier);
 	if (!$$) YYNOMEM;
 }
 ;

@@ -81,9 +81,7 @@ void fprint_ast_struct(
 	FPRINT_AST_NODE_BEGIN(ast_struct_t);
 
 	FPRINT_AST_MEMBER("tag", node->tag);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_DECLARATION_LIST],
-		node->declaration_list);
+	FPRINT_AST_MEMBER("declaration-list", node->declaration_list);
 
 	const char *type;
 	switch (node->type) {

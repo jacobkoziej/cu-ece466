@@ -50,9 +50,7 @@ void fprint_ast_call(
 	FPRINT_AST_NODE_BEGIN(ast_call_t);
 
 	FPRINT_AST_MEMBER(ast_node_str[AST_EXPRESSION], node->expression);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_ARGUMENT_LIST],
-		node->argument_list);
+	FPRINT_AST_MEMBER("argument-list", node->argument_list);
 
 	FPRINT_AST_NODE_FINISH;
 }

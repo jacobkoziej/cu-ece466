@@ -76,9 +76,7 @@ void fprint_ast_array(
 	FPRINT_AST_NODE_BEGIN(ast_array_t);
 
 	FPRINT_AST_MEMBER(ast_node_str[AST_TYPE], node->type);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_TYPE_QUALIFIER_LIST],
-		node->type_qualifier_list);
+	FPRINT_AST_MEMBER("type-qualifier-list", node->type_qualifier_list);
 	FPRINT_AST_MEMBER("size", node->size);
 
 	FPRINT_AST_NODE_FINISH;

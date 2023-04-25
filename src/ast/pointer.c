@@ -75,12 +75,8 @@ void fprint_ast_pointer(
 {
 	FPRINT_AST_NODE_BEGIN(ast_pointer_t);
 
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_POINTER],
-		node->pointer);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_TYPE_QUALIFIER_LIST],
-		node->type_qualifier_list);
+	FPRINT_AST_MEMBER(ast_node_str[AST_POINTER], node->pointer);
+	FPRINT_AST_MEMBER("type-qualifier-list", node->type_qualifier_list);
 
 	FPRINT_AST_NODE_FINISH;
 }

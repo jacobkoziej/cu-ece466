@@ -11,7 +11,6 @@
 #include <jkcc/ast/addressof.h>
 #include <jkcc/ast/alignas.h>
 #include <jkcc/ast/alignof.h>
-#include <jkcc/ast/argument_list.h>
 #include <jkcc/ast/array.h>
 #include <jkcc/ast/assignment.h>
 #include <jkcc/ast/ast.h>
@@ -21,7 +20,6 @@
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/declaration.h>
-#include <jkcc/ast/declaration_list.h>
 #include <jkcc/ast/dereference.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
@@ -32,9 +30,9 @@
 #include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/generic_selection.h>
 #include <jkcc/ast/identifier.h>
-#include <jkcc/ast/identifier_list.h>
 #include <jkcc/ast/if.h>
 #include <jkcc/ast/integer_constant.h>
+#include <jkcc/ast/list.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>
 #include <jkcc/ast/sizeof.h>
@@ -46,7 +44,6 @@
 #include <jkcc/ast/ternary_operator.h>
 #include <jkcc/ast/type.h>
 #include <jkcc/ast/type_qualifier.h>
-#include <jkcc/ast/type_qualifier_list.h>
 #include <jkcc/ast/type_specifier.h>
 #include <jkcc/ast/unary_operator.h>
 #include <jkcc/ast/while.h>
