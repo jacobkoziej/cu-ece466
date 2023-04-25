@@ -404,6 +404,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
 %nterm <ast> statement
+%nterm <ast> compound_statement
 %nterm <ast> block_item_list
 %nterm <ast> block_item
 %nterm <ast> expression_statement
@@ -2626,12 +2627,12 @@ statement:
 	TRACE("statement", "labeled-statement");
 	$statement = $labeled_statement;
 }
-| compound_statement {
-	TRACE("statement", "compount-statement");
+*/
+  compound_statement {
+	TRACE("statement", "compound-statement");
 	$statement = $compound_statement;
 }
-*/
-  expression_statement {
+| expression_statement {
 	TRACE("statement", "expression-statement");
 	$statement = $expression_statement;
 }
@@ -2649,6 +2650,18 @@ statement:
 	$statement = $jump_statement;
 }
 */
+
+
+// 6.8.2
+compound_statement:
+  PUNCTUATOR_LBRACE PUNCTUATOR_RBRACE {
+	TRACE("compound-statement", "{ }");
+	$compound_statement = NULL;
+}
+| PUNCTUATOR_LBRACE compound_statement_scope_push block_item_list scope_pop PUNCTUATOR_RBRACE {
+	TRACE("compound-statement", "{ block-item-list }");
+	$compound_statement = $block_item_list;
+}
 
 
 // 6.8.2
@@ -2901,6 +2914,13 @@ iteration_statement:
 
 
 /* mid-rule actions */
+
+
+compound_statement_scope_push: %empty {
+	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+
+	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
+}
 
 
 function_scope_push: %empty {
