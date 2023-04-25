@@ -420,6 +420,7 @@ typedef void* yyscan_t;
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
+%nterm <ast> declaration_list
 
 %nterm <ast> struct_install_tag
 
@@ -2928,6 +2929,25 @@ iteration_statement:
 	if (!$iteration_statement) YYNOMEM;
 
 	if (GET_FOR_DECLARATION) SCOPE_POP;
+}
+
+
+// 6.9.1
+declaration_list:
+  declaration {
+	TRACE("declaration-list", "declaration");
+	$declaration_list = $declaration;
+}
+| declaration_list[list] declaration {
+	TRACE("declaration-list", "declaration-list declaration");
+
+	ast_t *list = (*$list != AST_LIST)
+		? ast_list_init($list, &@list)
+		: $list;
+	if (!list) YYNOMEM;
+
+	$$ = ast_list_append(list, $declaration, &@declaration);
+	if (!$$) YYNOMEM;
 }
 
 
