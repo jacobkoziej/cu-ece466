@@ -404,6 +404,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
 %nterm <ast> statement
+%nterm <ast> block_item_list
 %nterm <ast> block_item
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
@@ -2648,6 +2649,25 @@ statement:
 	$statement = $jump_statement;
 }
 */
+
+
+// 6.8.2
+block_item_list:
+  block_item {
+	TRACE("block-item-list", "block-item");
+	$block_item_list = $block_item;
+}
+| block_item_list[list] block_item {
+	TRACE("block-item-list", "block-item-list block-item");
+
+	ast_t *list = (*$list != AST_LIST)
+		? ast_list_init($list, &@list)
+		: $list;
+	if (!list) YYNOMEM;
+
+	$$ = ast_list_append(list, $block_item, &@block_item);
+	if (!$$) YYNOMEM;
+}
 
 
 // 6.8.2
