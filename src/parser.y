@@ -1668,7 +1668,7 @@ type_specifier:
 
 // 6.7.2.1
 struct_or_union_specifier:
-  struct_or_union PUNCTUATOR_LBRACKET struct_scope_push struct_declaration_list PUNCTUATOR_RBRACKET {
+  struct_or_union PUNCTUATOR_LBRACE struct_scope_push struct_declaration_list PUNCTUATOR_RBRACE {
 	TRACE("struct-or-union-specifier", "struct-or-union { struct-declaration-list }");
 
 	$struct_or_union_specifier = ast_struct_init(
@@ -1677,7 +1677,7 @@ struct_or_union_specifier:
 		parser->yyextra_data->symbol_table->context.current.identifier,
 		$struct_or_union,
 		&@struct_or_union,
-		&@PUNCTUATOR_RBRACKET);
+		&@PUNCTUATOR_RBRACE);
 	if (!$struct_or_union_specifier) YYNOMEM;
 
 	SCOPE_POP;
