@@ -32,7 +32,7 @@ typedef struct yyextra_s {
 	int                        prev_yylineno;
 	const char                *error;
 	ast_t                     *identifier;
-	bool                       for_declaration;
+	bool                       prescope_declaration;
 	bool                       variadic_parameter;
 	uint_fast16_t              identifier_type;
 	scope_t                   *symbol_table;
