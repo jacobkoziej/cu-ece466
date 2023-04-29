@@ -124,6 +124,10 @@
 	parser->yyextra_data->identifier = ast_identifier; \
 }
 
+#define SET_IDENTIFIER_TYPE(type) {                   \
+	parser->yyextra_data->identifier_type = type; \
+}
+
 #define SET_PRESCOPE_DECLARATION {                         \
 	parser->yyextra_data->prescope_declaration = true; \
 }
@@ -1716,10 +1720,12 @@ struct_or_union:
   KEYWORD_STRUCT {
 	TRACE("struct-or-union", "struct");
 	$struct_or_union = AST_STRUCT_STRUCT;
+	SET_IDENTIFIER_TYPE(AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER);
 }
 | KEYWORD_UNION {
 	TRACE("struct-or-union", "union");
 	$struct_or_union = AST_STRUCT_UNION;
+	SET_IDENTIFIER_TYPE(AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER);
 }
 ;
 
