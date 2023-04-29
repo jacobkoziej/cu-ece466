@@ -2955,8 +2955,8 @@ declaration_list:
 
 
 compound_statement_scope_push: %empty {
-		if (scope_push(translation_unit->symbol_table)) YYNOMEM;
 	if (!GET_PRESCOPE_DECLARATION) {
+		if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
 
 		SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	}
@@ -2965,7 +2965,7 @@ compound_statement_scope_push: %empty {
 
 
 for_scope_push: %empty {
-	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	SET_PRESCOPE_DECLARATION;
@@ -2973,7 +2973,7 @@ for_scope_push: %empty {
 
 
 function_scope_push: %empty {
-	if (scope_push(translation_unit->symbol_table)) YYNOMEM;
+	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 	SET_PRESCOPE_DECLARATION;
@@ -3008,5 +3008,7 @@ struct_install_tag: %empty {
 
 
 struct_scope_push: %empty {
-	if (scope_push_identifier(translation_unit->symbol_table)) YYNOMEM;
+	if (scope_push(
+		translation_unit->symbol_table,
+		SCOPE_NO_PUSH_TAG)) YYNOMEM;
 }

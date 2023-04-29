@@ -8,8 +8,14 @@
 #define JKCC_SCOPE_H
 
 
+#include <stdint.h>
+
 #include <jkcc/symbol.h>
 #include <jkcc/vector.h>
+
+
+#define SCOPE_NO_PUSH_IDENTIFIER (1 << 0)
+#define SCOPE_NO_PUSH_TAG        (1 << 1)
 
 
 typedef struct context_s {
@@ -27,24 +33,20 @@ typedef struct context_s {
 
 typedef struct scope_s {
 	context_t context;
-	struct {
-		vector_t context;     // context_t
-		vector_t identifier;  // ast_t*
-		vector_t tag;         // ast_t*
-	} history;
+	vector_t  stack;    // context_t
+	vector_t  history;  // context_t
 } scope_t;
 
 
 scope_t *scope_init(
 	void);
 void scope_free(
-	scope_t *scope);
+	scope_t      *scope);
 void scope_pop(
-	scope_t *scope);
+	scope_t      *scope);
 int scope_push(
-	scope_t *scope);
-int scope_push_identifier(
-	scope_t *scope);
+	scope_t      *scope,
+	uint_fast8_t  flags);
 
 
 #endif  /* JCC_SCOPE_H */
