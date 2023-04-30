@@ -10,6 +10,7 @@
 
 #include <jkcc/ast/ast.h>
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -26,6 +27,7 @@ typedef struct ast_struct_s {
 	ast_t          *tag;
 	ast_t          *declaration_list;
 	symbol_table_t *members;
+	bool            definition;
 	uint_fast8_t    type;
 	location_t      location;
 	ast_t           ast;
@@ -36,12 +38,13 @@ ast_t *ast_struct_init(
 	ast_t          *tag,
 	ast_t          *declaration_list,
 	symbol_table_t *members,
+	bool            definition,
 	uint_fast8_t    type,
 	location_t     *location_start,
 	location_t     *location_end);
 void ast_struct_free(
 	ast_t          *ast);
-ast_t *ast_struct_get_declaration_list(
+bool ast_struct_get_definition(
 	ast_t          *ast);
 void ast_struct_set_declaration_list(
 	ast_t          *ast,
