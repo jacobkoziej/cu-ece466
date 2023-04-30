@@ -8,6 +8,7 @@
 #define JKCC_SCOPE_H
 
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <jkcc/symbol.h>
@@ -26,8 +27,8 @@ typedef struct context_s {
 	struct {
 		symbol_table_t *identifier;
 		symbol_table_t *tag;
+		size_t          type_stack;
 		uint_fast8_t    storage_class;
-		ast_t          *type;
 	} current;
 } context_t;
 

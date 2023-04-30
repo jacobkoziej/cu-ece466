@@ -92,6 +92,7 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 		if (!identifier) goto error_symbol_init_identifier;
 
 		scope->context.current.identifier = identifier;
+		scope->context.current.type_stack = 0;
 	}
 
 	if (!(flags & SCOPE_NO_PUSH_TAG)) {

@@ -29,7 +29,6 @@ typedef struct ast_function_s {
 
 
 ast_t *ast_function_init(
-	ast_t        *return_type,
 	ast_t        *parameter_list,
 	ast_t        *identifier_list,
 	bool          variadic,
@@ -37,9 +36,9 @@ ast_t *ast_function_init(
 	location_t   *location_end);
 void ast_function_free(
 	ast_t        *ast);
-void ast_function_prepend_pointer(
+void ast_function_set_return_type(
 	ast_t        *function,
-	ast_t        *pointer);
+	ast_t        *return_type);
 void fprint_ast_function(
 	FILE         *stream,
 	const ast_t  *ast,

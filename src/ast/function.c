@@ -16,7 +16,6 @@
 
 
 ast_t *ast_function_init(
-	ast_t        *return_type,
 	ast_t        *parameter_list,
 	ast_t        *identifier_list,
 	bool          variadic,
@@ -25,10 +24,11 @@ ast_t *ast_function_init(
 {
 	AST_INIT(ast_function_t);
 
-	node->return_type     = return_type;
 	node->parameter_list  = parameter_list;
 	node->identifier_list = identifier_list;
 	node->variadic        = variadic;
+
+	node->return_type      = NULL;
 
 	AST_NODE_LOCATION;
 
@@ -58,17 +58,15 @@ void ast_function_free(ast_t *ast)
 	free(node);
 }
 
-void ast_function_prepend_pointer(
+void ast_function_set_return_type(
 	ast_t *function,
-	ast_t *pointer)
+	ast_t *return_type)
 {
 	ast_function_t *ast_function = OFFSETOF_AST_NODE(
 		function,
 		ast_function_t);
 
-	ast_pointer_append(pointer, ast_function->return_type);
-
-	ast_function->return_type = pointer;
+	ast_function->return_type = return_type;
 }
 
 void fprint_ast_function(

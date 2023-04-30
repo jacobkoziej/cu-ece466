@@ -27,16 +27,15 @@ typedef struct ast_array_s {
 
 
 ast_t *ast_array_init(
-	ast_t        *type,
 	ast_t        *type_qualifier_list,
 	ast_t        *size,
 	location_t   *location_start,
 	location_t   *location_end);
 void ast_array_free(
 	ast_t        *ast);
-void ast_array_prepend_pointer(
+void ast_array_set_type(
 	ast_t        *array,
-	ast_t        *pointer);
+	ast_t        *type);
 void fprint_ast_array(
 	FILE         *stream,
 	const ast_t  *ast,

@@ -17,7 +17,6 @@
 
 
 ast_t *ast_array_init(
-	ast_t      *type,
 	ast_t      *type_qualifier_list,
 	ast_t      *size,
 	location_t *location_start,
@@ -25,9 +24,10 @@ ast_t *ast_array_init(
 {
 	AST_INIT(ast_array_t);
 
-	node->type                = type;
 	node->type_qualifier_list = type_qualifier_list;
 	node->size                = size;
+
+	node->type = NULL;
 
 	AST_NODE_LOCATION;
 
@@ -50,21 +50,13 @@ void ast_array_free(ast_t *ast)
 	free(node);
 }
 
-void ast_array_prepend_pointer(
+void ast_array_set_type(
 	ast_t *array,
-	ast_t *pointer)
+	ast_t *type)
 {
-	ast_array_t *ast_array;
+	ast_array_t *ast_array = OFFSETOF_AST_NODE(array, ast_array_t);
 
-	// get base type
-	do {
-		ast_array = OFFSETOF_AST_NODE(array, ast_array_t);
-		array     = ast_array->type;
-	} while (*array == AST_ARRAY);
-
-	ast_pointer_append(pointer, array);
-
-	ast_array->type = pointer;
+	ast_array->type = type;
 }
 
 void fprint_ast_array(

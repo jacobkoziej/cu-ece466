@@ -50,6 +50,36 @@
 		YYNOMEM;                                            \
 }
 
+#define ASSEMBLE_TYPE(ast_type) {                                                 \
+	ast_type = parser->yyextra_data->symbol_table->context.base.type;         \
+                                                                                  \
+	while (parser->yyextra_data->symbol_table->context.current.type_stack) {  \
+		ast_t *prv_type =  ast_type;                                      \
+		void  *element  = &ast_type;                                      \
+                                                                                  \
+		vector_pop(&parser->yyextra_data->type_stack, &element);          \
+                                                                                  \
+		switch (*ast_type) {                                              \
+			case AST_ARRAY:                                           \
+				ast_array_set_type(ast_type, prv_type);           \
+				break;                                            \
+                                                                                  \
+			case AST_FUNCTION:                                        \
+				ast_function_set_return_type(ast_type, prv_type); \
+				break;                                            \
+                                                                                  \
+			case AST_POINTER:                                         \
+				ast_pointer_append(ast_type, prv_type);           \
+				break;                                            \
+                                                                                  \
+			default:                                                  \
+				break;                                            \
+		}                                                                 \
+                                                                                  \
+		--parser->yyextra_data->symbol_table->context.current.type_stack; \
+	}                                                                         \
+}
+
 #define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                        \
 	if (symbol_check_identifier_collision(                              \
 		translation_unit->symbol_table->context.current.identifier, \
@@ -72,12 +102,6 @@
 #define GET_BASE_TYPE parser->yyextra_data->symbol_table->context.base.type
 
 #define GET_CURRENT_STORAGE_CLASS parser->yyextra_data->symbol_table->context.current.storage_class
-
-#define GET_CURRENT_TYPE                                                   \
-	parser->yyextra_data->symbol_table->context.current.type =         \
-		(parser->yyextra_data->symbol_table->context.current.type) \
-		? parser->yyextra_data->symbol_table->context.current.type \
-		: parser->yyextra_data->symbol_table->context.base.type    \
 
 #define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                                \
 	switch (parser->yyextra_data->identifier_type) {                                     \
@@ -102,6 +126,11 @@
 
 #define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
 
+#define PUSH_TYPE_STACK(type) {                                               \
+	if (vector_append(&parser->yyextra_data->type_stack, &type)) YYNOMEM; \
+	++parser->yyextra_data->symbol_table->context.current.type_stack;     \
+}
+
 #define SCOPE_POP scope_pop(translation_unit->symbol_table)
 
 #define SET_BASE_STORAGE_CLASS(new_storage_class) {                                            \
@@ -109,17 +138,12 @@
 	parser->yyextra_data->symbol_table->context.base.storage_class    = new_storage_class; \
 }
 
-#define SET_BASE_TYPE(ast_type) {                                            \
-	parser->yyextra_data->symbol_table->context.current.type = NULL;     \
-	parser->yyextra_data->symbol_table->context.base.type    = ast_type; \
+#define SET_BASE_TYPE(ast_type) {                                         \
+	parser->yyextra_data->symbol_table->context.base.type = ast_type; \
 }
 
 #define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                                         \
 	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
-}
-
-#define SET_CURRENT_TYPE(ast_type) {                                         \
-	parser->yyextra_data->symbol_table->context.current.type = ast_type; \
 }
 
 #define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
@@ -185,8 +209,6 @@
 #define RESET_BASE_STORAGE_CLASS {                         \
 	SET_CURRENT_STORAGE_CLASS(GET_BASE_STORAGE_CLASS); \
 }
-
-#define RESET_BASE_TYPE SET_CURRENT_TYPE(GET_BASE_TYPE)
 
 #define RESET_PRESCOPE_DECLARATION {                        \
 	parser->yyextra_data->prescope_declaration = false; \
@@ -1454,7 +1476,8 @@ init_declarator:
 
 	CHECK_IDENTIFIER_COLLISION($identifier);
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type;
+	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
 		translation_unit->symbol_table->context.current.identifier,
@@ -1469,15 +1492,15 @@ init_declarator:
 		&@identifier,
 		&@identifier);
 	if (!$init_declarator) YYNOMEM;
-
-	RESET_BASE_TYPE;
 }
 /*
 | declarator[lvalue] PUNCTUATOR_ASSIGNMENT initializer[rvalue] {
 	TRACE("init-declarator", "declarator = initializer");
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type;
 	ast_t *identifier = GET_CURRENT_IDENTIFIER;
+
+	ASSEMBLE_TYPE(type);
 
 	if (parse_insert_identifier(parser, identifier, type)) YYNOMEM;
 
@@ -1488,8 +1511,6 @@ init_declarator:
 		&@lvalue,
 		&@rvalue);
 	if ($$) YYNOMEM;
-
-	RESET_BASE_TYPE;
 }
 */
 ;
@@ -1849,7 +1870,8 @@ struct_declarator:
 
 	CHECK_IDENTIFIER_COLLISION($identifier);
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type = NULL;
+	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
 		translation_unit->symbol_table->context.current.identifier,
@@ -1864,8 +1886,6 @@ struct_declarator:
 		&@identifier,
 		&@identifier);
 	if (!$struct_declarator) YYNOMEM;
-
-	RESET_BASE_TYPE;
 }
 /*
 | PUNCTUATOR_CONDITIONAL_COLON constant_expression {
@@ -1964,30 +1984,9 @@ declarator:
 }
 | pointer direct_declarator {
 	TRACE("declarator", "pointer direct-declarator");
-
 	$declarator = $direct_declarator;
-
-	ast_t *type = GET_CURRENT_TYPE;
-
-	switch (*type) {
-		case AST_ARRAY:
-			ast_array_prepend_pointer(type, $pointer);
-			break;
-
-		case AST_FUNCTION:
-			ast_function_prepend_pointer(type, $pointer);
-			break;
-
-		case AST_TYPE:
-			ast_pointer_append($pointer, type);
-			SET_CURRENT_TYPE($pointer);
-			break;
-
-		default:
-			break;
-	}
+	PUSH_TYPE_STACK($pointer);
 }
-;
 
 
 // 6.7.6
@@ -1996,24 +1995,21 @@ direct_declarator:
 	TRACE("direct-declarator", "identifier");
 	$direct_declarator = $identifier;
 }
-/*
 | PUNCTUATOR_LPARENTHESIS declarator PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "( declarator )");
-	// TODO: handle pointer precedence
+	$direct_declarator = $declarator;
 }
-*/
 | direct_declarator[array] PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
 	TRACE("direct-declarator", "direct-declarator [ ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2021,14 +2017,13 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2036,14 +2031,13 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator [ assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2051,14 +2045,13 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2077,14 +2070,13 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator [ * ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2092,14 +2084,13 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator [ type-qualifier-list * ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2107,7 +2098,6 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator ( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2115,7 +2105,7 @@ direct_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$$ = $function;
 }
@@ -2123,7 +2113,6 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator ( )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		false,
@@ -2131,15 +2120,14 @@ direct_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$$ = $function;
 }
-| direct_declarator[function] PUNCTUATOR_LPARENTHESIS identifier_list PUNCTUATOR_RPARENTHESIS {
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push identifier_list scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "direct-declarator ( identifier-list )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		$identifier_list,
 		false,
@@ -2147,7 +2135,7 @@ direct_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$$ = $function;
 }
@@ -2249,7 +2237,8 @@ parameter_declaration:
   declaration_specifiers declarator {
 	TRACE("parameter-declaration", "declaration-specifiers declarator");
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type = NULL;
+	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
 		translation_unit->symbol_table->context.current.identifier,
@@ -2270,7 +2259,8 @@ parameter_declaration:
 | declaration_specifiers {
 	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type = NULL;
+	ASSEMBLE_TYPE(type);
 
 	$parameter_declaration = ast_declaration_init(
 		type,
@@ -2286,7 +2276,8 @@ parameter_declaration:
 | declaration_specifiers abstract_declarator {
 	TRACE("parameter-declaration", "declaration-specifiers abstract-declarator");
 
-	ast_t *type = GET_CURRENT_TYPE;
+	ast_t *type = NULL;
+	ASSEMBLE_TYPE(type);
 
 	$parameter_declaration = ast_declaration_init(
 		type,
@@ -2299,7 +2290,7 @@ parameter_declaration:
 
 	APPEND_BASE_TYPE($declaration_specifiers);
 
-	// handled by abstract_declarator
+	// handled by ASSEMBLE_TYPE()
 	(void) $abstract_declarator;
 }
 
@@ -2326,13 +2317,15 @@ type_name:
   specifier_qualifier_list {
 	TRACE("type-name", "specifier-qualifier-list");
 	$type_name = $specifier_qualifier_list;
+	APPEND_BASE_TYPE($specifier_qualifier_list);
 }
 | specifier_qualifier_list set_base_type abstract_declarator {
 	TRACE("type-name", "specifier-qualifier-list abstract-declarator");
-	$type_name = $abstract_declarator;
+	ASSEMBLE_TYPE($type_name);
+	APPEND_BASE_TYPE($specifier_qualifier_list);
 
-	// handled by set_base_type
-	(void) $specifier_qualifier_list;
+	// handled by ASSEMBLE_TYPE()
+	(void) $abstract_declarator;
 }
 
 
@@ -2356,9 +2349,7 @@ abstract_declarator:
   pointer {
 	TRACE("abstract-declarator", "pointer");
 	$abstract_declarator = $pointer;
-
-	ast_pointer_append($pointer, GET_CURRENT_TYPE);
-	SET_CURRENT_TYPE($pointer);
+	PUSH_TYPE_STACK($pointer);
 }
 | direct_abstract_declarator {
 	TRACE("abstract-declarator", "direct-abstract-declarator");
@@ -2366,51 +2357,28 @@ abstract_declarator:
 }
 | pointer direct_abstract_declarator {
 	TRACE("abstract-declarator", "pointer direct-abstract-declarator");
-
 	$abstract_declarator = $direct_abstract_declarator;
-
-	ast_t *type = GET_CURRENT_TYPE;
-
-	switch (*type) {
-		case AST_ARRAY:
-			ast_array_prepend_pointer(type, $pointer);
-			break;
-
-		case AST_FUNCTION:
-			ast_function_prepend_pointer(type, $pointer);
-			break;
-
-		case AST_TYPE:
-			ast_pointer_append($pointer, type);
-			SET_CURRENT_TYPE($pointer);
-			break;
-
-		default:
-			break;
-	}
+	PUSH_TYPE_STACK($pointer);
 }
 
 
 // 6.7.7
 direct_abstract_declarator:
-/*
   PUNCTUATOR_LPARENTHESIS abstract_declarator PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-abstract-declarator", "( abstract-declarator )");
-	// TODO: handle pointer precedence
+	$direct_abstract_declarator = $abstract_declarator;
 }
-*/
-  PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
+| PUNCTUATOR_LBRACKET PUNCTUATOR_RBRACKET {
 	TRACE("direct-abstract-declarator", "[ ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$direct_abstract_declarator = array;
 }
@@ -2418,14 +2386,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "[ assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$direct_abstract_declarator = array;
 }
@@ -2433,14 +2400,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "[ type-qualifier-list ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$direct_abstract_declarator = array;
 }
@@ -2448,14 +2414,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "[ type-qualifier-list assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$direct_abstract_declarator = array;
 }
@@ -2463,14 +2428,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2478,14 +2442,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2493,14 +2456,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2508,14 +2470,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ type-qualifier-list assignment-expression ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		$type_qualifier_list,
 		$assignment_expression,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2543,14 +2504,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "[ * ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$direct_abstract_declarator = array;
 }
@@ -2558,14 +2518,13 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator [ * ]");
 
 	ast_t *array = ast_array_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		&@PUNCTUATOR_LBRACKET,
 		&@PUNCTUATOR_RBRACKET);
 	if (!array) YYNOMEM;
 
-	SET_CURRENT_TYPE(array);
+	PUSH_TYPE_STACK(array);
 
 	$$ = $array;
 }
@@ -2573,7 +2532,6 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "( )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		false,
@@ -2581,15 +2539,14 @@ direct_abstract_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$direct_abstract_declarator = function;
 }
-| PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+| PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-abstract-declarator", "( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2597,7 +2554,7 @@ direct_abstract_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$direct_abstract_declarator = function;
 }
@@ -2605,7 +2562,6 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		NULL,
 		NULL,
 		false,
@@ -2613,15 +2569,14 @@ direct_abstract_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$$ = $function;
 }
-| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS parameter_type_list PUNCTUATOR_RPARENTHESIS {
+| direct_abstract_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
-		GET_CURRENT_TYPE,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2629,7 +2584,7 @@ direct_abstract_declarator:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!function) YYNOMEM;
 
-	SET_CURRENT_TYPE(function);
+	PUSH_TYPE_STACK(function);
 
 	$$ = $function;
 }
