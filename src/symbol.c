@@ -124,24 +124,30 @@ int symbol_insert_identifier(
 int symbol_insert_tag(
 	symbol_table_t *symbol,
 	ast_t          *tag,
-	bool            struct_defintion,
-	ast_t          *type)
+	bool            struct_declaration,
+	ast_t          *ast_struct)
 {
-	ast_identifier_set_type(tag, type);
+	ast_identifier_set_type(tag, ast_struct);
 	const string_t *key = ast_identifier_get_string(tag);
 
 	size_t len = key->tail - key->head;
 
 	void *existing_tag;
 
-	if (!ht_get(&symbol->table, key->head, len, &existing_tag))
-		if (ast_struct_get_definition(existing_tag)) {
-			if (struct_defintion) return SYMBOL_ERROR_EXISTS;
+	if (!ht_get(&symbol->table, key->head, len, &existing_tag)) {
+		if (ast_struct_get_declaration(existing_tag))
+			if (struct_declaration) return SYMBOL_ERROR_EXISTS;
 
-			return 0;
-		}
+		ast_struct_set_definition(
+			existing_tag,
+			struct_declaration,
+			ast_struct);
+		ht_set(&symbol->table, key->head, len, ast_struct);
 
-	if (ht_insert(&symbol->table, key->head, len, type))
+		return 0;
+	}
+
+	if (ht_insert(&symbol->table, key->head, len, ast_struct))
 		return SYMBOL_ERROR_NOMEM;
 
 	++symbol->size;

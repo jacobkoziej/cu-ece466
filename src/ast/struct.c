@@ -21,7 +21,7 @@ ast_t *ast_struct_init(
 	ast_t          *tag,
 	ast_t          *declaration_list,
 	symbol_table_t *members,
-	bool            definition,
+	bool            declaration,
 	uint_fast8_t    type,
 	location_t     *location_start,
 	location_t     *location_end)
@@ -31,8 +31,10 @@ ast_t *ast_struct_init(
 	node->tag              = tag;
 	node->declaration_list = declaration_list;
 	node->members          = members;
-	node->definition       = definition;
+	node->declaration      = declaration;
 	node->type             = type;
+
+	node->definition = NULL;
 
 	AST_NODE_LOCATION;
 
@@ -49,12 +51,37 @@ void ast_struct_free(ast_t *ast)
 	free(node);
 }
 
-bool ast_struct_get_definition(
+bool ast_struct_get_declaration(
+	ast_t *ast)
+{
+	ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
+
+	return ast_struct->declaration;
+}
+
+ast_t *ast_struct_get_definition(
 	ast_t *ast)
 {
 	ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
 
 	return ast_struct->definition;
+}
+
+void ast_struct_set_definition(
+	ast_t *ast,
+	bool   declaration,
+	ast_t *definition)
+{
+	do {
+		ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
+
+		ast = ast_struct->definition;
+
+		// replace references to incomplete type
+		// with struct definition
+		ast_struct->definition  = definition;
+		ast_struct->declaration = declaration;
+	} while (ast);
 }
 
 void ast_struct_set_declaration_list(

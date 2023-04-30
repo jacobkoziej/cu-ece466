@@ -98,7 +98,7 @@
 
 #define GET_PRESCOPE_DECLARATION parser->yyextra_data->prescope_declaration
 
-#define GET_STRUCT_DEFINITION parser->yyextra_data->struct_definition
+#define GET_STRUCT_DECLARATION parser->yyextra_data->struct_declaration
 
 #define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
 
@@ -134,52 +134,52 @@
 	parser->yyextra_data->prescope_declaration = true; \
 }
 
-#define SET_STRUCT_DEFINITION(definition) {                   \
-	parser->yyextra_data->struct_definition = definition; \
+#define SET_STRUCT_DECLARATION(declaration) {                   \
+	parser->yyextra_data->struct_declaration = declaration; \
 }
 
 #define SET_VARIADIC_PARAMETER(variadic) {                   \
 	parser->yyextra_data->variadic_parameter = variadic; \
 }
 
-#define STRUCT_INSTALL_TAG(ast_struct, struct_or_union, struct_definition, identifier, struct_or_union_yylloc, identifier_yylloc) { \
-	ast_t *struct_type = ast_struct_init(                                                                                       \
-		identifier,                                                                                                         \
-		NULL,                                                                                                               \
-		NULL,                                                                                                               \
-		struct_definition,                                                                                                  \
-		struct_or_union,                                                                                                    \
-		struct_or_union_yylloc,                                                                                             \
-		identifier_yylloc);                                                                                                 \
-	if (!struct_type) YYNOMEM;                                                                                                  \
-                                                                                                                                    \
-	switch (symbol_insert_tag(                                                                                                  \
-		translation_unit->symbol_table->context.current.tag,                                                                \
-		identifier,                                                                                                         \
-		struct_definition,                                                                                                  \
-		struct_type)                                                                                                        \
-	) {                                                                                                                         \
-		case SYMBOL_ERROR_NOMEM:                                                                                            \
-			YYNOMEM;                                                                                                    \
-			break;                                                                                                      \
-                                                                                                                                    \
-		case SYMBOL_ERROR_EXISTS:                                                                                           \
-			yyerror(                                                                                                    \
-				&yylloc,                                                                                            \
-				scanner,                                                                                            \
-				parser,                                                                                             \
-				translation_unit,                                                                                   \
-				"redeclaration of struct or union");                                                                \
-			YYERROR;                                                                                                    \
-			break;                                                                                                      \
-                                                                                                                                    \
-		default:                                                                                                            \
-			break;                                                                                                      \
-	}                                                                                                                           \
-                                                                                                                                    \
-	SET_STRUCT_DEFINITION(false);                                                                                               \
-                                                                                                                                    \
-	ast_struct = struct_type;                                                                                                   \
+#define STRUCT_INSTALL_TAG(ast_struct, struct_or_union, struct_declaration, identifier, struct_or_union_yylloc, identifier_yylloc) { \
+	ast_t *struct_type = ast_struct_init(                                                                                        \
+		identifier,                                                                                                          \
+		NULL,                                                                                                                \
+		NULL,                                                                                                                \
+		struct_declaration,                                                                                                  \
+		struct_or_union,                                                                                                     \
+		struct_or_union_yylloc,                                                                                              \
+		identifier_yylloc);                                                                                                  \
+	if (!struct_type) YYNOMEM;                                                                                                   \
+                                                                                                                                     \
+	switch (symbol_insert_tag(                                                                                                   \
+		translation_unit->symbol_table->context.current.tag,                                                                 \
+		identifier,                                                                                                          \
+		struct_declaration,                                                                                                  \
+		struct_type)                                                                                                         \
+	) {                                                                                                                          \
+		case SYMBOL_ERROR_NOMEM:                                                                                             \
+			YYNOMEM;                                                                                                     \
+			break;                                                                                                       \
+                                                                                                                                     \
+		case SYMBOL_ERROR_EXISTS:                                                                                            \
+			yyerror(                                                                                                     \
+				&yylloc,                                                                                             \
+				scanner,                                                                                             \
+				parser,                                                                                              \
+				translation_unit,                                                                                    \
+				"redeclaration of struct or union");                                                                 \
+			YYERROR;                                                                                                     \
+			break;                                                                                                       \
+                                                                                                                                     \
+		default:                                                                                                             \
+			break;                                                                                                       \
+	}                                                                                                                            \
+                                                                                                                                     \
+	SET_STRUCT_DECLARATION(false);                                                                                               \
+                                                                                                                                     \
+	ast_struct = struct_type;                                                                                                    \
 }
 
 #define RESET_BASE_STORAGE_CLASS {                         \
@@ -1697,7 +1697,7 @@ struct_or_union_specifier:
 
 	SCOPE_POP;
 }
-| struct_or_union identifier set_struct_definition_true struct_install_tag PUNCTUATOR_LBRACE struct_scope_push struct_declaration_list PUNCTUATOR_RBRACE {
+| struct_or_union identifier set_struct_declaration_true struct_install_tag PUNCTUATOR_LBRACE struct_scope_push struct_declaration_list PUNCTUATOR_RBRACE {
 	TRACE("struct-or-union-specifier", "struct-or-union identifier { struct-declaration-list }");
 
 	// handled by struct_install_tag
@@ -1715,7 +1715,7 @@ struct_or_union_specifier:
 
 	SCOPE_POP;
 }
-| struct_or_union identifier set_struct_definition_false struct_install_tag {
+| struct_or_union identifier set_struct_declaration_false struct_install_tag {
 	TRACE("struct-or-union-specifier", "struct-or-union identifier");
 
 	// handled by struct_install_tag
@@ -3008,13 +3008,13 @@ set_base_type: %empty {
 }
 
 
-set_struct_definition_false: %empty {
-	SET_STRUCT_DEFINITION(false);
+set_struct_declaration_false: %empty {
+	SET_STRUCT_DECLARATION(false);
 }
 
 
-set_struct_definition_true: %empty {
-	SET_STRUCT_DEFINITION(true);
+set_struct_declaration_true: %empty {
+	SET_STRUCT_DECLARATION(true);
 }
 
 
@@ -3028,7 +3028,7 @@ struct_install_tag: %empty {
 	STRUCT_INSTALL_TAG(
 		$struct_install_tag,
 		struct_or_union,
-		GET_STRUCT_DEFINITION,
+		GET_STRUCT_DECLARATION,
 		identifier,
 		struct_or_union_yylloc,
 		identifier_yylloc);
