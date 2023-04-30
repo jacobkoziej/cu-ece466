@@ -67,7 +67,8 @@ void ast_list_free(ast_t *ast)
 	ast_t **item = node->list.buf;
 
 	for (size_t i = 0; i < node->list.use; i++)
-		AST_NODE_FREE(item[i]);
+		if (*item[i] != AST_TYPE)
+			AST_NODE_FREE(item[i]);
 
 	vector_free(&node->list);
 
