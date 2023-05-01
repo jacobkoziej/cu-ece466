@@ -95,6 +95,21 @@
 	}                                                                   \
 }
 
+#define CHECK_LABEL_COLLISION(ast_label) {                                  \
+	if (symbol_check_identifier_collision(                              \
+		translation_unit->symbol_table->context.current.label,      \
+		ast_label))                                                 \
+	{                                                                   \
+		yyerror(                                                    \
+			&yylloc,                                            \
+			scanner,                                            \
+			parser,                                             \
+			translation_unit,                                   \
+			"redeclaration of label");                          \
+		YYERROR;                                                    \
+	}                                                                   \
+}
+
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
 #define GET_BASE_STORAGE_CLASS parser->yyextra_data->symbol_table->context.base.storage_class
@@ -450,6 +465,7 @@ typedef void* yyscan_t;
 %nterm <ast> direct_abstract_declarator
 %nterm <ast> static_assert_declaration
 %nterm <ast> statement
+%nterm <ast> labeled_statement
 %nterm <ast> compound_statement
 %nterm <ast> block_item_list
 %nterm <ast> block_item
@@ -2628,13 +2644,11 @@ static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS consta
 
 // 6.8
 statement:
-/*
   labeled_statement {
 	TRACE("statement", "labeled-statement");
 	$statement = $labeled_statement;
 }
-*/
-  compound_statement {
+| compound_statement {
 	TRACE("statement", "compound-statement");
 	$statement = $compound_statement;
 }
@@ -2656,6 +2670,47 @@ statement:
 	$statement = $jump_statement;
 }
 */
+
+
+// 6.8.1
+labeled_statement:
+  identifier PUNCTUATOR_CONDITIONAL_COLON statement {
+	TRACE("labeled-statement", "identifier : statement");
+
+	CHECK_LABEL_COLLISION($identifier);
+
+	$labeled_statement = ast_label_init(
+		$identifier,
+		$statement,
+		&@identifier,
+		&@statement);
+	if (!$labeled_statement) YYNOMEM;
+
+	if (symbol_insert_identifier(
+		translation_unit->symbol_table->context.current.label,
+		$identifier,
+		$labeled_statement)) YYNOMEM;
+}
+| KEYWORD_CASE constant_expression PUNCTUATOR_CONDITIONAL_COLON statement {
+	TRACE("labeled-statement", "case constant-expression : statement");
+
+	$labeled_statement = ast_case_init(
+		$constant_expression,
+		$statement,
+		&@KEYWORD_CASE,
+		&@statement);
+	if (!$labeled_statement) YYNOMEM;
+}
+| KEYWORD_DEFAULT PUNCTUATOR_CONDITIONAL_COLON statement {
+	TRACE("labeled-statement", "default : statement");
+
+	$labeled_statement = ast_case_init(
+		NULL,
+		$statement,
+		&@KEYWORD_DEFAULT,
+		&@statement);
+	if (!$labeled_statement) YYNOMEM;
+}
 
 
 // 6.8.2
@@ -3004,7 +3059,8 @@ compound_statement_scope_push: %empty {
 
 
 for_scope_push: %empty {
-	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
+	if (scope_push(translation_unit->symbol_table, SCOPE_NO_PUSH_LABEL))
+		YYNOMEM;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	SET_PRESCOPE_DECLARATION;
@@ -3082,5 +3138,5 @@ struct_install_tag: %empty {
 struct_scope_push: %empty {
 	if (scope_push(
 		translation_unit->symbol_table,
-		SCOPE_NO_PUSH_TAG)) YYNOMEM;
+		SCOPE_NO_PUSH_LABEL | SCOPE_NO_PUSH_TAG)) YYNOMEM;
 }

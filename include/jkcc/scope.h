@@ -16,7 +16,8 @@
 
 
 #define SCOPE_NO_PUSH_IDENTIFIER (1 << 0)
-#define SCOPE_NO_PUSH_TAG        (1 << 1)
+#define SCOPE_NO_PUSH_LABEL      (1 << 1)
+#define SCOPE_NO_PUSH_TAG        (1 << 2)
 
 
 typedef struct context_s {
@@ -26,6 +27,7 @@ typedef struct context_s {
 	} base;
 	struct {
 		symbol_table_t *identifier;
+		symbol_table_t *label;
 		symbol_table_t *tag;
 		size_t          type_stack;
 		uint_fast8_t    storage_class;
@@ -37,6 +39,7 @@ typedef struct scope_s {
 	vector_t  stack;              // context_t
 	struct {
 		vector_t identifier;  // symbol_table_t*
+		vector_t label;       // symbol_table_t*
 		vector_t tag;         // symbol_table_t*
 	} history;
 } scope_t;

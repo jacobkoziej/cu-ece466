@@ -17,6 +17,7 @@
 #include <jkcc/ast/atomic.h>
 #include <jkcc/ast/binary_operator.h>
 #include <jkcc/ast/call.h>
+#include <jkcc/ast/case.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/declaration.h>
@@ -33,6 +34,7 @@
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/if.h>
 #include <jkcc/ast/integer_constant.h>
+#include <jkcc/ast/label.h>
 #include <jkcc/ast/list.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>

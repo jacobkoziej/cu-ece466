@@ -32,6 +32,10 @@ scope_t *scope_init(void)
 		sizeof(scope->context.current.identifier),
 		0)) goto error;
 	if (vector_init(
+		&scope->history.label,
+		sizeof(scope->context.current.label),
+		0)) goto error;
+	if (vector_init(
 		&scope->history.tag,
 		sizeof(scope->context.current.tag),
 		0)) goto error;
@@ -50,6 +54,7 @@ error:
 	symbol_free(scope->context.current.tag);
 
 	vector_free(&scope->history.identifier);
+	vector_free(&scope->history.label);
 	vector_free(&scope->history.tag);
 	vector_free(&scope->stack);
 
@@ -66,12 +71,17 @@ void scope_free(scope_t *scope)
 	for (size_t i = 0; i < scope->history.identifier.use; i++)
 		symbol_free(symbol[i]);
 
+	symbol = scope->history.label.buf;
+	for (size_t i = 0; i < scope->history.label.use; i++)
+		symbol_free(symbol[i]);
+
 	symbol = scope->history.tag.buf;
 	for (size_t i = 0; i < scope->history.tag.use; i++)
 		symbol_free(symbol[i]);
 
 	vector_free(&scope->stack);
 	vector_free(&scope->history.identifier);
+	vector_free(&scope->history.label);
 	vector_free(&scope->history.tag);
 
 	free(scope);
@@ -87,6 +97,7 @@ void scope_pop(scope_t *scope)
 int scope_push(scope_t *scope, uint_fast8_t flags)
 {
 	symbol_table_t *identifier = NULL;
+	symbol_table_t *label      = NULL;
 	symbol_table_t *tag        = NULL;
 
 	if (vector_append(&scope->stack, &scope->context))
@@ -101,6 +112,16 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 
 		scope->context.current.identifier = identifier;
 		scope->context.current.type_stack = 0;
+	}
+
+	if (!(flags & SCOPE_NO_PUSH_LABEL)) {
+		label = symbol_init();
+		if (!label) goto error_symbol_init_label;
+
+		if (vector_append(&scope->history.label, &label))
+			goto error_vector_append_history_label;
+
+		scope->context.current.label = label;
 	}
 
 	if (!(flags & SCOPE_NO_PUSH_TAG)) {
@@ -118,11 +139,17 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 error_vector_append_history_tag:
 	symbol_free(tag);
 
+error_symbol_init_tag:
+	if (label) vector_pop(&scope->history.label, NULL);
+
+error_vector_append_history_label:
+	symbol_free(label);
+
+error_symbol_init_label:
+	if (identifier) vector_pop(&scope->history.identifier, NULL);
+
 error_vector_append_history_identifier:
 	symbol_free(identifier);
-
-error_symbol_init_tag:
-	if (identifier) vector_pop(&scope->history.identifier, NULL);
 
 error_symbol_init_identifier:;
 	void *element = &scope->context;
