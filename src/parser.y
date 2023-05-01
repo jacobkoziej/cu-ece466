@@ -456,8 +456,10 @@ typedef void* yyscan_t;
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
+%nterm <ast> function_definition
 %nterm <ast> declaration_list
 
+%nterm <ast> assemble_function_definition
 %nterm <ast> struct_install_tag
 
 
@@ -2094,10 +2096,11 @@ direct_declarator:
 
 	$$ = $array;
 }
-| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list scope_pop PUNCTUATOR_RPARENTHESIS {
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push parameter_type_list get_function_body_symbol_table scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "direct-declarator ( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
+		$function,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2113,6 +2116,7 @@ direct_declarator:
 	TRACE("direct-declarator", "direct-declarator ( )");
 
 	ast_t *function = ast_function_init(
+		$function,
 		NULL,
 		NULL,
 		false,
@@ -2124,10 +2128,11 @@ direct_declarator:
 
 	$$ = $function;
 }
-| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push identifier_list scope_pop PUNCTUATOR_RPARENTHESIS {
+| direct_declarator[function] PUNCTUATOR_LPARENTHESIS function_scope_push identifier_list get_function_body_symbol_table scope_pop PUNCTUATOR_RPARENTHESIS {
 	TRACE("direct-declarator", "direct-declarator ( identifier-list )");
 
 	ast_t *function = ast_function_init(
+		$function,
 		NULL,
 		$identifier_list,
 		false,
@@ -2536,6 +2541,7 @@ direct_abstract_declarator:
 	ast_t *function = ast_function_init(
 		NULL,
 		NULL,
+		NULL,
 		false,
 		&@PUNCTUATOR_LPARENTHESIS,
 		&@PUNCTUATOR_RPARENTHESIS);
@@ -2549,6 +2555,7 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
+		NULL,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2566,6 +2573,7 @@ direct_abstract_declarator:
 	ast_t *function = ast_function_init(
 		NULL,
 		NULL,
+		NULL,
 		false,
 		&@function,
 		&@PUNCTUATOR_RPARENTHESIS);
@@ -2579,6 +2587,7 @@ direct_abstract_declarator:
 	TRACE("direct-abstract-declarator", "direct-abstract-declarator ( parameter-type-list )");
 
 	ast_t *function = ast_function_init(
+		NULL,
 		$parameter_type_list,
 		NULL,
 		GET_VARIADIC_PARAMETER,
@@ -2909,6 +2918,35 @@ iteration_statement:
 
 
 // 6.9.1
+function_definition:
+  declaration_specifiers declarator assemble_function_definition set_function_body_symbol_table function_body_set_storage_class compound_statement {
+	TRACE("function-definition", "declaration-specifiers declarator compound-statement");
+
+	ast_t *function = $assemble_function_definition;
+	ast_function_set_body(function, $compound_statement);
+
+	$function_definition = function;
+
+	// handled by assemble_function_definition
+	(void) $declaration_specifiers;
+	(void) $declarator;
+}
+| declaration_specifiers declarator assemble_function_definition set_function_body_symbol_table set_function_declaration_list_storage_class declaration_list function_body_set_storage_class compound_statement {
+	TRACE("function-definition", "declaration-specifiers declarator declaration-list compound-statement");
+
+	ast_t *function = $assemble_function_definition;
+	ast_function_set_declaration_list(function, $declaration_list);
+	ast_function_set_body(function, $compound_statement);
+
+	$function_definition = function;
+
+	// handled by assemble_function_definition
+	(void) $declaration_specifiers;
+	(void) $declarator;
+}
+
+
+// 6.9.1
 declaration_list:
   declaration {
 	TRACE("declaration-list", "declaration");
@@ -2930,9 +2968,22 @@ declaration_list:
 /* mid-rule actions */
 
 
+assemble_function_definition: %empty {
+	APPEND_BASE_TYPE($<ast>-1);
+	ASSEMBLE_TYPE($assemble_function_definition);
+}
+
+
 compound_statement_scope_push: %empty {
 	if (!GET_PRESCOPE_DECLARATION) {
-		if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
+		uint_fast8_t flags = 0;
+
+		if (parser->yyextra_data->function_body_symbol_table) {
+			flags |= SCOPE_NO_PUSH_IDENTIFIER;
+			parser->yyextra_data->function_body_symbol_table = NULL;
+		}
+
+		if (scope_push(translation_unit->symbol_table, flags)) YYNOMEM;
 
 		SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	}
@@ -2948,11 +2999,22 @@ for_scope_push: %empty {
 }
 
 
+function_body_set_storage_class: %empty {
+	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
+}
+
+
 function_scope_push: %empty {
 	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 	SET_PRESCOPE_DECLARATION;
+}
+
+
+get_function_body_symbol_table: %empty {
+	parser->yyextra_data->function_body_symbol_table =
+		parser->yyextra_data->symbol_table->context.current.identifier;
 }
 
 
@@ -2964,6 +3026,17 @@ scope_pop: %empty {
 
 set_base_type: %empty {
 	SET_BASE_TYPE($<ast>0);
+}
+
+
+set_function_body_symbol_table: %empty {
+	parser->yyextra_data->symbol_table->context.current.identifier =
+		parser->yyextra_data->function_body_symbol_table;
+}
+
+
+set_function_declaration_list_storage_class: %empty {
+	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 }
 
 

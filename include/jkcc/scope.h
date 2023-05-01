@@ -34,8 +34,11 @@ typedef struct context_s {
 
 typedef struct scope_s {
 	context_t context;
-	vector_t  stack;    // context_t
-	vector_t  history;  // context_t
+	vector_t  stack;              // context_t
+	struct {
+		vector_t identifier;  // symbol_table_t*
+		vector_t tag;         // symbol_table_t*
+	} history;
 } scope_t;
 
 
