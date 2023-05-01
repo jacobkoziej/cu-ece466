@@ -2237,6 +2237,8 @@ parameter_declaration:
   declaration_specifiers declarator {
 	TRACE("parameter-declaration", "declaration-specifiers declarator");
 
+	CHECK_IDENTIFIER_COLLISION($declarator);
+
 	ast_t *type = NULL;
 	ASSEMBLE_TYPE(type);
 
