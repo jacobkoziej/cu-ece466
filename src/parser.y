@@ -460,7 +460,19 @@ typedef void* yyscan_t;
 %nterm <ast> declaration_list
 
 %nterm <ast> assemble_function_definition
+%nterm       compound_statement_scope_push
+%nterm       for_scope_push
+%nterm       function_body_set_storage_class
+%nterm       function_scope_push
+%nterm       get_function_body_symbol_table
+%nterm       scope_pop
+%nterm       set_base_type
+%nterm       set_function_body_symbol_table
+%nterm       set_function_declaration_list_storage_class
+%nterm       set_struct_declaration_false
+%nterm       set_struct_declaration_true
 %nterm <ast> struct_install_tag
+%nterm       struct_scope_push
 
 
 %destructor {
