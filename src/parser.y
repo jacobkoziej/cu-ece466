@@ -2684,7 +2684,9 @@ block_item:
 expression_statement:
   PUNCTUATOR_SEMICOLON {
 	TRACE("expression-statement", ";");
-	$expression_statement = NULL;
+
+	$expression_statement = ast_empty_init(&@PUNCTUATOR_SEMICOLON);
+	if (!$expression_statement) YYNOMEM;
 }
 | expression PUNCTUATOR_SEMICOLON {
 	TRACE("expression-statement", "expression ;");

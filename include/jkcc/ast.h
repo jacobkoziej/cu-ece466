@@ -21,6 +21,7 @@
 #include <jkcc/ast/character_constant.h>
 #include <jkcc/ast/declaration.h>
 #include <jkcc/ast/dereference.h>
+#include <jkcc/ast/empty.h>
 #include <jkcc/ast/expression.h>
 #include <jkcc/ast/floating_constant.h>
 #include <jkcc/ast/for.h>
