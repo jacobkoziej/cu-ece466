@@ -425,6 +425,8 @@ typedef void* yyscan_t;
 %precedence KEYWORD_IF
 %precedence KEYWORD_ELSE
 
+%nterm jkcc_parse
+
 %nterm <ast> identifier
 %nterm <ast> constant
 %nterm <ast> integer_constant
@@ -522,6 +524,12 @@ typedef void* yyscan_t;
 
 
 %%
+
+
+jkcc_parse: translation_unit;
+
+
+/* N1570 grammar */
 
 
 // 6.4.4
