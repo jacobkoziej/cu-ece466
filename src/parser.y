@@ -496,6 +496,7 @@ typedef void* yyscan_t;
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
 %nterm <ast> jump_statement
+%nterm <ast> external_declaration
 %nterm <ast> function_definition
 %nterm <ast> declaration_list
 
@@ -3045,6 +3046,18 @@ jump_statement:
 		&@expression,
 		&@KEYWORD_RETURN);
 	if (!$jump_statement) YYNOMEM;
+}
+
+
+// 6.9
+external_declaration:
+  function_definition {
+	TRACE("external-declaration", "function-definition");
+	$external_declaration = $function_definition;
+}
+| declaration {
+	TRACE("external-declaration", "declaration");
+	$external_declaration = $declaration;
 }
 
 
