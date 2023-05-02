@@ -571,6 +571,7 @@ identifier: IDENTIFIER {
 
 	SET_CURRENT_IDENTIFIER($identifier);
 }
+;
 
 
 // 6.4.4.1
@@ -582,6 +583,7 @@ integer_constant: INTEGER_CONSTANT {
 		&@INTEGER_CONSTANT);
 	if (!$integer_constant) YYNOMEM;
 }
+;
 
 
 // 6.4.4.2
@@ -593,6 +595,7 @@ floating_constant: FLOATING_CONSTANT {
 		&@FLOATING_CONSTANT);
 	if (!$floating_constant) YYNOMEM;
 }
+;
 
 
 /* TODO: add support for enum's
@@ -611,6 +614,7 @@ character_constant: CHARACTER_CONSTANT {
 		&@CHARACTER_CONSTANT);
 	if (!$character_constant) YYNOMEM;
 }
+;
 
 
 // 6.4.5
@@ -622,6 +626,7 @@ string_literal: STRING_LITERAL {
 		&@STRING_LITERAL);
 	if (!$string_literal) YYNOMEM;
 }
+;
 
 
 // 6.5.1
@@ -660,6 +665,7 @@ generic_selection: KEYWORD__GENERIC PUNCTUATOR_LPARENTHESIS assignment_expressio
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$generic_selection) YYNOMEM;
 }
+;
 
 
 // 6.5.1.1
@@ -1361,6 +1367,7 @@ constant_expression: conditional_expression {
 	TRACE("constant-expression", "conditional-expression");
 	$constant_expression = $conditional_expression;
 }
+;
 
 
 // 6.7
@@ -1508,6 +1515,7 @@ declaration_specifiers:
 
 	SET_BASE_TYPE($$);
 }
+;
 
 
 // 6.7
@@ -1527,7 +1535,7 @@ init_declarator_list:
 	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
-
+;
 
 
 // 6.7
@@ -1806,6 +1814,7 @@ struct_or_union_specifier:
 
 	$struct_or_union_specifier = $struct_install_tag;
 }
+;
 
 
 // 6.7.2.1
@@ -1840,6 +1849,7 @@ struct_declaration_list:
 	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
+;
 
 
 // 6.7.2.1
@@ -1859,6 +1869,7 @@ struct_declaration:
 	TRACE("struct-declaration", "static_assert-declaration");
 	$struct_declaration = $static_assert_declaration;
 }
+;
 
 
 // 6.7.2.1
@@ -1903,6 +1914,7 @@ specifier_qualifier_list:
 		ERROR_ADDR);
 	ERROR($$);
 }
+;
 
 
 // 6.7.2.1
@@ -1922,6 +1934,7 @@ struct_declarator_list:
 	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
+;
 
 
 // 6.7.2.1
@@ -1956,6 +1969,7 @@ struct_declarator:
 	TRACE("struct-declarator", "declarator : constant-expression");
 }
 */
+;
 
 
 // 6.7.3
@@ -2013,6 +2027,7 @@ function_specifier:
 		&@KEYWORD__NORETURN);
 	if (!$function_specifier) YYNOMEM;
 }
+;
 
 
 // 6.7.5
@@ -2035,6 +2050,7 @@ alignment_specifier:
 		&@PUNCTUATOR_RPARENTHESIS);
 	if (!$alignment_specifier) YYNOMEM;
 }
+;
 
 
 // 6.7.6
@@ -2048,6 +2064,7 @@ declarator:
 	$declarator = $direct_declarator;
 	PUSH_TYPE_STACK($pointer);
 }
+;
 
 
 // 6.7.6
@@ -2294,6 +2311,7 @@ parameter_list:
 		&@parameter_declaration);
 	if (!$$) YYNOMEM;
 }
+;
 
 
 // 6.7.6
@@ -2359,6 +2377,7 @@ parameter_declaration:
 	// handled by ASSEMBLE_TYPE()
 	(void) $abstract_declarator;
 }
+;
 
 
 // 6.7.6
@@ -2393,6 +2412,7 @@ type_name:
 	// handled by ASSEMBLE_TYPE()
 	(void) $abstract_declarator;
 }
+;
 
 
 // 6.7.2.4
@@ -2408,6 +2428,7 @@ atomic_type_specifier: KEYWORD__ATOMIC PUNCTUATOR_LPARENTHESIS type_name[operand
 		ERROR_ADDR);
 	ERROR($atomic_type_specifier);
 }
+;
 
 
 // 6.7.7
@@ -2426,6 +2447,7 @@ abstract_declarator:
 	$abstract_declarator = $direct_abstract_declarator;
 	PUSH_TYPE_STACK($pointer);
 }
+;
 
 
 // 6.7.7
@@ -2658,6 +2680,7 @@ direct_abstract_declarator:
 
 	$$ = $function;
 }
+;
 
 
 // 6.7.10
@@ -2671,6 +2694,7 @@ static_assert_declaration: KEYWORD__STATIC_ASSERT PUNCTUATOR_LPARENTHESIS consta
 		&@PUNCTUATOR_SEMICOLON);
 	if (!$static_assert_declaration) YYNOMEM;
 }
+;
 
 
 // 6.8
@@ -2699,6 +2723,7 @@ statement:
 	TRACE("statement", "jump-statement");
 	$statement = $jump_statement;
 }
+;
 
 
 // 6.8.1
@@ -2740,6 +2765,7 @@ labeled_statement:
 		&@statement);
 	if (!$labeled_statement) YYNOMEM;
 }
+;
 
 
 // 6.8.2
@@ -2752,6 +2778,7 @@ compound_statement:
 	TRACE("compound-statement", "{ block-item-list }");
 	$compound_statement = $block_item_list;
 }
+;
 
 
 // 6.8.2
@@ -2771,6 +2798,7 @@ block_item_list:
 	$$ = ast_list_append(list, $block_item, &@block_item);
 	if (!$$) YYNOMEM;
 }
+;
 
 
 // 6.8.2
@@ -2783,6 +2811,7 @@ block_item:
 	TRACE("block-item", "statement");
 	$block_item = $statement;
 }
+;
 
 
 // 6.8.3
@@ -2797,6 +2826,7 @@ expression_statement:
 	TRACE("expression-statement", "expression ;");
 	$expression_statement = $expression;
 }
+;
 
 
 // 6.8.4
@@ -2833,6 +2863,7 @@ selection_statement:
 		&@statement);
 	if (!$selection_statement) YYNOMEM;
 }
+;
 
 
 // 6.8.5
@@ -3011,6 +3042,7 @@ iteration_statement:
 
 	if (GET_PRESCOPE_DECLARATION) SCOPE_POP;
 }
+;
 
 
 // 6.8.6
@@ -3053,6 +3085,7 @@ jump_statement:
 		&@KEYWORD_RETURN);
 	if (!$jump_statement) YYNOMEM;
 }
+;
 
 
 // 6.9
@@ -3076,6 +3109,7 @@ translation_unit:
 	// handled by parse()
 	(void) $1;
 }
+;
 
 
 // 6.9
@@ -3088,6 +3122,7 @@ external_declaration:
 	TRACE("external-declaration", "declaration");
 	$external_declaration = $declaration;
 }
+;
 
 
 // 6.9.1
@@ -3117,6 +3152,7 @@ function_definition:
 	(void) $declaration_specifiers;
 	(void) $declarator;
 }
+;
 
 
 // 6.9.1
@@ -3136,6 +3172,7 @@ declaration_list:
 	$$ = ast_list_append(list, $declaration, &@declaration);
 	if (!$$) YYNOMEM;
 }
+;
 
 
 /* mid-rule actions */
@@ -3145,6 +3182,7 @@ assemble_function_definition: %empty {
 	APPEND_BASE_TYPE($<ast>-1);
 	ASSEMBLE_TYPE($assemble_function_definition);
 }
+;
 
 
 compound_statement_scope_push: %empty {
@@ -3164,6 +3202,7 @@ compound_statement_scope_push: %empty {
 	}
 	RESET_PRESCOPE_DECLARATION;
 }
+;
 
 
 for_scope_push: %empty {
@@ -3175,11 +3214,13 @@ for_scope_push: %empty {
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	SET_PRESCOPE_DECLARATION;
 }
+;
 
 
 function_body_set_storage_class: %empty {
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 }
+;
 
 
 function_scope_push: %empty {
@@ -3190,12 +3231,14 @@ function_scope_push: %empty {
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 	SET_PRESCOPE_DECLARATION;
 }
+;
 
 
 get_function_body_symbol_table: %empty {
 	yyextra_data->function_body_symbol_table =
 		yyextra_data->symbol_table->context.current.identifier;
 }
+;
 
 
 scope_pop: %empty {
@@ -3220,32 +3263,38 @@ scope_pop: %empty {
 	SCOPE_POP;
 	RESET_PRESCOPE_DECLARATION;
 }
+;
 
 
 set_base_type: %empty {
 	SET_BASE_TYPE($<ast>0);
 }
+;
 
 
 set_function_body_symbol_table: %empty {
 	yyextra_data->symbol_table->context.current.identifier =
 		yyextra_data->function_body_symbol_table;
 }
+;
 
 
 set_function_declaration_list_storage_class: %empty {
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 }
+;
 
 
 set_struct_declaration_false: %empty {
 	SET_STRUCT_DECLARATION(false);
 }
+;
 
 
 set_struct_declaration_true: %empty {
 	SET_STRUCT_DECLARATION(true);
 }
+;
 
 
 struct_install_tag: %empty {
@@ -3263,6 +3312,7 @@ struct_install_tag: %empty {
 		struct_or_union_yylloc,
 		identifier_yylloc);
 }
+;
 
 
 struct_scope_push: %empty {
@@ -3272,3 +3322,4 @@ struct_scope_push: %empty {
 
 	++GET_SCOPE_LEVEL;
 }
+;
