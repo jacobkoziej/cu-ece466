@@ -18,6 +18,7 @@ typedef struct jkcc_config_s {
 	unsigned ansi_sgr_stdout : 1;
 	unsigned ansi_sgr_stderr : 1;
 	unsigned clean_exit      : 1;
+	unsigned print_ast       : 1;
 	unsigned trace           : 1;
 } jkcc_config_t;
 

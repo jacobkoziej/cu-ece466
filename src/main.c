@@ -102,6 +102,9 @@ parse_stdin:
 		translation_unit = parse(&parser);
 		if (!translation_unit) goto error;
 
+		if (jkcc.config.print_ast)
+			FPRINT_AST_NODE(stdout, translation_unit, 0, 0);
+
 		if (vector_append(&jkcc.translation_unit, &translation_unit))
 			goto error;
 
@@ -146,6 +149,11 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 		case 'f':
 			if (!strcmp(arg, "clean-exit")) {
 				jkcc->config.clean_exit = 1;
+				break;
+			}
+
+			if (!strcmp(arg, "print-ast")) {
+				jkcc->config.print_ast = 1;
 				break;
 			}
 
