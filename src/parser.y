@@ -281,7 +281,13 @@ static void yyerror(
 	(void) parser;
 	(void) yyextra_data;
 
-	fprintf(stderr, "error: %s\n", error);
+	fprintf(
+		stderr,
+		"%s:%d:%d: error: %s\n",
+		yyextra_data->file->path,
+		yylloc->start.line,
+		yylloc->start.column,
+		error);
 }
 %}
 
