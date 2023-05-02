@@ -25,7 +25,7 @@ typedef struct jkcc_config_s {
 typedef struct jkcc_s {
 	const char    **file;
 	size_t          file_count;
-	vector_t        translation_unit;  // parse_t*
+	vector_t        translation_unit;  // ast_t*
 	trace_t         trace;
 	jkcc_config_t   config;
 } jkcc_t;
