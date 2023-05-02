@@ -5,13 +5,14 @@
 y_tab_c = custom_target(
         'y.tab.c',
         input  : 'parser.y',
-        output : ['y.tab.c', 'y.tab.h', 'y.output'],
+        output : ['y.tab.c', 'y.tab.h', 'y.html', 'y.output'],
         command : [
                 bison,
                 '--color=yes',
                 '--header=@OUTPUT1@',
+                '--html=@OUTPUT2@',
                 '--output=@OUTPUT0@',
-                '--report-file=@OUTPUT2@',
+                '--report-file=@OUTPUT3@',
                 '--report=all',
                 '--warnings=all',
                 '@INPUT0@',

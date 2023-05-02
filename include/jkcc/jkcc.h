@@ -17,13 +17,15 @@
 typedef struct jkcc_config_s {
 	unsigned ansi_sgr_stdout : 1;
 	unsigned ansi_sgr_stderr : 1;
+	unsigned clean_exit      : 1;
+	unsigned print_ast       : 1;
 	unsigned trace           : 1;
 } jkcc_config_t;
 
 typedef struct jkcc_s {
 	const char    **file;
 	size_t          file_count;
-	vector_t        translation_unit;  // parse_t*
+	vector_t        translation_unit;  // ast_t*
 	trace_t         trace;
 	jkcc_config_t   config;
 } jkcc_t;

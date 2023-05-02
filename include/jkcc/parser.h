@@ -18,7 +18,6 @@
 typedef struct parser_s {
 	const char *path;
 	trace_t    *trace;
-	yyextra_t  *yyextra_data;
 } parser_t;
 
 typedef struct translation_unit_s {
@@ -29,10 +28,7 @@ typedef struct translation_unit_s {
 } translation_unit_t;
 
 
-translation_unit_t *parse(
-	parser_t           *parser);
-void translation_unit_free(
-	translation_unit_t *translation_unit);
+ast_t *parse(parser_t *parser);
 
 
 #endif  /* JKCC_PARSER_H */

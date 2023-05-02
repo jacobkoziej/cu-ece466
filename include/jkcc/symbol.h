@@ -8,6 +8,7 @@
 #define JKCC_SYMBOL_H
 
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #include <jkcc/ast/ast.h>
@@ -45,6 +46,7 @@ int symbol_insert_identifier(
 int symbol_insert_tag(
 	symbol_table_t  *symbol,
 	ast_t           *tag,
+	bool             struct_declaration,
 	ast_t           *type);
 
 

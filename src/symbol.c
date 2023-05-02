@@ -6,6 +6,7 @@
 
 #include <jkcc/symbol.h>
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -123,9 +124,10 @@ int symbol_insert_identifier(
 int symbol_insert_tag(
 	symbol_table_t *symbol,
 	ast_t          *tag,
-	ast_t          *type)
+	bool            struct_declaration,
+	ast_t          *ast_struct)
 {
-	ast_identifier_set_type(tag, type);
+	ast_identifier_set_type(tag, ast_struct);
 	const string_t *key = ast_identifier_get_string(tag);
 
 	size_t len = key->tail - key->head;
@@ -133,13 +135,19 @@ int symbol_insert_tag(
 	void *existing_tag;
 
 	if (!ht_get(&symbol->table, key->head, len, &existing_tag)) {
-		ast_t *declaration_list
-			= ast_struct_get_declaration_list(existing_tag);
+		if (ast_struct_get_declaration(existing_tag))
+			if (struct_declaration) return SYMBOL_ERROR_EXISTS;
 
-		if (declaration_list) return SYMBOL_ERROR_EXISTS;
+		ast_struct_set_definition(
+			existing_tag,
+			struct_declaration,
+			ast_struct);
+		ht_set(&symbol->table, key->head, len, ast_struct);
+
+		return 0;
 	}
 
-	if (ht_insert(&symbol->table, key->head, len, type))
+	if (ht_insert(&symbol->table, key->head, len, ast_struct))
 		return SYMBOL_ERROR_NOMEM;
 
 	++symbol->size;

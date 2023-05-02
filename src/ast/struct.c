@@ -8,6 +8,7 @@
 #include <jkcc/ast/struct.h>
 #include <jkcc/private/ast.h>
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,6 +21,7 @@ ast_t *ast_struct_init(
 	ast_t          *tag,
 	ast_t          *declaration_list,
 	symbol_table_t *members,
+	bool            declaration,
 	uint_fast8_t    type,
 	location_t     *location_start,
 	location_t     *location_end)
@@ -29,7 +31,10 @@ ast_t *ast_struct_init(
 	node->tag              = tag;
 	node->declaration_list = declaration_list;
 	node->members          = members;
+	node->declaration      = declaration;
 	node->type             = type;
+
+	node->definition = NULL;
 
 	AST_NODE_LOCATION;
 
@@ -46,12 +51,37 @@ void ast_struct_free(ast_t *ast)
 	free(node);
 }
 
-ast_t *ast_struct_get_declaration_list(
+bool ast_struct_get_declaration(
 	ast_t *ast)
 {
 	ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
 
-	return ast_struct->declaration_list;
+	return ast_struct->declaration;
+}
+
+ast_t *ast_struct_get_definition(
+	ast_t *ast)
+{
+	ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
+
+	return ast_struct->definition;
+}
+
+void ast_struct_set_definition(
+	ast_t *ast,
+	bool   declaration,
+	ast_t *definition)
+{
+	do {
+		ast_struct_t *ast_struct = OFFSETOF_AST_NODE(ast, ast_struct_t);
+
+		ast = ast_struct->definition;
+
+		// replace references to incomplete type
+		// with struct definition
+		ast_struct->definition  = definition;
+		ast_struct->declaration = declaration;
+	} while (ast);
 }
 
 void ast_struct_set_declaration_list(
@@ -81,9 +111,7 @@ void fprint_ast_struct(
 	FPRINT_AST_NODE_BEGIN(ast_struct_t);
 
 	FPRINT_AST_MEMBER("tag", node->tag);
-	FPRINT_AST_MEMBER(
-		ast_node_str[AST_DECLARATION_LIST],
-		node->declaration_list);
+	FPRINT_AST_MEMBER("declaration-list", node->declaration_list);
 
 	const char *type;
 	switch (node->type) {

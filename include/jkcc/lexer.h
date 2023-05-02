@@ -21,6 +21,7 @@
 #include <jkcc/location.h>
 #include <jkcc/scope.h>
 #include <jkcc/string.h>
+#include <jkcc/symbol.h>
 #include <jkcc/vector.h>
 
 
@@ -32,9 +33,17 @@ typedef struct yyextra_s {
 	int                        prev_yylineno;
 	const char                *error;
 	ast_t                     *identifier;
+	vector_t                   goto_list;
+	vector_t                   type_stack;
+	symbol_table_t            *function_body_symbol_table;
+	bool                       prescope_declaration;
+	bool                       struct_declaration;
 	bool                       variadic_parameter;
 	uint_fast16_t              identifier_type;
+	size_t                     scope_level;
+	vector_t                  *base_type;
 	scope_t                   *symbol_table;
+	ast_t                     *translation_unit;
 } yyextra_t;
 
 

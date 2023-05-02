@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <jkcc/ast.h>
 #include <jkcc/jkcc.h>
 #include <jkcc/parser.h>
 #include <jkcc/trace.h>
@@ -24,6 +25,11 @@ const char *argp_program_version     = JKCC_VERSION;
 const char *argp_program_bug_address = "<jacobkoziej@gmail.com>";
 
 static const struct argp_option options[] = {
+	{
+		.key  = 'f',
+		.arg  = "OPTION",
+		.doc  = "Enable OPTION."
+	},
 	{
 		.name = "color",
 		.key  = KEY_COLOR,
@@ -76,7 +82,7 @@ int main(int argc, char **argv)
 
 	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
 
-	translation_unit_t *translation_unit;
+	ast_t *translation_unit;
 
 	if (vector_init(&jkcc.translation_unit, sizeof(translation_unit), 0))
 		return EXIT_FAILURE;
@@ -96,6 +102,9 @@ parse_stdin:
 		translation_unit = parse(&parser);
 		if (!translation_unit) goto error;
 
+		if (jkcc.config.print_ast)
+			FPRINT_AST_NODE(stdout, translation_unit, 0, 0);
+
 		if (vector_append(&jkcc.translation_unit, &translation_unit))
 			goto error;
 
@@ -111,12 +120,13 @@ error:
 
 static void cleanup(void)
 {
+	if (!jkcc.config.clean_exit) return;
+
 	if (jkcc.translation_unit.buf) {
-		translation_unit_t **translation_unit =
-			jkcc.translation_unit.buf;
+		ast_t **translation_unit = jkcc.translation_unit.buf;
 
 		for (size_t i = 0; i < jkcc.translation_unit.use; i++)
-			translation_unit_free(translation_unit[i]);
+			AST_NODE_FREE(translation_unit[i]);
 
 		vector_free(&jkcc.translation_unit);
 	}
@@ -134,6 +144,20 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 			// let argp_parse() know we've consumed
 			// all remaining arguments
 			state->next = state->argc;
+			break;
+
+		case 'f':
+			if (!strcmp(arg, "clean-exit")) {
+				jkcc->config.clean_exit = 1;
+				break;
+			}
+
+			if (!strcmp(arg, "print-ast")) {
+				jkcc->config.print_ast = 1;
+				break;
+			}
+
+			argp_error(state, "unrecognized option: '%s'", arg);
 			break;
 
 		case KEY_COLOR:
@@ -161,11 +185,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 				break;
 			}
 
-			argp_error(
-				state,
-				"unrecognized argument: '%s'",
-				arg);
-
+			argp_error(state, "unrecognized argument: '%s'", arg);
 			break;
 
 		case KEY_TRACE:;
