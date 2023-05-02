@@ -24,7 +24,7 @@ bool ht_exists(ht_t *ht, const void *key, size_t size)
 
 	uint64_t pos = fnv1a_hash(key, size) % ht->size;
 
-	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % ht->size, i++) {
 		ht_entry_t *entry = &ht->entries[pos];
 
 		// we've passed the set entries
@@ -77,7 +77,7 @@ int ht_get(ht_t *ht, const void *key, size_t size, void **val)
 
 	uint64_t pos = fnv1a_hash(key, size) % ht->size;
 
-	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % ht->size, i++) {
 		ht_entry_t *entry = &ht->entries[pos];
 
 		// we've passed the set entries
@@ -126,7 +126,7 @@ int ht_insert(ht_t *ht, const void *key, size_t size, void *val)
 
 	uint64_t pos = fnv1a_hash(key, size) % ht->size;
 
-	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % ht->size, i++) {
 		ht_entry_t *entry = &ht->entries[pos];
 
 		if (entry->key) {
@@ -170,7 +170,7 @@ int ht_rm(ht_t *ht, const void *key, size_t size, void **val)
 
 	uint64_t pos = fnv1a_hash(key, size) % ht->size;
 
-	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % ht->size, i++) {
 		ht_entry_t *entry = &ht->entries[pos];
 
 		// we've passed the set entries
@@ -203,7 +203,7 @@ int ht_set(ht_t *ht, const void *key, size_t size, void *val)
 
 	uint64_t pos = fnv1a_hash(key, size) % ht->size;
 
-	for (size_t i = 0; i < ht->size; pos = (pos + 1) % size, i++) {
+	for (size_t i = 0; i < ht->size; pos = (pos + 1) % ht->size, i++) {
 		ht_entry_t *entry = &ht->entries[pos];
 
 		// we've passed the set entries
