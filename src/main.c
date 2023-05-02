@@ -26,6 +26,11 @@ const char *argp_program_bug_address = "<jacobkoziej@gmail.com>";
 
 static const struct argp_option options[] = {
 	{
+		.key  = 'f',
+		.arg  = "OPTION",
+		.doc  = "Enable OPTION."
+	},
+	{
 		.name = "color",
 		.key  = KEY_COLOR,
 		.arg  = "WHEN",
@@ -112,6 +117,8 @@ error:
 
 static void cleanup(void)
 {
+	if (!jkcc.config.clean_exit) return;
+
 	if (jkcc.translation_unit.buf) {
 		ast_t **translation_unit = jkcc.translation_unit.buf;
 
@@ -134,6 +141,15 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 			// let argp_parse() know we've consumed
 			// all remaining arguments
 			state->next = state->argc;
+			break;
+
+		case 'f':
+			if (!strcmp(arg, "clean-exit")) {
+				jkcc->config.clean_exit = 1;
+				break;
+			}
+
+			argp_error(state, "unrecognized option: '%s'", arg);
 			break;
 
 		case KEY_COLOR:
@@ -161,11 +177,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 				break;
 			}
 
-			argp_error(
-				state,
-				"unrecognized argument: '%s'",
-				arg);
-
+			argp_error(state, "unrecognized argument: '%s'", arg);
 			break;
 
 		case KEY_TRACE:;
