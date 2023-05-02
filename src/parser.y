@@ -50,6 +50,11 @@
 		YYNOMEM;                                            \
 }
 
+#define APPEND_GOTO(ast_type) {                                         \
+	if (vector_append(&parser->yyextra_data->goto_list, &ast_type)) \
+		YYNOMEM;                                                \
+}
+
 #define ASSEMBLE_TYPE(ast_type) {                                                 \
 	ast_type = parser->yyextra_data->symbol_table->context.base.type;         \
                                                                                   \
@@ -110,6 +115,22 @@
 	}                                                                   \
 }
 
+#define GET_LABEL(ast_identifier, ast_label) {                             \
+	if (symbol_get_identifier(                                         \
+		parser->yyextra_data->symbol_table->context.current.label, \
+		ast_identifier,                                            \
+		&ast_label))                                               \
+	{                                                                  \
+		yyerror(                                                   \
+			&yylloc,                                           \
+			scanner,                                           \
+			parser,                                            \
+			translation_unit,                                  \
+			"undefined label");                                \
+		YYERROR;                                                   \
+	}                                                                  \
+}
+
 #define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
 
 #define GET_BASE_STORAGE_CLASS parser->yyextra_data->symbol_table->context.base.storage_class
@@ -136,6 +157,8 @@
 	symbol_get_identifier(symbol, ast_identifier, ast_type)
 
 #define GET_PRESCOPE_DECLARATION parser->yyextra_data->prescope_declaration
+
+#define GET_SCOPE_LEVEL parser->yyextra_data->scope_level
 
 #define GET_STRUCT_DECLARATION parser->yyextra_data->struct_declaration
 
@@ -472,6 +495,7 @@ typedef void* yyscan_t;
 %nterm <ast> expression_statement
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
+%nterm <ast> jump_statement
 %nterm <ast> function_definition
 %nterm <ast> declaration_list
 
@@ -2664,12 +2688,10 @@ statement:
 	TRACE("statement", "iteration-statement");
 	$statement = $iteration_statement;
 }
-/*
 | jump_statement {
 	TRACE("statement", "jump-statement");
 	$statement = $jump_statement;
 }
-*/
 
 
 // 6.8.1
@@ -2984,6 +3006,48 @@ iteration_statement:
 }
 
 
+// 6.8.6
+jump_statement:
+  KEYWORD_GOTO identifier PUNCTUATOR_SEMICOLON {
+	TRACE("jump-statement", "goto identifier ;");
+
+	$jump_statement = ast_goto_init(
+		$identifier,
+		&@KEYWORD_GOTO,
+		&@identifier);
+	if (!$jump_statement) YYNOMEM;
+
+	APPEND_GOTO($jump_statement);
+}
+| KEYWORD_CONTINUE PUNCTUATOR_SEMICOLON {
+	TRACE("jump-statement", "continue ;");
+
+	$jump_statement = ast_continue_init(&@KEYWORD_CONTINUE);
+	if (!$jump_statement) YYNOMEM;
+}
+| KEYWORD_BREAK PUNCTUATOR_SEMICOLON {
+	TRACE("jump-statement", "break ;");
+
+	$jump_statement = ast_break_init(&@KEYWORD_BREAK);
+	if (!$jump_statement) YYNOMEM;
+}
+| KEYWORD_RETURN PUNCTUATOR_SEMICOLON {
+	TRACE("jump-statement", "return ;");
+
+	$jump_statement = ast_return_init(NULL, &@KEYWORD_RETURN, NULL);
+	if (!$jump_statement) YYNOMEM;
+}
+| KEYWORD_RETURN expression PUNCTUATOR_SEMICOLON {
+	TRACE("jump-statement", "return expression ;");
+
+	$jump_statement = ast_return_init(
+		$expression,
+		&@expression,
+		&@KEYWORD_RETURN);
+	if (!$jump_statement) YYNOMEM;
+}
+
+
 // 6.9.1
 function_definition:
   declaration_specifiers declarator assemble_function_definition set_function_body_symbol_table function_body_set_storage_class compound_statement {
@@ -3052,6 +3116,8 @@ compound_statement_scope_push: %empty {
 
 		if (scope_push(translation_unit->symbol_table, flags)) YYNOMEM;
 
+		++GET_SCOPE_LEVEL;
+
 		SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	}
 	RESET_PRESCOPE_DECLARATION;
@@ -3061,6 +3127,8 @@ compound_statement_scope_push: %empty {
 for_scope_push: %empty {
 	if (scope_push(translation_unit->symbol_table, SCOPE_NO_PUSH_LABEL))
 		YYNOMEM;
+
+	++GET_SCOPE_LEVEL;
 
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_AUTO);
 	SET_PRESCOPE_DECLARATION;
@@ -3075,6 +3143,8 @@ function_body_set_storage_class: %empty {
 function_scope_push: %empty {
 	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
 
+	++GET_SCOPE_LEVEL;
+
 	SET_BASE_STORAGE_CLASS(AST_DECLARATION_ARGUMENT);
 	SET_PRESCOPE_DECLARATION;
 }
@@ -3087,8 +3157,26 @@ get_function_body_symbol_table: %empty {
 
 
 scope_pop: %empty {
-	 SCOPE_POP;
-	 RESET_PRESCOPE_DECLARATION;
+	// set goto label references
+	if (GET_SCOPE_LEVEL-- == 1)
+		for (
+			size_t i = 0;
+			i < parser->yyextra_data->goto_list.use;
+			i++)
+		{
+			ast_t *ast_goto;
+			ast_t *ast_label;
+
+			void *element = &ast_goto;
+			vector_pop(&parser->yyextra_data->goto_list, &element);
+
+			GET_LABEL(ast_goto_get_identifier(ast_goto), ast_label);
+
+			ast_goto_set_label(ast_goto, ast_label);
+		}
+
+	SCOPE_POP;
+	RESET_PRESCOPE_DECLARATION;
 }
 
 
@@ -3139,4 +3227,6 @@ struct_scope_push: %empty {
 	if (scope_push(
 		translation_unit->symbol_table,
 		SCOPE_NO_PUSH_LABEL | SCOPE_NO_PUSH_TAG)) YYNOMEM;
+
+	++GET_SCOPE_LEVEL;
 }

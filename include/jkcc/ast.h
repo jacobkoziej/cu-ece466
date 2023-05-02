@@ -16,10 +16,12 @@
 #include <jkcc/ast/ast.h>
 #include <jkcc/ast/atomic.h>
 #include <jkcc/ast/binary_operator.h>
+#include <jkcc/ast/break.h>
 #include <jkcc/ast/call.h>
 #include <jkcc/ast/case.h>
 #include <jkcc/ast/cast.h>
 #include <jkcc/ast/character_constant.h>
+#include <jkcc/ast/continue.h>
 #include <jkcc/ast/declaration.h>
 #include <jkcc/ast/dereference.h>
 #include <jkcc/ast/empty.h>
@@ -31,6 +33,7 @@
 #include <jkcc/ast/generic_association.h>
 #include <jkcc/ast/generic_association_list.h>
 #include <jkcc/ast/generic_selection.h>
+#include <jkcc/ast/goto.h>
 #include <jkcc/ast/identifier.h>
 #include <jkcc/ast/if.h>
 #include <jkcc/ast/integer_constant.h>
@@ -38,6 +41,7 @@
 #include <jkcc/ast/list.h>
 #include <jkcc/ast/member_access.h>
 #include <jkcc/ast/pointer.h>
+#include <jkcc/ast/return.h>
 #include <jkcc/ast/sizeof.h>
 #include <jkcc/ast/static_assert.h>
 #include <jkcc/ast/storage_class_specifier.h>

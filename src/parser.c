@@ -26,6 +26,7 @@ translation_unit_t *parse(parser_t *parser)
 	file_t             *file;
 	yyscan_t            yyscanner  = NULL;
 	FILE               *stream     = NULL;
+	vector_t           *goto_list  = NULL;
 	vector_t           *type_stack = NULL;
 
 	translation_unit = calloc(1, sizeof(*translation_unit));
@@ -63,6 +64,9 @@ translation_unit_t *parse(parser_t *parser)
 		.symbol_table   = translation_unit->symbol_table,
 	};
 
+	goto_list = &yyextra_data.goto_list;
+	if (vector_init(goto_list, sizeof(ast_t*), 0)) goto error;
+
 	type_stack = &yyextra_data.type_stack;
 	if (vector_init(type_stack, sizeof(ast_t*), 0)) goto error;
 
@@ -77,6 +81,7 @@ translation_unit_t *parse(parser_t *parser)
 	yylex_destroy(yyscanner);
 
 	vector_free(type_stack);
+	vector_free(goto_list);
 
 	if (stream != stdin) fclose(stream);
 
@@ -86,6 +91,7 @@ error:
 	if (yyscanner) yylex_destroy(yyscanner);
 
 	vector_free(type_stack);
+	vector_free(goto_list);
 
 	if (stream && (stream != stdin)) fclose(stream);
 
