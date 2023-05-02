@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <jkcc/ast.h>
 #include <jkcc/jkcc.h>
 #include <jkcc/parser.h>
 #include <jkcc/trace.h>
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
 
 	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
 
-	translation_unit_t *translation_unit;
+	ast_t *translation_unit;
 
 	if (vector_init(&jkcc.translation_unit, sizeof(translation_unit), 0))
 		return EXIT_FAILURE;
@@ -112,11 +113,10 @@ error:
 static void cleanup(void)
 {
 	if (jkcc.translation_unit.buf) {
-		translation_unit_t **translation_unit =
-			jkcc.translation_unit.buf;
+		ast_t **translation_unit = jkcc.translation_unit.buf;
 
 		for (size_t i = 0; i < jkcc.translation_unit.use; i++)
-			translation_unit_free(translation_unit[i]);
+			AST_NODE_FREE(translation_unit[i]);
 
 		vector_free(&jkcc.translation_unit);
 	}

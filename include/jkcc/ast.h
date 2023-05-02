@@ -49,6 +49,7 @@
 #include <jkcc/ast/struct.h>
 #include <jkcc/ast/switch.h>
 #include <jkcc/ast/ternary_operator.h>
+#include <jkcc/ast/translation_unit.h>
 #include <jkcc/ast/type.h>
 #include <jkcc/ast/type_qualifier.h>
 #include <jkcc/ast/type_specifier.h>

@@ -25,19 +25,19 @@
 #include <jkcc/trace.h>
 
 
-#define ERROR_ADDR &parser->yyextra_data->error
+#define ERROR_ADDR &yyextra_data->error
 
-#define ERROR_RESET parser->yyextra_data->error = NULL
+#define ERROR_RESET yyextra_data->error = NULL
 
 #define ERROR(ast) {                                          \
 	if (!ast) {                                           \
-		if (parser->yyextra_data->error) {            \
+		if (yyextra_data->error) {                    \
 			yyerror(                              \
 				&yylloc,                      \
 				scanner,                      \
 				parser,                       \
-				translation_unit,             \
-				parser->yyextra_data->error); \
+				yyextra_data,                 \
+				yyextra_data->error);         \
 			YYERROR;                              \
 		} else {                                      \
 			YYNOMEM;                              \
@@ -45,24 +45,24 @@
 	}                                                     \
 }
 
-#define APPEND_BASE_TYPE(ast_type) {                                \
-	if (vector_append(&translation_unit->base_type, &ast_type)) \
-		YYNOMEM;                                            \
+#define APPEND_BASE_TYPE(ast_type) {                           \
+	if (vector_append(yyextra_data->base_type, &ast_type)) \
+		YYNOMEM;                                       \
 }
 
-#define APPEND_GOTO(ast_type) {                                         \
-	if (vector_append(&parser->yyextra_data->goto_list, &ast_type)) \
-		YYNOMEM;                                                \
+#define APPEND_GOTO(ast_type) {                                 \
+	if (vector_append(&yyextra_data->goto_list, &ast_type)) \
+		YYNOMEM;                                        \
 }
 
 #define ASSEMBLE_TYPE(ast_type) {                                                 \
-	ast_type = parser->yyextra_data->symbol_table->context.base.type;         \
+	ast_type = yyextra_data->symbol_table->context.base.type;                 \
                                                                                   \
-	while (parser->yyextra_data->symbol_table->context.current.type_stack) {  \
+	while (yyextra_data->symbol_table->context.current.type_stack) {          \
 		ast_t *prv_type =  ast_type;                                      \
 		void  *element  = &ast_type;                                      \
                                                                                   \
-		vector_pop(&parser->yyextra_data->type_stack, &element);          \
+		vector_pop(&yyextra_data->type_stack, &element);                  \
                                                                                   \
 		switch (*ast_type) {                                              \
 			case AST_ARRAY:                                           \
@@ -81,43 +81,43 @@
 				break;                                            \
 		}                                                                 \
                                                                                   \
-		--parser->yyextra_data->symbol_table->context.current.type_stack; \
+		--yyextra_data->symbol_table->context.current.type_stack;         \
 	}                                                                         \
 }
 
-#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                        \
-	if (symbol_check_identifier_collision(                              \
-		translation_unit->symbol_table->context.current.identifier, \
-		ast_identifier))                                            \
-	{                                                                   \
-		yyerror(                                                    \
-			&yylloc,                                            \
-			scanner,                                            \
-			parser,                                             \
-			translation_unit,                                   \
-			"redeclaration of identifier");                     \
-		YYERROR;                                                    \
-	}                                                                   \
+#define CHECK_IDENTIFIER_COLLISION(ast_identifier) {                            \
+	if (symbol_check_identifier_collision(                                  \
+		yyextra_data->symbol_table->context.current.identifier,         \
+		ast_identifier))                                                \
+	{                                                                       \
+		yyerror(                                                        \
+			&yylloc,                                                \
+			scanner,                                                \
+			parser,                                                 \
+			yyextra_data,                                           \
+			"redeclaration of identifier");                         \
+		YYERROR;                                                        \
+	}                                                                       \
 }
 
-#define CHECK_LABEL_COLLISION(ast_label) {                                  \
-	if (symbol_check_identifier_collision(                              \
-		translation_unit->symbol_table->context.current.label,      \
-		ast_label))                                                 \
-	{                                                                   \
-		yyerror(                                                    \
-			&yylloc,                                            \
-			scanner,                                            \
-			parser,                                             \
-			translation_unit,                                   \
-			"redeclaration of label");                          \
-		YYERROR;                                                    \
-	}                                                                   \
+#define CHECK_LABEL_COLLISION(ast_label) {                                      \
+	if (symbol_check_identifier_collision(                                  \
+		yyextra_data->symbol_table->context.current.label,              \
+		ast_label))                                                     \
+	{                                                                       \
+		yyerror(                                                        \
+			&yylloc,                                                \
+			scanner,                                                \
+			parser,                                                 \
+			yyextra_data,                                           \
+			"redeclaration of label");                              \
+		YYERROR;                                                        \
+	}                                                                       \
 }
 
 #define GET_LABEL(ast_identifier, ast_label) {                             \
 	if (symbol_get_identifier(                                         \
-		parser->yyextra_data->symbol_table->context.current.label, \
+		yyextra_data->symbol_table->context.current.label,         \
 		ast_identifier,                                            \
 		&ast_label))                                               \
 	{                                                                  \
@@ -125,83 +125,80 @@
 			&yylloc,                                           \
 			scanner,                                           \
 			parser,                                            \
-			translation_unit,                                  \
+			yyextra_data,                                      \
 			"undefined label");                                \
 		YYERROR;                                                   \
 	}                                                                  \
 }
 
-#define GET_CURRENT_IDENTIFIER parser->yyextra_data->identifier
+#define GET_CURRENT_IDENTIFIER yyextra_data->identifier
 
-#define GET_BASE_STORAGE_CLASS parser->yyextra_data->symbol_table->context.base.storage_class
+#define GET_BASE_STORAGE_CLASS yyextra_data->symbol_table->context.base.storage_class
 
-#define GET_BASE_TYPE parser->yyextra_data->symbol_table->context.base.type
+#define GET_BASE_TYPE yyextra_data->symbol_table->context.base.type
 
-#define GET_CURRENT_STORAGE_CLASS parser->yyextra_data->symbol_table->context.current.storage_class
+#define GET_CURRENT_STORAGE_CLASS yyextra_data->symbol_table->context.current.storage_class
 
-#define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                                \
-	switch (parser->yyextra_data->identifier_type) {                                     \
-		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:                           \
-			symbol = translation_unit->symbol_table->context.current.tag;        \
-			break;                                                               \
-                                                                                             \
-		default:                                                                     \
-			symbol = translation_unit->symbol_table->context.current.identifier; \
-			break;                                                               \
-	}                                                                                    \
-                                                                                             \
-	parser->yyextra_data->identifier_type = 0;                                           \
+#define GET_IDENTIFIER_SYMBOL_TABLE(symbol, ast_identifier) {                            \
+	switch (yyextra_data->identifier_type) {                                         \
+		case AST_TYPE_SPECIFIER_STRUCT_OR_UNION_SPECIFIER:                       \
+			symbol = yyextra_data->symbol_table->context.current.tag;        \
+			break;                                                           \
+                                                                                         \
+		default:                                                                 \
+			symbol = yyextra_data->symbol_table->context.current.identifier; \
+			break;                                                           \
+	}                                                                                \
+                                                                                         \
+	yyextra_data->identifier_type = 0;                                               \
 }
 
-#define GET_IDENTIFIER_TYPE(symbol, ast_identifier, ast_type)   \
-	symbol_get_identifier(symbol, ast_identifier, ast_type)
+#define GET_PRESCOPE_DECLARATION yyextra_data->prescope_declaration
 
-#define GET_PRESCOPE_DECLARATION parser->yyextra_data->prescope_declaration
+#define GET_SCOPE_LEVEL yyextra_data->scope_level
 
-#define GET_SCOPE_LEVEL parser->yyextra_data->scope_level
+#define GET_STRUCT_DECLARATION yyextra_data->struct_declaration
 
-#define GET_STRUCT_DECLARATION parser->yyextra_data->struct_declaration
+#define GET_VARIADIC_PARAMETER yyextra_data->variadic_parameter
 
-#define GET_VARIADIC_PARAMETER parser->yyextra_data->variadic_parameter
-
-#define PUSH_TYPE_STACK(type) {                                               \
-	if (vector_append(&parser->yyextra_data->type_stack, &type)) YYNOMEM; \
-	++parser->yyextra_data->symbol_table->context.current.type_stack;     \
+#define PUSH_TYPE_STACK(type) {                                       \
+	if (vector_append(&yyextra_data->type_stack, &type)) YYNOMEM; \
+	++yyextra_data->symbol_table->context.current.type_stack;     \
 }
 
-#define SCOPE_POP scope_pop(translation_unit->symbol_table)
+#define SCOPE_POP scope_pop(yyextra_data->symbol_table)
 
-#define SET_BASE_STORAGE_CLASS(new_storage_class) {                                            \
-	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
-	parser->yyextra_data->symbol_table->context.base.storage_class    = new_storage_class; \
+#define SET_BASE_STORAGE_CLASS(new_storage_class) {                                    \
+	yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
+	yyextra_data->symbol_table->context.base.storage_class    = new_storage_class; \
 }
 
-#define SET_BASE_TYPE(ast_type) {                                         \
-	parser->yyextra_data->symbol_table->context.base.type = ast_type; \
+#define SET_BASE_TYPE(ast_type) {                                 \
+	yyextra_data->symbol_table->context.base.type = ast_type; \
 }
 
-#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                                         \
-	parser->yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
+#define SET_CURRENT_STORAGE_CLASS(new_storage_class) {                                 \
+	yyextra_data->symbol_table->context.current.storage_class = new_storage_class; \
 }
 
-#define SET_CURRENT_IDENTIFIER(ast_identifier) {           \
-	parser->yyextra_data->identifier = ast_identifier; \
+#define SET_CURRENT_IDENTIFIER(ast_identifier) {   \
+	yyextra_data->identifier = ast_identifier; \
 }
 
-#define SET_IDENTIFIER_TYPE(type) {                   \
-	parser->yyextra_data->identifier_type = type; \
+#define SET_IDENTIFIER_TYPE(type) {           \
+	yyextra_data->identifier_type = type; \
 }
 
-#define SET_PRESCOPE_DECLARATION {                         \
-	parser->yyextra_data->prescope_declaration = true; \
+#define SET_PRESCOPE_DECLARATION {                 \
+	yyextra_data->prescope_declaration = true; \
 }
 
-#define SET_STRUCT_DECLARATION(declaration) {                   \
-	parser->yyextra_data->struct_declaration = declaration; \
+#define SET_STRUCT_DECLARATION(declaration) {           \
+	yyextra_data->struct_declaration = declaration; \
 }
 
-#define SET_VARIADIC_PARAMETER(variadic) {                   \
-	parser->yyextra_data->variadic_parameter = variadic; \
+#define SET_VARIADIC_PARAMETER(variadic) {           \
+	yyextra_data->variadic_parameter = variadic; \
 }
 
 #define STRUCT_INSTALL_TAG(ast_struct, struct_or_union, struct_declaration, identifier, struct_or_union_yylloc, identifier_yylloc) { \
@@ -216,7 +213,7 @@
 	if (!struct_type) YYNOMEM;                                                                                                   \
                                                                                                                                      \
 	switch (symbol_insert_tag(                                                                                                   \
-		translation_unit->symbol_table->context.current.tag,                                                                 \
+		yyextra_data->symbol_table->context.current.tag,                                                                     \
 		identifier,                                                                                                          \
 		struct_declaration,                                                                                                  \
 		struct_type)                                                                                                         \
@@ -230,7 +227,7 @@
 				&yylloc,                                                                                             \
 				scanner,                                                                                             \
 				parser,                                                                                              \
-				translation_unit,                                                                                    \
+				yyextra_data,                                                                                        \
 				"redeclaration of struct or union");                                                                 \
 			YYERROR;                                                                                                     \
 			break;                                                                                                       \
@@ -248,8 +245,8 @@
 	SET_CURRENT_STORAGE_CLASS(GET_BASE_STORAGE_CLASS); \
 }
 
-#define RESET_PRESCOPE_DECLARATION {                        \
-	parser->yyextra_data->prescope_declaration = false; \
+#define RESET_PRESCOPE_DECLARATION {                \
+	yyextra_data->prescope_declaration = false; \
 }
 
 #define TRACE(rule, match) TRACE_RULE(parser->trace, rule, match)
@@ -273,16 +270,16 @@
 
 
 static void yyerror(
-	YYLTYPE            *yylloc,
-	yyscan_t            scanner,
-	parser_t           *parser,
-	translation_unit_t *translation_unit,
-	char const         *error)
+	YYLTYPE    *yylloc,
+	yyscan_t    scanner,
+	parser_t   *parser,
+	yyextra_t  *yyextra_data,
+	char const *error)
 {
 	(void) yylloc;
 	(void) scanner;
 	(void) parser;
-	(void) translation_unit;
+	(void) yyextra_data;
 
 	fprintf(stderr, "error: %s\n", error);
 }
@@ -291,7 +288,7 @@ static void yyerror(
 
 %param {yyscan_t scanner}
 %parse-param {parser_t *parser}
-%parse-param {translation_unit_t *translation_unit}
+%parse-param {yyextra_t *yyextra_data}
 
 
 %code requires {
@@ -496,6 +493,7 @@ typedef void* yyscan_t;
 %nterm <ast> selection_statement
 %nterm <ast> iteration_statement
 %nterm <ast> jump_statement
+%nterm <ast> translation_unit
 %nterm <ast> external_declaration
 %nterm <ast> function_definition
 %nterm <ast> declaration_list
@@ -560,7 +558,7 @@ identifier: IDENTIFIER {
 	GET_IDENTIFIER_SYMBOL_TABLE(symbol, $identifier)
 
 	ast_t *type;
-	if (!GET_IDENTIFIER_TYPE(symbol, $identifier, &type))
+	if (!symbol_get_identifier(symbol, $identifier, &type))
 		ast_identifier_set_type($identifier, type);
 
 	SET_CURRENT_IDENTIFIER($identifier);
@@ -1535,7 +1533,7 @@ init_declarator:
 	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->context.current.identifier,
+		yyextra_data->symbol_table->context.current.identifier,
 		$identifier,
 		type)) YYNOMEM;
 
@@ -1764,7 +1762,7 @@ struct_or_union_specifier:
 	$struct_or_union_specifier = ast_struct_init(
 		NULL,
 		$struct_declaration_list,
-		parser->yyextra_data->symbol_table->context.current.identifier,
+		yyextra_data->symbol_table->context.current.identifier,
 		false,
 		$struct_or_union,
 		&@struct_or_union,
@@ -1785,7 +1783,7 @@ struct_or_union_specifier:
 	ast_struct_set_declaration_list(ast_struct, $struct_declaration_list);
 	ast_struct_set_symbol_table(
 		ast_struct,
-		parser->yyextra_data->symbol_table->context.current.identifier);
+		yyextra_data->symbol_table->context.current.identifier);
 
 	$struct_or_union_specifier = ast_struct;
 
@@ -1929,7 +1927,7 @@ struct_declarator:
 	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->context.current.identifier,
+		yyextra_data->symbol_table->context.current.identifier,
 		$identifier,
 		type)) YYNOMEM;
 
@@ -2301,7 +2299,7 @@ parameter_declaration:
 	ASSEMBLE_TYPE(type);
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->context.current.identifier,
+		yyextra_data->symbol_table->context.current.identifier,
 		$declarator,
 		type)) YYNOMEM;
 
@@ -2710,7 +2708,7 @@ labeled_statement:
 	if (!$labeled_statement) YYNOMEM;
 
 	if (symbol_insert_identifier(
-		translation_unit->symbol_table->context.current.label,
+		yyextra_data->symbol_table->context.current.label,
 		$identifier,
 		$labeled_statement)) YYNOMEM;
 }
@@ -3050,6 +3048,29 @@ jump_statement:
 
 
 // 6.9
+translation_unit:
+  external_declaration {
+	TRACE("translation-unit", "external-declaration");
+
+	$translation_unit = ast_translation_unit_append_external_declaration(
+		yyextra_data->translation_unit,
+		$external_declaration,
+		&@external_declaration);
+}
+| translation_unit external_declaration {
+	TRACE("translation-unit", "translation-unit external-declaration");
+
+	$$ = ast_translation_unit_append_external_declaration(
+		yyextra_data->translation_unit,
+		$external_declaration,
+		&@external_declaration);
+
+	// handled by parse()
+	(void) $1;
+}
+
+
+// 6.9
 external_declaration:
   function_definition {
 	TRACE("external-declaration", "function-definition");
@@ -3122,12 +3143,12 @@ compound_statement_scope_push: %empty {
 	if (!GET_PRESCOPE_DECLARATION) {
 		uint_fast8_t flags = 0;
 
-		if (parser->yyextra_data->function_body_symbol_table) {
+		if (yyextra_data->function_body_symbol_table) {
 			flags |= SCOPE_NO_PUSH_IDENTIFIER;
-			parser->yyextra_data->function_body_symbol_table = NULL;
+			yyextra_data->function_body_symbol_table = NULL;
 		}
 
-		if (scope_push(translation_unit->symbol_table, flags)) YYNOMEM;
+		if (scope_push(yyextra_data->symbol_table, flags)) YYNOMEM;
 
 		++GET_SCOPE_LEVEL;
 
@@ -3138,7 +3159,7 @@ compound_statement_scope_push: %empty {
 
 
 for_scope_push: %empty {
-	if (scope_push(translation_unit->symbol_table, SCOPE_NO_PUSH_LABEL))
+	if (scope_push(yyextra_data->symbol_table, SCOPE_NO_PUSH_LABEL))
 		YYNOMEM;
 
 	++GET_SCOPE_LEVEL;
@@ -3154,7 +3175,7 @@ function_body_set_storage_class: %empty {
 
 
 function_scope_push: %empty {
-	if (scope_push(translation_unit->symbol_table, 0)) YYNOMEM;
+	if (scope_push(yyextra_data->symbol_table, 0)) YYNOMEM;
 
 	++GET_SCOPE_LEVEL;
 
@@ -3164,8 +3185,8 @@ function_scope_push: %empty {
 
 
 get_function_body_symbol_table: %empty {
-	parser->yyextra_data->function_body_symbol_table =
-		parser->yyextra_data->symbol_table->context.current.identifier;
+	yyextra_data->function_body_symbol_table =
+		yyextra_data->symbol_table->context.current.identifier;
 }
 
 
@@ -3174,14 +3195,14 @@ scope_pop: %empty {
 	if (GET_SCOPE_LEVEL-- == 1)
 		for (
 			size_t i = 0;
-			i < parser->yyextra_data->goto_list.use;
+			i < yyextra_data->goto_list.use;
 			i++)
 		{
 			ast_t *ast_goto;
 			ast_t *ast_label;
 
 			void *element = &ast_goto;
-			vector_pop(&parser->yyextra_data->goto_list, &element);
+			vector_pop(&yyextra_data->goto_list, &element);
 
 			GET_LABEL(ast_goto_get_identifier(ast_goto), ast_label);
 
@@ -3199,8 +3220,8 @@ set_base_type: %empty {
 
 
 set_function_body_symbol_table: %empty {
-	parser->yyextra_data->symbol_table->context.current.identifier =
-		parser->yyextra_data->function_body_symbol_table;
+	yyextra_data->symbol_table->context.current.identifier =
+		yyextra_data->function_body_symbol_table;
 }
 
 
@@ -3238,7 +3259,7 @@ struct_install_tag: %empty {
 
 struct_scope_push: %empty {
 	if (scope_push(
-		translation_unit->symbol_table,
+		yyextra_data->symbol_table,
 		SCOPE_NO_PUSH_LABEL | SCOPE_NO_PUSH_TAG)) YYNOMEM;
 
 	++GET_SCOPE_LEVEL;

@@ -41,7 +41,9 @@ typedef struct yyextra_s {
 	bool                       variadic_parameter;
 	uint_fast16_t              identifier_type;
 	size_t                     scope_level;
+	vector_t                  *base_type;
 	scope_t                   *symbol_table;
+	ast_t                     *translation_unit;
 } yyextra_t;
 
 
