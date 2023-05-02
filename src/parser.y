@@ -508,7 +508,6 @@ typedef void* yyscan_t;
 %nterm       get_function_body_symbol_table
 %nterm       scope_pop
 %nterm       set_base_type
-%nterm       set_function_body_symbol_table
 %nterm       set_function_declaration_list_storage_class
 %nterm       set_struct_declaration_false
 %nterm       set_struct_declaration_true
@@ -3127,7 +3126,7 @@ external_declaration:
 
 // 6.9.1
 function_definition:
-  declaration_specifiers declarator assemble_function_definition set_function_body_symbol_table function_body_set_storage_class compound_statement {
+  declaration_specifiers declarator assemble_function_definition function_body_set_storage_class compound_statement {
 	TRACE("function-definition", "declaration-specifiers declarator compound-statement");
 
 	ast_t *function = $assemble_function_definition;
@@ -3139,7 +3138,7 @@ function_definition:
 	(void) $declaration_specifiers;
 	(void) $declarator;
 }
-| declaration_specifiers declarator assemble_function_definition set_function_body_symbol_table set_function_declaration_list_storage_class declaration_list function_body_set_storage_class compound_statement {
+| declaration_specifiers declarator assemble_function_definition set_function_declaration_list_storage_class declaration_list function_body_set_storage_class compound_statement {
 	TRACE("function-definition", "declaration-specifiers declarator declaration-list compound-statement");
 
 	ast_t *function = $assemble_function_definition;
@@ -3189,12 +3188,17 @@ compound_statement_scope_push: %empty {
 	if (!GET_PRESCOPE_DECLARATION) {
 		uint_fast8_t flags = 0;
 
-		if (yyextra_data->function_body_symbol_table) {
+		if (yyextra_data->function_body_symbol_table)
 			flags |= SCOPE_NO_PUSH_IDENTIFIER;
-			yyextra_data->function_body_symbol_table = NULL;
-		}
 
 		if (scope_push(yyextra_data->symbol_table, flags)) YYNOMEM;
+
+		if (yyextra_data->function_body_symbol_table) {
+			yyextra_data->symbol_table->context.current.identifier
+				= yyextra_data->function_body_symbol_table;
+
+			yyextra_data->function_body_symbol_table = NULL;
+		}
 
 		++GET_SCOPE_LEVEL;
 
@@ -3268,13 +3272,6 @@ scope_pop: %empty {
 
 set_base_type: %empty {
 	SET_BASE_TYPE($<ast>0);
-}
-;
-
-
-set_function_body_symbol_table: %empty {
-	yyextra_data->symbol_table->context.current.identifier =
-		yyextra_data->function_body_symbol_table;
 }
 ;
 
