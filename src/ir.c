@@ -14,6 +14,21 @@
 #include <jkcc/vector.h>
 
 
+ir_static_declaration_t *ir_static_declaration_alloc(
+	ir_context_t *ir_context,
+	ast_t        *declaration)
+{
+	ir_static_declaration_t *ir_static_declaration
+		= malloc(sizeof(*ir_static_declaration));
+
+	if (!ir_static_declaration) return NULL;
+
+	ir_static_declaration->bb          = ++ir_context->current.bb;
+	ir_static_declaration->declaration =   declaration;
+
+	return ir_static_declaration;
+}
+
 ir_unit_t *ir_unit_alloc(void)
 {
 	ir_unit_t *ir_unit = malloc(sizeof(*ir_unit));
