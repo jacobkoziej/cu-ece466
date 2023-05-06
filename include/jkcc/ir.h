@@ -8,4 +8,7 @@
 #define JKCC_IR_H
 
 
+#include <jkcc/ir/ir.h>
+
+
 #endif  /* JKCC_IR_H */
