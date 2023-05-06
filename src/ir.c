@@ -28,6 +28,15 @@ error_ir_unit_init:
 	return NULL;
 }
 
+void ir_unit_free(ir_unit_t *ir_unit)
+{
+	if (!ir_unit) return;
+
+	ir_unit_deinit(ir_unit);
+
+	free(ir_unit);
+}
+
 void ir_unit_deinit(ir_unit_t *ir_unit)
 {
 	if (!ir_unit) return;
