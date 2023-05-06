@@ -37,6 +37,64 @@ void ir_unit_free(ir_unit_t *ir_unit)
 	free(ir_unit);
 }
 
+int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
+{
+	int ir_error = IR_ERROR_NOMEM;
+
+	vector_t *list;
+	{
+		ast_translation_unit_t *t_unit
+			= OFFSETOF_AST_NODE(ast, ast_translation_unit_t);
+
+		if (!t_unit->external_declaration)
+			return IR_ERROR_EMPTY_TRANSLATION_UNIT;
+
+		list = ast_list_get_list(t_unit->external_declaration);
+	}
+
+	ast_t **declaration_list = list->buf;
+	for (size_t i = 0; i < list->use; i++)
+		switch (*declaration_list[i]) {
+			case AST_DECLARATION:
+				break;
+
+			case AST_FUNCTION:
+				break;
+
+			case AST_LIST: {
+				vector_t *list = ast_list_get_list(
+					declaration_list[i]);
+
+				ast_t **declaration = list->buf;
+				for (size_t i = 0; i < list->use; i++)
+					if (vector_append(
+						&ir_unit->declaration,
+						&declaration[i])) goto error;
+
+				break;
+			}
+
+			default:
+				goto error_unknown_ast_node;
+		}
+
+	return 0;
+
+error_unknown_ast_node:
+	ir_error = IR_ERROR_EMPTY_TRANSLATION_UNIT;
+
+	goto error;
+
+error:
+	{
+		ir_function_t **ir_function = ir_unit->function.buf;
+		for (size_t i = 0; i < ir_unit->function.use; i++)
+			(void) ir_function;
+	}
+
+	return ir_error;
+}
+
 void ir_unit_deinit(ir_unit_t *ir_unit)
 {
 	if (!ir_unit) return;
