@@ -44,6 +44,8 @@ ast_t *ast_declaration_init(
 	location_t    *location_end);
 void ast_declaration_free(
 	ast_t         *ast);
+uint_fast8_t ast_declaration_get_storage_class(
+	ast_t         *ast);
 void fprint_ast_declaration(
 	FILE          *stream,
 	const ast_t   *ast,
