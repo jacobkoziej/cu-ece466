@@ -34,7 +34,7 @@ typedef struct ir_function_s {
 
 typedef struct ir_unit_s {
 	vector_t declaration;  // ast_t*
-	vector_t function;     // ir_function_t*
+	vector_t function;     // ir_function_t
 } ir_unit_t;
 
 typedef struct ir_context_s {
