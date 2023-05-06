@@ -9,6 +9,7 @@
 
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <jkcc/ast/ast.h>
 #include <jkcc/ht.h>
@@ -32,16 +33,23 @@ typedef struct ir_function_s {
 	ir_bb_t *bb;
 } ir_function_t;
 
+typedef struct ir_static_declaration_s {
+	uintptr_t  bb;
+	ast_t     *declaration;
+} ir_static_declaration_t;
+
 typedef struct ir_unit_s {
-	vector_t declaration;  // ast_t*
-	vector_t function;     // ir_function_t
+	vector_t extern_declaration;  // ast_t*
+	vector_t static_declaration;  // ir_static_declaration_t*
+	vector_t function;            // ir_function_t
 } ir_unit_t;
 
 typedef struct ir_context_s {
-	ht_t reg;
+	ir_unit_t *ir_unit;
+	ht_t       reg;
 	struct {
-		size_t bb;
-		size_t reg;
+		size_t    bb;
+		uintptr_t reg;
 	} current;
 } ir_context_t;
 
