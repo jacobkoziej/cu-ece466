@@ -5,6 +5,7 @@
  */
 
 #include <jkcc/ir.h>
+#include <jkcc/private/ir.h>
 
 #include <stddef.h>
 #include <stdlib.h>
