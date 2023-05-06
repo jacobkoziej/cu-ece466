@@ -6,9 +6,27 @@
 
 #include <jkcc/ir.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+
 #include <jkcc/ast.h>
 #include <jkcc/vector.h>
 
+
+ir_unit_t *ir_unit_alloc(void)
+{
+	ir_unit_t *ir_unit = malloc(sizeof(*ir_unit));
+	if (!ir_unit) return NULL;
+
+	if (ir_unit_init(ir_unit)) goto error_ir_unit_init;
+
+	return ir_unit;
+
+error_ir_unit_init:
+	free(ir_unit);
+
+	return NULL;
+}
 
 void ir_unit_deinit(ir_unit_t *ir_unit)
 {
