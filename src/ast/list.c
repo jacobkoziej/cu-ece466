@@ -75,6 +75,11 @@ void ast_list_free(ast_t *ast)
 	free(node);
 }
 
+vector_t *ast_list_get_list(ast_t *ast)
+{
+	return &OFFSETOF_AST_NODE(ast, ast_list_t)->list;
+}
+
 void fprint_ast_list(
 	FILE         *stream,
 	const ast_t  *ast,
