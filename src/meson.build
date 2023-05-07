@@ -50,6 +50,7 @@ jkcc_src = files(
 
 
 subdir('ast')
+subdir('ir')
 
 
 executable(
