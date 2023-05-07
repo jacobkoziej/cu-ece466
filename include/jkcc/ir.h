@@ -11,6 +11,7 @@
 #include <jkcc/ir/bb.h>
 #include <jkcc/ir/function.h>
 #include <jkcc/ir/ir.h>
+#include <jkcc/ir/quad.h>
 
 #include <jkcc/ast.h>
 
