@@ -68,6 +68,12 @@ void ast_function_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_function_get_body(
+	ast_t *function)
+{
+	return OFFSETOF_AST_NODE(function, ast_function_t)->body;
+}
+
 void ast_function_set_body(
 	ast_t *function,
 	ast_t *body)
