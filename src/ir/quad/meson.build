@@ -3,5 +3,5 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 jkcc_src += files(
-        'generic.c',
+        'binop.c',
 )

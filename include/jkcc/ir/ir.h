@@ -19,7 +19,7 @@
 
 
 typedef enum ir_quad_e {
-	IR_QUAD_GENERIC,
+	IR_QUAD_BINOP,
 	IR_QUAD_TOTAL,
 } ir_quad_t;
 

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 /*
- * generic.h -- generic quad
+ * binop.h -- binary operation quad
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#ifndef JKCC_IR_QUAD_GENERIC_H
-#define JKCC_IR_QUAD_GENERIC_H
+#ifndef JKCC_IR_QUAD_BINOP_H
+#define JKCC_IR_QUAD_BINOP_H
 
 
 #include <jkcc/ir/ir.h>
 
 
-#endif  /* JKCC_IR_QUAD_GENERIC_H */
+#endif  /* JKCC_IR_QUAD_BINOP_H */
