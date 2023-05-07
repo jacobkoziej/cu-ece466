@@ -8,6 +8,7 @@
 #define JKCC_IR_H
 
 
+#include <jkcc/ir/function.h>
 #include <jkcc/ir/ir.h>
 
 #include <jkcc/ast.h>
