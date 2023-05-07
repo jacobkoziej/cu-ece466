@@ -14,3 +14,12 @@ ir_function_t *ir_function_alloc(void)
 {
 	return calloc(1, sizeof(ir_function_t));
 }
+
+void ir_function_free(ir_function_t *ir_function)
+{
+	if (!ir_function) return;
+
+	(void) ir_function->bb;
+
+	free(ir_function);
+}

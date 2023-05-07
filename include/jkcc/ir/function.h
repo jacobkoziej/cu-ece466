@@ -13,6 +13,8 @@
 
 ir_function_t *ir_function_alloc(
 	void);
+void ir_function_free(
+	ir_function_t *ir_function);
 
 
 #endif  /* JKCC_IR_FUNCTION_H */
