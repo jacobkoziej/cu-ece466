@@ -11,8 +11,57 @@
 #include <stdlib.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/ht.h>
 #include <jkcc/vector.h>
 
+
+int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
+{
+	ir_static_declaration_t *ir_static_declaration;
+
+	switch (ast_declaration_get_storage_class(declaration)) {
+		case AST_DECLARATION_IMPLICIT_EXTERN:
+			if (vector_append(
+				&ir_context->ir_unit->extern_declaration,
+				&declaration)) return IR_ERROR_NOMEM;
+
+			break;
+
+		case AST_DECLARATION_STATIC:
+			ir_static_declaration = ir_static_declaration_alloc(
+				ir_context,
+				declaration);
+			if (!ir_static_declaration) return IR_ERROR_NOMEM;
+
+			if (vector_append(
+				&ir_context->ir_unit->static_declaration,
+				&ir_static_declaration))
+				goto error_vector_append_ir_static_declaration;
+
+			if (ht_insert(
+				&ir_context->static_declaration,
+				ast_declaration_get_type(declaration),
+				sizeof(ast_type_t*),
+				(void*) ir_static_declaration->bb))
+				goto error_ht_insert_ir_static_declaration;
+
+			break;
+
+		default:
+			return IR_ERROR_UNIMPLEMENTED_STORAGE_CLASS;
+	}
+
+	return 0;
+
+error_ht_insert_ir_static_declaration:
+	vector_pop(&ir_context->ir_unit->static_declaration, NULL);
+
+error_vector_append_ir_static_declaration:
+	--ir_context->current.bb;
+	free(ir_static_declaration);
+
+	return 0;
+}
 
 ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_context_t *ir_context,
@@ -68,10 +117,24 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 		list = ast_list_get_list(t_unit->external_declaration);
 	}
 
+	ir_context_t ir_context = {
+		.ir_unit = ir_unit,
+	};
+
+	if (ht_init(&ir_context.static_declaration, 0)) goto error;
+
 	ast_t **declaration_list = list->buf;
 	for (size_t i = 0; i < list->use; i++)
 		switch (*declaration_list[i]) {
-			case AST_DECLARATION:
+			case AST_DECLARATION:;
+				int ret = ir_declaration(
+					&ir_context,
+					declaration_list[i]);
+				if (ret) {
+					ir_error = ret;
+					goto error;
+				}
+
 				break;
 
 			case AST_FUNCTION:
@@ -81,29 +144,30 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 				vector_t *list = ast_list_get_list(
 					declaration_list[i]);
 
-				// TODO: add distinction
-				// between static & extern
 				ast_t **declaration = list->buf;
-				for (size_t i = 0; i < list->use; i++)
-					if (vector_append(
-						&ir_unit->extern_declaration,
-						&declaration[i])) goto error;
+				for (size_t i = 0; i < list->use; i++) {
+					int ret = ir_declaration(
+						&ir_context,
+						declaration[i]);
+					if (ret) {
+						ir_error = ret;
+						goto error;
+					}
+				}
 
 				break;
 			}
 
 			default:
-				goto error_unknown_ast_node;
+				ir_error = IR_ERROR_UNKNOWN_AST_NODE;
+				goto error;
 		}
 
 	return 0;
 
-error_unknown_ast_node:
-	ir_error = IR_ERROR_EMPTY_TRANSLATION_UNIT;
-
-	goto error;
-
 error:
+	ht_free(&ir_context.static_declaration, free);
+
 	{
 		ir_function_t **ir_function = ir_unit->function.buf;
 		for (size_t i = 0; i < ir_unit->function.use; i++)
@@ -120,6 +184,11 @@ void ir_unit_deinit(ir_unit_t *ir_unit)
 	ir_function_t *ir_function = ir_unit->function.buf;
 	for (size_t i = 0; i < ir_unit->function.use; i++)
 		(void) ir_function;
+
+	ir_static_declaration_t **ir_static_declaration
+		= ir_unit->static_declaration.buf;
+	for (size_t i = 0; i < ir_unit->static_declaration.use; i++)
+		free(ir_static_declaration[i]);
 
 	vector_free(&ir_unit->extern_declaration);
 	vector_free(&ir_unit->static_declaration);

@@ -13,11 +13,15 @@
 #include <jkcc/ast.h>
 
 
-#define IR_ERROR_NOMEM                  (-1)
-#define IR_ERROR_EMPTY_TRANSLATION_UNIT (-2)
-#define IR_ERROR_UNKNOWN_AST_NODE       (-3)
+#define IR_ERROR_NOMEM                       (-1)
+#define IR_ERROR_EMPTY_TRANSLATION_UNIT      (-2)
+#define IR_ERROR_UNKNOWN_AST_NODE            (-3)
+#define IR_ERROR_UNIMPLEMENTED_STORAGE_CLASS (-4)
 
 
+int ir_declaration(
+	ir_context_t *ir_context,
+	ast_t        *declaration);
 ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_context_t *ir_context,
 	ast_t        *declaration);
