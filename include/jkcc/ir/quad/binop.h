@@ -10,6 +10,7 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stdint.h>
 
 
 typedef enum ir_quad_binop_op_e {
@@ -24,5 +25,15 @@ typedef enum ir_quad_binop_op_e {
 	IR_QUAD_BINOP_LSL,
 	IR_QUAD_BINOP_LSR,
 } ir_quad_binop_op_t;
+
+
+typedef struct ir_quad_binop_s {
+	uintptr_t          dst;
+	ir_quad_binop_op_t op;
+	uintptr_t          lhs;
+	uintptr_t          rhs;
+	ir_quad_t          ir_quad;
+} ir_quad_binop_t;
+
 
 #endif  /* JKCC_IR_QUAD_BINOP_H */
