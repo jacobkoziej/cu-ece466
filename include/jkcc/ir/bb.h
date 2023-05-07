@@ -12,7 +12,9 @@
 
 
 ir_bb_t *ir_bb_alloc(
-	size_t id);
+	size_t   id);
+void ir_bb_free(
+	ir_bb_t *ir_bb);
 
 
 #endif  /* JKCC_IR_BB_H */

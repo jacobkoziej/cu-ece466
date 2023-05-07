@@ -29,3 +29,16 @@ error:
 
 	return NULL;
 }
+
+void ir_bb_free(ir_bb_t *ir_bb)
+{
+	if (!ir_bb) return;
+
+	ir_quad_t **ir_quad = ir_bb->quad.buf;
+	for (size_t i = 0; i < ir_bb->quad.use; i++)
+		(void) ir_quad;
+
+	vector_free(&ir_bb->quad);
+
+	free(ir_bb);
+}
