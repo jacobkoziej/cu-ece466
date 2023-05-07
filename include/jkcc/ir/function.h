@@ -11,4 +11,8 @@
 #include <jkcc/ir/ir.h>
 
 
+ir_function_t *ir_function_alloc(
+	void);
+
+
 #endif  /* JKCC_IR_FUNCTION_H */
