@@ -61,6 +61,11 @@ uint_fast8_t ast_declaration_get_storage_class(ast_t *ast)
 	return OFFSETOF_AST_NODE(ast, ast_declaration_t)->storage_class;
 }
 
+ast_t *ast_declaration_get_type(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_declaration_t)->type;
+}
+
 void fprint_ast_declaration(
 	FILE         *stream,
 	const ast_t  *ast,
