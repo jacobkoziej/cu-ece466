@@ -9,6 +9,9 @@
 
 #include <stdlib.h>
 
+#include <jkcc/ast.h>
+#include <jkcc/ir.h>
+
 
 ir_function_t *ir_function_alloc(void)
 {
@@ -22,4 +25,28 @@ void ir_function_free(ir_function_t *ir_function)
 	(void) ir_function->bb;
 
 	free(ir_function);
+}
+
+int ir_function_gen(
+	ir_context_t  *ir_context,
+	ir_function_t *ir_function,
+	ast_t         *ast_function)
+{
+	(void) ir_context;
+	(void) ir_function;
+
+	vector_t *list;
+	{
+		ast_t *ast_list = ast_function_get_body(ast_function);
+
+		if (ast_list) return IR_ERROR_EMPTY_FUNCTION_BODY;
+
+		list = ast_list_get_list(ast_list);
+	}
+
+	ast_t **statement = list->buf;
+	for (size_t i = 0; i < list->use; i++)
+		(void) statement;
+
+	return 0;
 }
