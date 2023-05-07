@@ -3,8 +3,5 @@
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
 jkcc_src += files(
-        'bb.c',
-        'function.c',
+        'generic.c',
 )
-
-subdir('quad')
