@@ -8,6 +8,7 @@
 #define JKCC_IR_QUAD_H
 
 
+#include <jkcc/ir/quad/alloca.h>
 #include <jkcc/ir/quad/binop.h>
 
 
