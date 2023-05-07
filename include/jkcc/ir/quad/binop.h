@@ -11,4 +11,18 @@
 #include <jkcc/ir/ir.h>
 
 
+
+typedef enum ir_quad_binop_op_e {
+	IR_QUAD_BINOP_ADD,
+	IR_QUAD_BINOP_SUB,
+	IR_QUAD_BINOP_MUL,
+	IR_QUAD_BINOP_DIV,
+	IR_QUAD_BINOP_MOD,
+	IR_QUAD_BINOP_AND,
+	IR_QUAD_BINOP_OOR,
+	IR_QUAD_BINOP_EOR,
+	IR_QUAD_BINOP_LSL,
+	IR_QUAD_BINOP_LSR,
+} ir_quad_binop_op_t;
+
 #endif  /* JKCC_IR_QUAD_BINOP_H */
