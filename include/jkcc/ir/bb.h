@@ -11,4 +11,8 @@
 #include <jkcc/ir/ir.h>
 
 
+ir_bb_t *ir_bb_alloc(
+	size_t id);
+
+
 #endif  /* JKCC_IR_BB_H */
