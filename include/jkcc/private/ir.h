@@ -11,4 +11,9 @@
 #include <jkcc/ir/ir.h>
 
 
+#define IR_QUAD_INIT(type)                  \
+	type *quad = malloc(sizeof(*quad)); \
+	if (!quad) return IR_ERROR_NOMEM;
+
+
 #endif  /* JKCC_PRIVATE_IR_H */
