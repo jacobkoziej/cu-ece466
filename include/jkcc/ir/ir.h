@@ -47,6 +47,21 @@ typedef struct ir_static_declaration_s {
 	ast_t     *declaration;
 } ir_static_declaration_t;
 
+typedef enum ir_location_type_e {
+	IR_LOCATION_REG,
+	IR_LOCATION_EXTERN_DECLARATION,
+	IR_LOCATION_STATIC_DECLARATION,
+} ir_location_type_t;
+
+typedef struct ir_location_s {
+	ir_location_type_t type;
+	union {
+		uintptr_t                reg;
+		ast_t                   *extern_declaration;
+		ir_static_declaration_t *static_declaration;
+	};
+} ir_location_t;
+
 typedef struct ir_unit_s {
 	vector_t extern_declaration;  // ast_t*
 	vector_t static_declaration;  // ir_static_declaration_t*
