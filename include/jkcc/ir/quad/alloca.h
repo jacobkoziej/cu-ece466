@@ -11,4 +11,10 @@
 #include <jkcc/ir/ir.h>
 
 
+typedef enum ir_quad_alloca_type_e {
+	IR_QUAD_ALLOCA_TYPE_I32,
+	IR_QUAD_ALLOCA_TYPE_PTR,
+} ir_quad_alloca_type_t;
+
+
 #endif  /* JKCC_IR_QUAD_ALLOCA_H */
