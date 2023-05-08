@@ -10,6 +10,8 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stddef.h>
+
 
 typedef enum ir_quad_br_condition_e {
 	IR_QUAD_BR_EQ,
@@ -29,6 +31,12 @@ typedef enum ir_quad_br_condition_e {
 	IR_QUAD_BR_AL,
 	IR_QUAD_BR_NV,
 } ir_quad_br_condition_t;
+
+typedef struct ir_quad_br_s {
+	ir_quad_br_condition_t condition;
+	size_t                 bb;
+	ir_quad_t              ir_quad;
+} ir_quad_br_t;
 
 
 #endif  /* JKCC_IR_QUAD_BR_H */
