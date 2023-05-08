@@ -39,4 +39,10 @@ typedef struct ir_quad_br_s {
 } ir_quad_br_t;
 
 
+int ir_quad_br_gen(
+	ir_quad_t              **ir_quad,
+	ir_quad_br_condition_t   condition,
+	size_t                   bb);
+
+
 #endif  /* JKCC_IR_QUAD_BR_H */
