@@ -5,6 +5,7 @@
 jkcc_src += files(
         'bb.c',
         'function.c',
+        'quad.c',
 )
 
 subdir('quad')
