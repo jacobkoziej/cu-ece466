@@ -14,6 +14,7 @@
 
 #include <jkcc/ast.h>
 #include <jkcc/ht.h>
+#include <jkcc/string.h>
 #include <jkcc/vector.h>
 
 
@@ -68,6 +69,14 @@ error_vector_append_ir_static_declaration:
 	free(ir_static_declaration);
 
 	return 0;
+}
+
+void ir_extern_declaration_symbol_fprint(FILE *stream, ast_t *declaration)
+{
+	const string_t *identifier = ast_identifier_get_string(
+		ast_declaration_get_identifier(declaration));
+
+	fprintf(stream, "@%s", identifier->head);
 }
 
 ir_static_declaration_t *ir_static_declaration_alloc(

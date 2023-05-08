@@ -26,6 +26,9 @@ void ir_align_fprint(
 int ir_declaration(
 	ir_context_t            *ir_context,
 	ast_t                   *declaration);
+void ir_extern_declaration_symbol_fprint(
+	FILE                    *stream,
+	ast_t                   *declaration);
 ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_context_t            *ir_context,
 	ast_t                   *declaration);
