@@ -9,7 +9,23 @@
 #include <jkcc/private/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
+#include <jkcc/ir.h>
+
+
+void ir_quad_mov_fprint(FILE *stream, ir_quad_t *ir_quad)
+{
+	IR_QUAD_FPRINT_BEGIN(ir_quad_mov_t);
+
+	ir_reg_fprint(stream, quad->dst);
+	fprintf(stream, " = mov ");
+	ir_reg_type_fprint(stream, quad->type);
+	fprintf(stream, " 0x%lx, ", quad->immediate);
+	ir_align_fprint(stream, quad->align);
+
+	IR_QUAD_FPRINT_FINISH;
+}
 
 int ir_quad_mov_gen(
 	ir_context_t   *ir_context,
