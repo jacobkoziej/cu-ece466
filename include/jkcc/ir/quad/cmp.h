@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef struct ir_quad_cmp_s {
@@ -20,6 +21,9 @@ typedef struct ir_quad_cmp_s {
 } ir_quad_cmp_t;
 
 
+void ir_quad_cmp_fprint(
+	FILE       *stream,
+	ir_quad_t  *ir_quad);
 int ir_quad_cmp_gen(
 	ir_quad_t **ir_quad,
 	uintptr_t   lhs,
