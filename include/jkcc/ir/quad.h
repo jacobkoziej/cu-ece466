@@ -9,6 +9,7 @@
 
 
 #include <jkcc/ir/quad/alloca.h>
+#include <jkcc/ir/quad/arg.h>
 #include <jkcc/ir/quad/binop.h>
 #include <jkcc/ir/quad/br.h>
 #include <jkcc/ir/quad/call.h>
