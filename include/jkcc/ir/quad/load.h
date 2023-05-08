@@ -10,6 +10,7 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
