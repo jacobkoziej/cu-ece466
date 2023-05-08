@@ -23,4 +23,11 @@ typedef struct ir_quad_mov_s {
 } ir_quad_mov_t;
 
 
+int ir_quad_mov_gen(
+	ir_context_t   *ir_context,
+	ir_quad_t     **ir_quad,
+	ir_reg_type_t   type,
+	uintptr_t       immediate);
+
+
 #endif  /* JKCC_IR_QUAD_MOV_H */
