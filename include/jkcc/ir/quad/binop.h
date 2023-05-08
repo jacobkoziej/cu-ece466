@@ -36,4 +36,12 @@ typedef struct ir_quad_binop_s {
 } ir_quad_binop_t;
 
 
+int ir_quad_binop_gen(
+	ir_context_t        *ir_context,
+	ir_quad_t          **ir_quad,
+	ir_quad_binop_op_t   op,
+	uintptr_t            lhs,
+	uintptr_t            rhs);
+
+
 #endif  /* JKCC_IR_QUAD_BINOP_H */
