@@ -20,4 +20,10 @@ typedef struct ir_quad_cmp_s {
 } ir_quad_cmp_t;
 
 
+int ir_quad_cmp_gen(
+	ir_quad_t **ir_quad,
+	uintptr_t   lhs,
+	uintptr_t   rhs);
+
+
 #endif  /* JKCC_IR_QUAD_CMP_H */
