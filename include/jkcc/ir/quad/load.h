@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef struct ir_quad_load_s {
@@ -20,6 +21,11 @@ typedef struct ir_quad_load_s {
 	size_t        align;
 	ir_quad_t     ir_quad;
 } ir_quad_load_t;
+
+
+void ir_quad_load_fprint(
+	FILE      *stream,
+	ir_quad_t *ir_quad);
 
 
 #endif  /* JKCC_IR_QUAD_LOAD_H */
