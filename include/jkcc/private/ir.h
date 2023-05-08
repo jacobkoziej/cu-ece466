@@ -10,6 +10,9 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 
 #define IR_QUAD_INIT(type)                  \
 	type *quad = malloc(sizeof(*quad)); \
@@ -19,6 +22,11 @@
 	quad->ir_quad = val;       \
 	*ir_quad = &quad->ir_quad; \
 	return 0;
+
+#define IR_QUAD_FPRINT_BEGIN(type)                    \
+	type *quad = OFFSETOF_IR_QUAD(ir_quad, type); \
+	fprintf(stream, "\t");
+
 
 
 #endif  /* JKCC_PRIVATE_IR_H */
