@@ -59,7 +59,7 @@ typedef struct ir_context_s {
 	ht_t       static_declaration;
 	struct {
 		size_t    bb;
-		uintptr_t reg;
+		uintptr_t dst;
 	} current;
 } ir_context_t;
 
