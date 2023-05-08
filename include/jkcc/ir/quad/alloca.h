@@ -29,8 +29,12 @@ typedef struct ir_quad_alloc_s {
 
 
 void ir_quad_alloca_fprint(
-	FILE      *stream,
-	ir_quad_t *ir_quad);
+	FILE          *stream,
+	ir_quad_t     *ir_quad);
+int ir_quad_alloca_gen(
+	ir_context_t  *ir_context,
+	ir_quad_t    **ir_quad,
+	ast_t         *type);
 
 
 #endif  /* JKCC_IR_QUAD_ALLOCA_H */
