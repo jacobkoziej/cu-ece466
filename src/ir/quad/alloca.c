@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <jkcc/ht.h>
 #include <jkcc/ir.h>
 
 
@@ -20,11 +21,11 @@ void ir_quad_alloca_fprint(FILE *stream, ir_quad_t *ir_quad)
 
 	const char *type;
 	switch (quad->type) {
-		case IR_QUAD_ALLOCA_TYPE_I32:
+		case IR_REG_TYPE_I32:
 			type = "i32";
 			break;
 
-		case IR_QUAD_ALLOCA_TYPE_PTR:
+		case IR_REG_TYPE_PTR:
 			type = "ptr";
 			break;
 
@@ -50,20 +51,42 @@ int ir_quad_alloca_gen(
 
 	switch (*type) {
 		case AST_POINTER:
-			quad->type = IR_QUAD_ALLOCA_TYPE_PTR;
+			quad->type = IR_REG_TYPE_PTR;
 			break;
 
 		default:
 			// TODO: FIX THIS CRIME!
 			// everything's an i32... sigh
-			quad->type = IR_QUAD_ALLOCA_TYPE_I32;
+			quad->type = IR_REG_TYPE_I32;
 			break;
 	}
 
 	quad->dst = ++ir_context->current.dst;
 
+	uintptr_t key;
+	uintptr_t val;
+
+	key = quad->dst;
+	val = quad->type;
+	if (ht_insert(&ir_context->reg.type, &key, sizeof(key), (void*) val))
+		goto error_ht_insert_reg_type;
+
+	key = (uintptr_t) type;
+	val = quad->type;
+	if (ht_insert(&ir_context->reg.lookup, &key, sizeof(key), (void*) val))
+		goto error_ht_insert_reg_lookup;
+
 	// TODO: determine alignment
 	quad->align = 0;
 
 	IR_QUAD_RETURN(IR_QUAD_ALLOCA);
+
+error_ht_insert_reg_lookup:
+	key = quad->dst;
+	ht_rm(&ir_context->reg.type, &key, sizeof(key), NULL);
+
+error_ht_insert_reg_type:
+	free(quad);
+
+	return IR_ERROR_NOMEM;
 }

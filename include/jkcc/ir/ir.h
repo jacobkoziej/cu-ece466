@@ -47,6 +47,11 @@ typedef struct ir_static_declaration_s {
 	ast_t     *declaration;
 } ir_static_declaration_t;
 
+typedef enum ir_reg_type_e {
+	IR_REG_TYPE_I32,
+	IR_REG_TYPE_PTR,
+} ir_reg_type_t;
+
 typedef enum ir_location_type_e {
 	IR_LOCATION_REG,
 	IR_LOCATION_EXTERN_DECLARATION,
@@ -70,8 +75,11 @@ typedef struct ir_unit_s {
 
 typedef struct ir_context_s {
 	ir_unit_t *ir_unit;
-	ht_t       reg;
 	ht_t       static_declaration;
+	struct {
+		ht_t lookup;
+		ht_t type;
+	} reg;
 	struct {
 		size_t    bb;
 		uintptr_t dst;
