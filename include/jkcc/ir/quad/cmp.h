@@ -10,5 +10,14 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stdint.h>
+
+
+typedef struct ir_quad_cmp_s {
+	uintptr_t lhs;
+	uintptr_t rhs;
+	ir_quad_t ir_quad;
+} ir_quad_cmp_t;
+
 
 #endif  /* JKCC_IR_QUAD_CMP_H */
