@@ -13,26 +13,31 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/ir/quad.h>
 
+#include <stdio.h>
+
 #include <jkcc/ast.h>
 
 
 int ir_declaration(
-	ir_context_t *ir_context,
-	ast_t        *declaration);
+	ir_context_t  *ir_context,
+	ast_t         *declaration);
 ir_static_declaration_t *ir_static_declaration_alloc(
-	ir_context_t *ir_context,
-	ast_t        *declaration);
+	ir_context_t  *ir_context,
+	ast_t         *declaration);
+void ir_reg_type_fprint(
+	FILE          *stream,
+	ir_reg_type_t  type);
 ir_unit_t *ir_unit_alloc(
 	void);
 void ir_unit_deinit(
-	ir_unit_t    *ir_unit);
+	ir_unit_t     *ir_unit);
 void ir_unit_free(
-	ir_unit_t    *ir_unit);
+	ir_unit_t     *ir_unit);
 int ir_unit_gen(
-	ir_unit_t    *ir_unit,
-	ast_t        *ast);
+	ir_unit_t     *ir_unit,
+	ast_t         *ast);
 int ir_unit_init(
-	ir_unit_t    *ir_unit);
+	ir_unit_t     *ir_unit);
 
 
 #endif  /* JKCC_IR_H */

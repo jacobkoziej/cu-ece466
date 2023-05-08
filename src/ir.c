@@ -8,6 +8,7 @@
 #include <jkcc/private/ir.h>
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <jkcc/ast.h>
@@ -76,6 +77,22 @@ ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_static_declaration->declaration =   declaration;
 
 	return ir_static_declaration;
+}
+
+void ir_reg_type_fprint(FILE *stream, ir_reg_type_t type)
+{
+	const char *type_str;
+	switch (type) {
+		case IR_REG_TYPE_I32:
+			type_str = "i32";
+			break;
+
+		case IR_REG_TYPE_PTR:
+			type_str = "ptr";
+			break;
+	}
+
+	fprintf(stream, "%s", type_str);
 }
 
 ir_unit_t *ir_unit_alloc(void)

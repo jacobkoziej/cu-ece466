@@ -19,27 +19,9 @@ void ir_quad_alloca_fprint(FILE *stream, ir_quad_t *ir_quad)
 {
 	ir_quad_alloca_t *quad = OFFSETOF_IR_QUAD(ir_quad, ir_quad_alloca_t);
 
-	const char *type;
-	switch (quad->type) {
-		case IR_REG_TYPE_I32:
-			type = "i32";
-			break;
-
-		case IR_REG_TYPE_PTR:
-			type = "ptr";
-			break;
-
-		default:
-			type = "(unknown)";
-			break;
-	}
-
-	fprintf(
-		stream,
-		"\t%%%lu = alloca %s, align %lu\n",
-		quad->dst,
-		type,
-		quad->align);
+	fprintf(stream, "\t%%%lu = alloca ", quad->dst);
+	ir_reg_type_fprint(stream, quad->type);
+	fprintf(stream, ", align %lu\n", quad->align);
 }
 
 int ir_quad_alloca_gen(
