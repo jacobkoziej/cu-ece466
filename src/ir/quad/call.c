@@ -8,6 +8,40 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/private/ir.h>
 
+#include <stdio.h>
+
+#include <jkcc/ir.h>
+
+
+void ir_quad_call_fprint(FILE *stream, ir_quad_t *ir_quad)
+{
+	IR_QUAD_FPRINT_BEGIN(ir_quad_call_t);
+
+	ir_reg_fprint(stream, quad->dst);
+	fprintf(stream, " = call ");
+	ir_reg_type_fprint(stream, quad->type);
+	fprintf(stream, " ");
+
+	switch (quad->src.type) {
+		case IR_LOCATION_REG:
+			ir_reg_fprint(stream, quad->src.reg);
+			break;
+
+		case IR_LOCATION_EXTERN_DECLARATION:
+			ir_extern_declaration_symbol_fprint(
+				stream,
+				quad->src.extern_declaration);
+			break;
+
+		case IR_LOCATION_STATIC_DECLARATION:
+			ir_static_declaration_symbol_fprint(
+				stream,
+				quad->src.static_declaration);
+			break;
+	}
+
+	IR_QUAD_FPRINT_FINISH;
+}
 
 int ir_quad_call_gen(
 	ir_context_t   *ir_context,
