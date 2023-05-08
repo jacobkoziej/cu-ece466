@@ -13,12 +13,16 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/ir/quad.h>
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
 #include <jkcc/ast.h>
 
 
+void ir_align_fprint(
+	FILE          *stream,
+	size_t         align);
 int ir_declaration(
 	ir_context_t  *ir_context,
 	ast_t         *declaration);

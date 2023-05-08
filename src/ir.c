@@ -17,6 +17,11 @@
 #include <jkcc/vector.h>
 
 
+void ir_align_fprint(FILE *stream, size_t align)
+{
+	fprintf(stream, "align %lu", align);
+}
+
 int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 {
 	ir_static_declaration_t *ir_static_declaration;
