@@ -24,8 +24,13 @@ typedef struct ir_quad_load_s {
 
 
 void ir_quad_load_fprint(
-	FILE      *stream,
-	ir_quad_t *ir_quad);
+	FILE           *stream,
+	ir_quad_t      *ir_quad);
+int ir_quad_load_gen(
+	ir_context_t   *ir_context,
+	ir_quad_t     **ir_quad,
+	ir_reg_type_t   type,
+	ir_location_t  *src);
 
 
 #endif  /* JKCC_IR_QUAD_LOAD_H */

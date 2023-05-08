@@ -9,6 +9,7 @@
 #include <jkcc/private/ir.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <jkcc/ir.h>
 
@@ -46,4 +47,22 @@ void ir_quad_load_fprint(FILE *stream, ir_quad_t *ir_quad)
 	ir_align_fprint(stream, quad->align);
 
 	IR_QUAD_FPRINT_FINISH;
+}
+
+int ir_quad_load_gen(
+	ir_context_t   *ir_context,
+	ir_quad_t     **ir_quad,
+	ir_reg_type_t   type,
+	ir_location_t  *src)
+{
+	IR_QUAD_INIT(ir_quad_load_t);
+
+	quad->dst  = ++ir_context->current.dst;
+	quad->type =   type;
+	quad->src  =  *src;
+
+	// TODO: determine alignment
+	quad->align = 0;
+
+	IR_QUAD_RETURN(IR_QUAD_LOAD);
 }
