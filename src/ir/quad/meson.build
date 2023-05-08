@@ -4,6 +4,7 @@
 
 jkcc_src += files(
         'alloca.c',
+        'arg.c',
         'binop.c',
         'br.c',
         'call.c',
