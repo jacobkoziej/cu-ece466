@@ -106,6 +106,13 @@ void ir_reg_type_fprint(FILE *stream, ir_reg_type_t type)
 	fprintf(stream, "%s", type_str);
 }
 
+void ir_static_declaration_symbol_fprint(
+	FILE                    *stream,
+	ir_static_declaration_t *declaration)
+{
+	fprintf(stream, "@.L%lu", declaration->bb);
+}
+
 ir_unit_t *ir_unit_alloc(void)
 {
 	ir_unit_t *ir_unit = malloc(sizeof(*ir_unit));

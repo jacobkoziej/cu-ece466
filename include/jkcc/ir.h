@@ -21,31 +21,34 @@
 
 
 void ir_align_fprint(
-	FILE          *stream,
-	size_t         align);
+	FILE                    *stream,
+	size_t                   align);
 int ir_declaration(
-	ir_context_t  *ir_context,
-	ast_t         *declaration);
+	ir_context_t            *ir_context,
+	ast_t                   *declaration);
 ir_static_declaration_t *ir_static_declaration_alloc(
-	ir_context_t  *ir_context,
-	ast_t         *declaration);
+	ir_context_t            *ir_context,
+	ast_t                   *declaration);
 void ir_reg_fprint(
-	FILE          *stream,
-	uintptr_t      reg);
+	FILE                    *stream,
+	uintptr_t                reg);
 void ir_reg_type_fprint(
-	FILE          *stream,
-	ir_reg_type_t  type);
+	FILE                    *stream,
+	ir_reg_type_t            type);
+void ir_static_declaration_symbol_fprint(
+	FILE                    *stream,
+	ir_static_declaration_t *declaration);
 ir_unit_t *ir_unit_alloc(
 	void);
 void ir_unit_deinit(
-	ir_unit_t     *ir_unit);
+	ir_unit_t               *ir_unit);
 void ir_unit_free(
-	ir_unit_t     *ir_unit);
+	ir_unit_t               *ir_unit);
 int ir_unit_gen(
-	ir_unit_t     *ir_unit,
-	ast_t         *ast);
+	ir_unit_t               *ir_unit,
+	ast_t                   *ast);
 int ir_unit_init(
-	ir_unit_t     *ir_unit);
+	ir_unit_t               *ir_unit);
 
 
 #endif  /* JKCC_IR_H */
