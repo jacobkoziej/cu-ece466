@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stddef.h>
+#include <stdio.h>
 
 
 typedef enum ir_quad_br_condition_e {
@@ -39,6 +40,9 @@ typedef struct ir_quad_br_s {
 } ir_quad_br_t;
 
 
+void ir_quad_br_fprint(
+	FILE                    *stream,
+	ir_quad_t               *ir_quad);
 int ir_quad_br_gen(
 	ir_quad_t              **ir_quad,
 	ir_quad_br_condition_t   condition,
