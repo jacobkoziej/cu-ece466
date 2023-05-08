@@ -12,9 +12,15 @@
 #include <jkcc/ir/quad/binop.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 #define OFFSETOF_IR_QUAD(quad, type) ((type*) (((uintptr_t) quad) - offsetof(type, ir_quad)))
+
+
+extern void (*const ir_quad_fprint[IR_QUAD_TOTAL])(
+	FILE      *stream,
+	ir_quad_t *ir_quad);
 
 
 #endif  /* JKCC_IR_QUAD_H */
