@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef enum ir_quad_alloca_type_e {
@@ -25,6 +26,11 @@ typedef struct ir_quad_alloc_s {
 	size_t                align;
 	ir_quad_t             ir_quad;
 } ir_quad_alloca_t;
+
+
+void ir_quad_alloca_fprint(
+	FILE      *stream,
+	ir_quad_t *ir_quad);
 
 
 #endif  /* JKCC_IR_QUAD_ALLOCA_H */
