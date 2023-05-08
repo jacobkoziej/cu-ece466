@@ -271,7 +271,7 @@ int ir_unit_init(ir_unit_t *ir_unit)
 
 	if (vector_init(
 		&ir_unit->extern_declaration,
-		sizeof(ir_static_declaration_t),
+		sizeof(ir_static_declaration_t*),
 		0)) goto error_vector_init_static_declaration;
 
 	if (vector_init(
