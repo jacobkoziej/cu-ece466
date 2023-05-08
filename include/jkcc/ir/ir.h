@@ -27,6 +27,7 @@
 
 typedef enum ir_quad_e {
 	IR_QUAD_ALLOCA,
+	IR_QUAD_ARG,
 	IR_QUAD_BINOP,
 	IR_QUAD_BR,
 	IR_QUAD_CALL,

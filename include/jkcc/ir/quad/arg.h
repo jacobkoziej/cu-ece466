@@ -10,5 +10,16 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stddef.h>
+#include <stdint.h>
+
+
+typedef struct ir_quad_arg_s {
+	size_t        pos;
+	uintptr_t     src;
+	ir_reg_type_t type;
+	ir_quad_t     ir_quad;
+} ir_quad_arg_t;
+
 
 #endif  /* JKCC_IR_QUAD_ARG_H */
