@@ -77,7 +77,7 @@ typedef struct ir_location_s {
 typedef struct ir_unit_s {
 	vector_t extern_declaration;  // ast_t*
 	vector_t static_declaration;  // ir_static_declaration_t*
-	vector_t function;            // ir_function_t
+	vector_t function;            // ir_function_t*
 } ir_unit_t;
 
 typedef struct ir_context_s {

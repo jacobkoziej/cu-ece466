@@ -170,7 +170,7 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 	ast_t **declaration_list = list->buf;
 	for (size_t i = 0; i < list->use; i++)
 		switch (*declaration_list[i]) {
-			case AST_DECLARATION:;
+			case AST_DECLARATION: {
 				int ret = ir_declaration(
 					&ir_context,
 					declaration_list[i]);
@@ -180,9 +180,32 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 				}
 
 				break;
+			}
 
-			case AST_FUNCTION:
+			case AST_FUNCTION: {
+				ir_function_t *ir_function
+					= ir_function_alloc();
+				if (!ir_function) goto error;
+
+				if (vector_append(
+					&ir_unit->function,
+					&ir_function)
+				) {
+					ir_function_free(ir_function);
+					goto error;
+				}
+
+				int ret = ir_function_gen(
+					&ir_context,
+					ir_function,
+					declaration_list[i]);
+				if (ret) {
+					ir_error = ret;
+					goto error;
+				}
+
 				break;
+			}
 
 			case AST_LIST: {
 				vector_t *list = ast_list_get_list(
@@ -225,9 +248,9 @@ void ir_unit_deinit(ir_unit_t *ir_unit)
 {
 	if (!ir_unit) return;
 
-	ir_function_t *ir_function = ir_unit->function.buf;
+	ir_function_t **ir_function = ir_unit->function.buf;
 	for (size_t i = 0; i < ir_unit->function.use; i++)
-		(void) ir_function;
+		ir_function_free(ir_function[i]);
 
 	ir_static_declaration_t **ir_static_declaration
 		= ir_unit->static_declaration.buf;
@@ -253,7 +276,7 @@ int ir_unit_init(ir_unit_t *ir_unit)
 
 	if (vector_init(
 		&ir_unit->function,
-		sizeof(ir_function_t),
+		sizeof(ir_function_t*),
 		0)) goto error_vector_init_function;
 
 	return 0;
