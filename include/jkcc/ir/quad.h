@@ -15,6 +15,10 @@
 #include <stdio.h>
 
 
+#define IR_QUAD_FPRINT(stream, ir_quad) if (ir_quad) ir_quad_fprint[*ir_quad]( \
+	stream,                                                                \
+	ir_quad)
+
 #define OFFSETOF_IR_QUAD(quad, type) ((type*) (((uintptr_t) quad) - offsetof(type, ir_quad)))
 
 
