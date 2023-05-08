@@ -22,4 +22,11 @@ typedef struct ir_quad_arg_s {
 } ir_quad_arg_t;
 
 
+int ir_quad_arg_gen(
+	ir_quad_t     **ir_quad,
+	size_t          pos,
+	uintptr_t       src,
+	ir_reg_type_t   type);
+
+
 #endif  /* JKCC_IR_QUAD_ARG_H */
