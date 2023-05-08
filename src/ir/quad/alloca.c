@@ -24,7 +24,8 @@ void ir_quad_alloca_fprint(FILE *stream, ir_quad_t *ir_quad)
 	ir_reg_type_fprint(stream, quad->type);
 	fprintf(stream, ", ");
 	ir_align_fprint(stream, quad->align);
-	fprintf(stream, "\n");
+
+	IR_QUAD_FPRINT_FINISH;
 }
 
 int ir_quad_alloca_gen(

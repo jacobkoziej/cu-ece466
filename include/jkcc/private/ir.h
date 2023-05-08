@@ -27,6 +27,9 @@
 	type *quad = OFFSETOF_IR_QUAD(ir_quad, type); \
 	fprintf(stream, "\t");
 
+#define IR_QUAD_FPRINT_FINISH  \
+	fprintf(stream, "\n");
+
 
 
 #endif  /* JKCC_PRIVATE_IR_H */
