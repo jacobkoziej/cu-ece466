@@ -18,6 +18,13 @@
 #include <jkcc/vector.h>
 
 
+#define IR_ERROR_NOMEM                       (-1)
+#define IR_ERROR_EMPTY_TRANSLATION_UNIT      (-2)
+#define IR_ERROR_UNKNOWN_AST_NODE            (-3)
+#define IR_ERROR_UNIMPLEMENTED_STORAGE_CLASS (-4)
+#define IR_ERROR_EMPTY_FUNCTION_BODY         (-5)
+
+
 typedef enum ir_quad_e {
 	IR_QUAD_ALLOCA,
 	IR_QUAD_BINOP,
