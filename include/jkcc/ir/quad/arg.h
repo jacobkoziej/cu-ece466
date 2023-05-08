@@ -12,6 +12,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef struct ir_quad_arg_s {
@@ -22,6 +23,9 @@ typedef struct ir_quad_arg_s {
 } ir_quad_arg_t;
 
 
+void ir_quad_arg_fprint(
+	FILE           *stream,
+	ir_quad_t      *ir_quad);
 int ir_quad_arg_gen(
 	ir_quad_t     **ir_quad,
 	size_t          pos,

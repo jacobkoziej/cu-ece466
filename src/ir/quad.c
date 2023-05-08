@@ -14,6 +14,7 @@ void (*const ir_quad_fprint[IR_QUAD_TOTAL])(
 	FILE      *stream,
 	ir_quad_t *ir_quad) = {
 	[IR_QUAD_ALLOCA] = ir_quad_alloca_fprint,
+	[IR_QUAD_ARG]    = ir_quad_arg_fprint,
 	[IR_QUAD_BINOP]  = ir_quad_binop_fprint,
 	[IR_QUAD_BR]     = ir_quad_br_fprint,
 	[IR_QUAD_CALL]   = ir_quad_call_fprint,
