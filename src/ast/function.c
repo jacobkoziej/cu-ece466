@@ -74,6 +74,12 @@ ast_t *ast_function_get_body(
 	return OFFSETOF_AST_NODE(function, ast_function_t)->body;
 }
 
+ast_t *ast_function_get_declaration_list(
+	ast_t *function)
+{
+	return OFFSETOF_AST_NODE(function, ast_function_t)->declaration_list;
+}
+
 void ast_function_set_body(
 	ast_t *function,
 	ast_t *body)

@@ -42,6 +42,8 @@ void ast_function_free(
 	ast_t        *ast);
 ast_t *ast_function_get_body(
 	ast_t        *function);
+ast_t *ast_function_get_declaration_list(
+	ast_t        *function);
 void ast_function_set_body(
 	ast_t        *function,
 	ast_t        *body);
