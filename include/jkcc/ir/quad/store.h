@@ -10,5 +10,17 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stddef.h>
+#include <stdint.h>
+
+
+typedef struct ir_quad_store_s {
+	ir_location_t dst;
+	ir_reg_type_t type;
+	uintptr_t     src;
+	size_t        align;
+	ir_quad_t     ir_quad;
+} ir_quad_store_t;
+
 
 #endif  /* JKCC_IR_QUAD_STORE_H */
