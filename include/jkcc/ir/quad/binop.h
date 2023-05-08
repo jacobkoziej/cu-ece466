@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef enum ir_quad_binop_op_e {
@@ -36,6 +37,9 @@ typedef struct ir_quad_binop_s {
 } ir_quad_binop_t;
 
 
+void ir_quad_binop_fprint(
+	FILE                *stream,
+	ir_quad_t           *ir_quad);
 int ir_quad_binop_gen(
 	ir_context_t        *ir_context,
 	ir_quad_t          **ir_quad,
