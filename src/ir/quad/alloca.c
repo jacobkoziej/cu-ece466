@@ -19,7 +19,9 @@ void ir_quad_alloca_fprint(FILE *stream, ir_quad_t *ir_quad)
 {
 	ir_quad_alloca_t *quad = OFFSETOF_IR_QUAD(ir_quad, ir_quad_alloca_t);
 
-	fprintf(stream, "\t%%%lu = alloca ", quad->dst);
+	fprintf(stream, "\t");
+	ir_reg_fprint(stream, quad->dst);
+	fprintf(stream, " = alloca ");
 	ir_reg_type_fprint(stream, quad->type);
 	fprintf(stream, ", align %lu\n", quad->align);
 }

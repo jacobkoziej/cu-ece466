@@ -8,6 +8,7 @@
 #include <jkcc/private/ir.h>
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -77,6 +78,11 @@ ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_static_declaration->declaration =   declaration;
 
 	return ir_static_declaration;
+}
+
+void ir_reg_fprint(FILE *stream, uintptr_t reg)
+{
+	fprintf(stream, "%%%lu", reg);
 }
 
 void ir_reg_type_fprint(FILE *stream, ir_reg_type_t type)

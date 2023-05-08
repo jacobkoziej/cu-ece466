@@ -13,6 +13,7 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/ir/quad.h>
 
+#include <stdint.h>
 #include <stdio.h>
 
 #include <jkcc/ast.h>
@@ -24,6 +25,9 @@ int ir_declaration(
 ir_static_declaration_t *ir_static_declaration_alloc(
 	ir_context_t  *ir_context,
 	ast_t         *declaration);
+void ir_reg_fprint(
+	FILE          *stream,
+	uintptr_t      reg);
 void ir_reg_type_fprint(
 	FILE          *stream,
 	ir_reg_type_t  type);
