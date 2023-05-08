@@ -16,9 +16,9 @@
 
 
 typedef struct ir_quad_store_s {
-	ir_location_t dst;
-	ir_reg_type_t type;
 	uintptr_t     src;
+	ir_reg_type_t type;
+	uintptr_t     dst;
 	size_t        align;
 	ir_quad_t     ir_quad;
 } ir_quad_store_t;
@@ -29,9 +29,9 @@ void ir_quad_store_fprint(
 	ir_quad_t      *ir_quad);
 int ir_quad_store_gen(
 	ir_quad_t     **ir_quad,
-	ir_reg_type_t   type,
 	uintptr_t       src,
-	ir_location_t  *dst);
+	ir_reg_type_t   type,
+	uintptr_t       dst);
 
 
 #endif  /* JKCC_IR_QUAD_STORE_H */

@@ -24,25 +24,7 @@ void ir_quad_store_fprint(FILE *stream, ir_quad_t *ir_quad)
 	fprintf(stream, ", ");
 	ir_reg_type_fprint(stream, IR_REG_TYPE_PTR);
 	fprintf(stream, " ");
-
-	switch (quad->dst.type) {
-		case IR_LOCATION_REG:
-			ir_reg_fprint(stream, quad->dst.reg);
-			break;
-
-		case IR_LOCATION_EXTERN_DECLARATION:
-			ir_extern_declaration_symbol_fprint(
-				stream,
-				quad->dst.extern_declaration);
-			break;
-
-		case IR_LOCATION_STATIC_DECLARATION:
-			ir_static_declaration_symbol_fprint(
-				stream,
-				quad->dst.static_declaration);
-			break;
-	}
-
+	ir_reg_fprint(stream, quad->dst);
 	fprintf(stream, ", ");
 	ir_align_fprint(stream, quad->align);
 
@@ -51,15 +33,15 @@ void ir_quad_store_fprint(FILE *stream, ir_quad_t *ir_quad)
 
 int ir_quad_store_gen(
 	ir_quad_t     **ir_quad,
-	ir_reg_type_t   type,
 	uintptr_t       src,
-	ir_location_t  *dst)
+	ir_reg_type_t   type,
+	uintptr_t       dst)
 {
 	IR_QUAD_INIT(ir_quad_store_t);
 
-	quad->dst  = *dst;
-	quad->type =  type;
-	quad->src  =  src;
+	quad->src  = src;
+	quad->type = type;
+	quad->dst  = dst;
 
 	// TODO: determine alignment
 	quad->align = 0;
