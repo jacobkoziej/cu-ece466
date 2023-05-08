@@ -10,6 +10,7 @@
 
 #include <jkcc/ir/quad/alloca.h>
 #include <jkcc/ir/quad/binop.h>
+#include <jkcc/ir/quad/load.h>
 
 #include <stdint.h>
 #include <stdio.h>
