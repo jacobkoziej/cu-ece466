@@ -69,19 +69,7 @@ argv_done:
 			ast_t *ast_type
 				= ast_declaration_get_type(declaration[i]);
 
-			ir_reg_type_t type;
-			switch (*ast_type) {
-				case AST_ARRAY:
-				case AST_POINTER:
-					type = IR_REG_TYPE_PTR;
-					break;
-
-				default:
-					// TODO: FIX THIS CRIME!
-					// everything's an i32... sigh
-					type = IR_REG_TYPE_I32;
-					break;
-			}
+			ir_reg_type_t type = ir_reg_type_gen(ast_type);
 
 			uintptr_t key = (uintptr_t) ast_type;
 			uintptr_t val = ir_context->current.dst++;

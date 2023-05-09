@@ -115,6 +115,26 @@ void ir_reg_type_fprint(FILE *stream, ir_reg_type_t type)
 	fprintf(stream, "%s", type_str);
 }
 
+ir_reg_type_t ir_reg_type_gen(ast_t *type)
+{
+	ir_reg_type_t reg_type;
+
+	switch (*type) {
+		case AST_ARRAY:
+		case AST_POINTER:
+			reg_type = IR_REG_TYPE_PTR;
+			break;
+
+		default:
+			// TODO: FIX THIS CRIME!
+			// everything's an i32... sigh
+			reg_type = IR_REG_TYPE_I32;
+			break;
+	}
+
+	return reg_type;
+}
+
 void ir_static_declaration_symbol_fprint(
 	FILE                    *stream,
 	ir_static_declaration_t *declaration)

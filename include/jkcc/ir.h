@@ -35,6 +35,8 @@ ir_static_declaration_t *ir_static_declaration_alloc(
 void ir_reg_fprint(
 	FILE                    *stream,
 	uintptr_t                reg);
+ir_reg_type_t ir_reg_type_gen(
+	ast_t                   *type);
 void ir_reg_type_fprint(
 	FILE                    *stream,
 	ir_reg_type_t            type);
