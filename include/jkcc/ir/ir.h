@@ -24,6 +24,11 @@
 #define IR_ERROR_EMPTY_FUNCTION_BODY         (-5)
 
 
+typedef enum ir_reg_type_e {
+	IR_REG_TYPE_I32,
+	IR_REG_TYPE_PTR,
+} ir_reg_type_t;
+
 typedef enum ir_quad_e {
 	IR_QUAD_ALLOCA,
 	IR_QUAD_ARG,
@@ -43,9 +48,10 @@ typedef struct ir_bb_s {
 } ir_bb_t;
 
 typedef struct ir_function_s {
-	vector_t *argv;         // ast_t*
-	ast_t    *declaration;
-	ir_bb_t  *bb;
+	ir_reg_type_t  return_type;
+	vector_t      *argv;         // ast_t*
+	ast_t         *declaration;
+	ir_bb_t       *bb;
 	struct {
 		ht_t lookup;
 		ht_t type;
@@ -56,11 +62,6 @@ typedef struct ir_static_declaration_s {
 	uintptr_t  bb;
 	ast_t     *declaration;
 } ir_static_declaration_t;
-
-typedef enum ir_reg_type_e {
-	IR_REG_TYPE_I32,
-	IR_REG_TYPE_PTR,
-} ir_reg_type_t;
 
 typedef enum ir_location_type_e {
 	IR_LOCATION_REG,

@@ -43,6 +43,9 @@ int ir_function_gen(
 		list = ast_list_get_list(ast_list);
 	}
 
+	ir_function->return_type
+		= ir_reg_type_gen(ast_function_get_return_type(ast_function));
+
 	if (ht_init(&ir_function->reg.lookup, 0)) return IR_ERROR_NOMEM;
 	if (ht_init(&ir_function->reg.type, 0)) goto error_ht_init_reg_type;
 
