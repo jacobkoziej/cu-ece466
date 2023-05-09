@@ -198,7 +198,7 @@ argv_done:
 
 	ast_t **statement = list->buf;
 	for (size_t i = 0; i < list->use; i++) {
-		int ret = ir_bb_statement_gen(ir_context, statement[i]);
+		int ret = IR_BB_GEN(ir_context, statement[i]);
 		if (ret) {
 			ir_error = ret;
 			goto error_ir_bb_statement_gen;
