@@ -80,26 +80,25 @@ retry_return_type:
 		for (size_t i = 0; i < ir_function->argv->use; i++) {
 			uintptr_t key = (uintptr_t) ast_declaration_get_type(
 				declaration[i]);
-
 			void *val;
-
-			ht_get(
-				&ir_function->reg.type,
-				&key,
-				sizeof(key),
-				&val);
-
-			ir_reg_type_t type = (uintptr_t) val;
-			ir_reg_type_fprint(stream, type);
-			fprintf(stream, " ");
 
 			ht_get(
 				&ir_function->reg.lookup,
 				&key,
 				sizeof(key),
 				&val);
-
 			uintptr_t reg = (uintptr_t) val;
+
+			key = (uintptr_t) val;
+			ht_get(
+				&ir_function->reg.type,
+				&key,
+				sizeof(key),
+				&val);
+			ir_reg_type_t type = (uintptr_t) val;
+
+			ir_reg_type_fprint(stream, type);
+			fprintf(stream, " ");
 			ir_reg_fprint(stream, reg);
 
 			if (i < ir_function->argv->use - 1)
