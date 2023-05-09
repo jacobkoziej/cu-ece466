@@ -8,4 +8,5 @@ jkcc_src += files(
         'mov.c',
         'statement.c',
         'store.c',
+        'symbol.c',
 )
