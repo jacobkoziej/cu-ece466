@@ -55,6 +55,11 @@ uint_fast32_t ast_binary_operator_get_operator(ast_t *ast)
 	return OFFSETOF_AST_NODE(ast, ast_binary_operator_t)->operator;
 }
 
+ast_t *ast_binary_operator_get_rhs(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_binary_operator_t)->rhs;
+}
+
 void fprint_ast_binary_operator(
 	FILE         *stream,
 	const ast_t  *ast,
