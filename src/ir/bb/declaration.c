@@ -55,6 +55,7 @@ int ir_bb_declaration_gen(
 		sizeof(key),
 		(void*) val)) goto error_ht_insert_reg_lookup;
 
+	key = val;
 	val = reg_type;
 	if (ht_insert(
 		&ir_context->ir_function->reg.type,

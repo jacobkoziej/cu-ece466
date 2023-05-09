@@ -182,6 +182,7 @@ argv_done:
 				sizeof(key),
 				(void*) val)) goto error_ht_insert_reg_lookup;
 
+			key = val;
 			val = type;
 			if (ht_insert(
 				&ir_function->reg.type,
