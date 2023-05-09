@@ -127,6 +127,8 @@ int ir_function_gen(
 	ir_function_t *ir_function,
 	ast_t         *ast_function)
 {
+	int ir_error = IR_ERROR_NOMEM;
+
 	ir_function->declaration = ast_function;
 
 	vector_t *list;
@@ -187,12 +189,32 @@ argv_done:
 		}
 	}
 
+	if (vector_init(&ir_function->bb, sizeof(ir_bb_t*), 0))
+		goto error_vector_init_bb;
+
+	ir_context->ir_bb = NULL;
+
 	ast_t **statement = list->buf;
-	for (size_t i = 0; i < list->use; i++)
-		(void) statement;
+	for (size_t i = 0; i < list->use; i++) {
+		int ret = ir_bb_statement_gen(ir_context, statement[i]);
+		if (ret) {
+			ir_error = ret;
+			goto error_ir_bb_statement_gen;
+		}
+	}
 
 	return 0;
 
+error_ir_bb_statement_gen:
+	{
+		ir_bb_t **ir_bb = ir_function->bb.buf;
+		for (size_t i = 0; i < ir_function->bb.use; i++)
+			ir_bb_free(ir_bb[i]);
+
+		vector_free(&ir_function->bb);
+	}
+
+error_vector_init_bb:
 error_ht_insert_reg_type:
 error_ht_insert_reg_lookup:
 	ht_free(&ir_function->reg.type, NULL);
@@ -200,5 +222,5 @@ error_ht_insert_reg_lookup:
 error_ht_init_reg_type:
 	ht_free(&ir_function->reg.lookup, NULL);
 
-	return IR_ERROR_NOMEM;
+	return ir_error;
 }

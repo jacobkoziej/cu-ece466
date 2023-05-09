@@ -51,7 +51,7 @@ typedef struct ir_function_s {
 	ir_reg_type_t  return_type;
 	vector_t      *argv;         // ast_t*
 	ast_t         *declaration;
-	ir_bb_t       *bb;
+	vector_t       bb;           // ir_bb_t*
 	struct {
 		ht_t lookup;
 		ht_t type;
@@ -87,6 +87,7 @@ typedef struct ir_unit_s {
 typedef struct ir_context_s {
 	ir_unit_t     *ir_unit;
 	ir_function_t *ir_function;
+	ir_bb_t       *ir_bb;
 	ht_t       static_declaration;
 	struct {
 		size_t    bb;
