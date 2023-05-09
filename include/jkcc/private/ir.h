@@ -8,11 +8,28 @@
 #define JKCC_PRIVATE_IR_H
 
 
-#include <jkcc/ir/ir.h>
+#include <jkcc/ir.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#define IR_BB_INIT                                                       \
+	if (!ir_context->ir_bb) {                                        \
+		ir_context->ir_bb = ir_bb_alloc(ir_context->current.bb); \
+		if (!ir_context->ir_bb) return IR_ERROR_NOMEM;           \
+                                                                         \
+		if (vector_append(                                       \
+			&ir_context->ir_function->bb,                    \
+			&ir_context->ir_bb)                              \
+		) {                                                      \
+			ir_bb_free(ir_context->ir_bb);                   \
+			ir_context->ir_bb = NULL;                        \
+			return IR_ERROR_NOMEM;                           \
+		}                                                        \
+                                                                         \
+		++ir_context->current.bb;                                \
+	}
 
 #define IR_QUAD_INIT(type)                  \
 	type *quad = malloc(sizeof(*quad)); \
