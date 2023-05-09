@@ -10,5 +10,10 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <jkcc/ast.h>
+
+
+int ir_bb_statement_gen(ir_context_t *ir_context, ast_t *statement);
+
 
 #endif  /* JKCC_IR_BB_STATEMENT_H */
