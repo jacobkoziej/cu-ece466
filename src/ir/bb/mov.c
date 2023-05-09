@@ -8,8 +8,11 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/private/ir.h>
 
+#include <stdint.h>
+
 #include <jkcc/ast.h>
 #include <jkcc/constant.h>
+#include <jkcc/ht.h>
 #include <jkcc/ir.h>
 
 
@@ -47,9 +50,21 @@ int ir_bb_mov_gen(
 		&ir_context->ir_bb->quad,
 		&quad)) goto error_vector_append_ir_bb_quad;
 
+	uintptr_t key = ir_context->current.dst;
+	uintptr_t val = reg_type;
+
+	if (ht_insert(
+		&ir_context->ir_function->reg.type,
+		&key,
+		sizeof(key),
+		(void*) val)) goto error_ht_insert_reg_type;
+
 	ir_context->result = ir_context->current.dst++;
 
 	return 0;
+
+error_ht_insert_reg_type:
+	vector_pop(&ir_context->ir_bb->quad, NULL);
 
 error_vector_append_ir_bb_quad:
 	free(quad);

@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/ht.h>
 #include <jkcc/ir.h>
 
 
@@ -102,15 +103,28 @@ int ir_bb_binop_gen(
 		binop.rhs);
 	if (ret) return ret;
 
-	++ir_context->current.dst;
-
 	if (vector_append(&ir_context->ir_bb->quad, &quad))
 		goto error_vector_append_ir_bb_quad;
 
+	uintptr_t key = ir_context->current.dst;
+	// TODO: determine result types
+	uintptr_t val = IR_REG_TYPE_I32;
+
+	if (ht_insert(
+		&ir_context->ir_function->reg.type,
+		&key,
+		sizeof(key),
+		(void*) val)) goto error_ht_insert_reg_type;
+
+	ir_context->result = ir_context->current.dst++;
+
 	return 0;
 
+error_ht_insert_reg_type:
+	vector_pop(&ir_context->ir_bb->quad, NULL);
+
 error_vector_append_ir_bb_quad:
-	--ir_context->current.bb;
+	free(quad);
 
 	return IR_ERROR_NOMEM;
 }
