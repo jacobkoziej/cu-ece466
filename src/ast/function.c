@@ -86,6 +86,12 @@ ast_t *ast_function_get_parameter_list(
 	return OFFSETOF_AST_NODE(function, ast_function_t)->parameter_list;
 }
 
+ast_t *ast_function_get_return_type(
+	ast_t *function)
+{
+	return OFFSETOF_AST_NODE(function, ast_function_t)->return_type;
+}
+
 void ast_function_set_body(
 	ast_t *function,
 	ast_t *body)
