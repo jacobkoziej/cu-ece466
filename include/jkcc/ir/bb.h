@@ -12,11 +12,21 @@
 
 #include <jkcc/ir/bb/statement.h>
 
+#include <jkcc/ast.h>
+
+
+extern int (*const ir_bb_gen[AST_NODES_TOTAL])(
+	ir_context_t *ir_context,
+	ast_t        *ast);
+
 
 ir_bb_t *ir_bb_alloc(
-	size_t   id);
+	size_t        id);
 void ir_bb_free(
-	ir_bb_t *ir_bb);
+	ir_bb_t      *ir_bb);
+int ir_bb_unknown_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast);
 
 
 #endif  /* JKCC_IR_BB_H */
