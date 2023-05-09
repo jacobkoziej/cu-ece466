@@ -28,16 +28,16 @@ void ir_quad_mov_fprint(FILE *stream, ir_quad_t *ir_quad)
 }
 
 int ir_quad_mov_gen(
-	ir_context_t   *ir_context,
 	ir_quad_t     **ir_quad,
+	uintptr_t       dst,
 	ir_reg_type_t   type,
 	uintptr_t       immediate)
 {
 	IR_QUAD_INIT(ir_quad_mov_t);
 
-	quad->dst       = ++ir_context->current.dst;
-	quad->type      =   type;
-	quad->immediate =   immediate;
+	quad->dst       = dst;
+	quad->type      = type;
+	quad->immediate = immediate;
 
 	// TODO: determine alignment
 	quad->align = 0;

@@ -28,8 +28,8 @@ void ir_quad_load_fprint(
 	FILE           *stream,
 	ir_quad_t      *ir_quad);
 int ir_quad_load_gen(
-	ir_context_t   *ir_context,
 	ir_quad_t     **ir_quad,
+	uintptr_t       dst,
 	ir_reg_type_t   type,
 	ir_location_t  *src);
 

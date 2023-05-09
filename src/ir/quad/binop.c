@@ -79,18 +79,18 @@ void ir_quad_binop_fprint(FILE *stream, ir_quad_t *ir_quad)
 }
 
 int ir_quad_binop_gen(
-	ir_context_t        *ir_context,
 	ir_quad_t          **ir_quad,
+	uintptr_t            dst,
 	ir_quad_binop_op_t   op,
 	uintptr_t            lhs,
 	uintptr_t            rhs)
 {
 	IR_QUAD_INIT(ir_quad_binop_t);
 
-	quad->dst = ++ir_context->current.dst;
-	quad->op  =   op;
-	quad->lhs =   lhs;
-	quad->rhs =   rhs;
+	quad->dst = dst;
+	quad->op  = op;
+	quad->lhs = lhs;
+	quad->rhs = rhs;
 
 	IR_QUAD_RETURN(IR_QUAD_BINOP);
 }
