@@ -34,6 +34,8 @@ void ast_identifier_free(
 	ast_t        *ast);
 const string_t *ast_identifier_get_string(
 	ast_t        *identifier);
+ast_t *ast_identifier_get_type(
+	ast_t        *identifier);
 void ast_identifier_set_type(
 	ast_t        *identifier,
 	ast_t        *type);
