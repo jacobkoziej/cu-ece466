@@ -43,8 +43,8 @@ int ir_function_gen(
 		list = ast_list_get_list(ast_list);
 	}
 
-	if (ht_init(&ir_context->reg.lookup, 0)) return IR_ERROR_NOMEM;
-	if (ht_init(&ir_context->reg.type, 0)) goto error_ht_init_reg_type;
+	if (ht_init(&ir_function->reg.lookup, 0)) return IR_ERROR_NOMEM;
+	if (ht_init(&ir_function->reg.type, 0)) goto error_ht_init_reg_type;
 
 	// reset registers
 	ir_context->current.dst = 0;
@@ -87,14 +87,14 @@ argv_done:
 			uintptr_t val = ir_context->current.dst++;
 
 			if (ht_insert(
-				&ir_context->reg.lookup,
+				&ir_function->reg.lookup,
 				&key,
 				sizeof(key),
 				(void*) val)) goto error_ht_insert_reg_lookup;
 
 			val = type;
 			if (ht_insert(
-				&ir_context->reg.type,
+				&ir_function->reg.type,
 				&key,
 				sizeof(key),
 				(void*) val)) goto error_ht_insert_reg_type;
@@ -109,10 +109,10 @@ argv_done:
 
 error_ht_insert_reg_type:
 error_ht_insert_reg_lookup:
-	ht_free(&ir_context->reg.type, NULL);
+	ht_free(&ir_function->reg.type, NULL);
 
 error_ht_init_reg_type:
-	ht_free(&ir_context->reg.lookup, NULL);
+	ht_free(&ir_function->reg.lookup, NULL);
 
 	return IR_ERROR_NOMEM;
 }
