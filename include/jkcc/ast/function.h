@@ -44,6 +44,8 @@ ast_t *ast_function_get_body(
 	ast_t        *function);
 ast_t *ast_function_get_declaration_list(
 	ast_t        *function);
+ast_t *ast_function_get_identifier(
+	ast_t        *function);
 ast_t *ast_function_get_parameter_list(
 	ast_t        *function);
 ast_t *ast_function_get_return_type(

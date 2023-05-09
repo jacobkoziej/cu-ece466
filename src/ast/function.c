@@ -80,6 +80,12 @@ ast_t *ast_function_get_declaration_list(
 	return OFFSETOF_AST_NODE(function, ast_function_t)->declaration_list;
 }
 
+ast_t *ast_function_get_identifier(
+	ast_t *function)
+{
+	return OFFSETOF_AST_NODE(function, ast_function_t)->identifier;
+}
+
 ast_t *ast_function_get_parameter_list(
 	ast_t *function)
 {
