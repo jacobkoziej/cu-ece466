@@ -50,6 +50,11 @@ void ast_array_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_array_get_type(ast_t *array)
+{
+	return OFFSETOF_AST_NODE(array, ast_array_t)->type;
+}
+
 void ast_array_set_type(
 	ast_t *array,
 	ast_t *type)
