@@ -132,7 +132,7 @@ int ht_insert(ht_t *ht, const void *key, size_t size, void *val)
 		if (entry->key) {
 			if (!(entry->attributes & HT_ATTRIBUTE_DELETED)) {
 				// duplicate entry
-				if (entry->size != size)
+				if (entry->size == size)
 					if (!memcmp(entry->key, key, size))
 						goto error;
 
