@@ -30,6 +30,8 @@ ast_t *ast_integer_constant_init(
 	location_t         *location);
 void ast_integer_constant_free(
 	ast_t              *ast);
+const integer_constant_t *ast_integer_constant_get_integer_constant(
+	ast_t              *ast);
 void fprint_ast_integer_constant(
 	FILE               *stream,
 	const ast_t        *ast,
