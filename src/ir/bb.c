@@ -23,7 +23,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_ALIGNAS]                  = ir_bb_unknown_gen,
 	[AST_ALIGNOF]                  = ir_bb_unknown_gen,
 	[AST_ARRAY]                    = ir_bb_unknown_gen,
-	[AST_ASSIGNMENT]               = ir_bb_unknown_gen,
+	[AST_ASSIGNMENT]               = ir_bb_store_gen,
 	[AST_ATOMIC]                   = ir_bb_unknown_gen,
 	[AST_BINARY_OPERATOR]          = ir_bb_binop_gen,
 	[AST_BREAK]                    = ir_bb_unknown_gen,
