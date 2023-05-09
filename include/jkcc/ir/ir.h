@@ -43,8 +43,9 @@ typedef struct ir_bb_s {
 } ir_bb_t;
 
 typedef struct ir_function_s {
-	ast_t   *declaration;
-	ir_bb_t *bb;
+	vector_t *argv;         // ast_t*
+	ast_t    *declaration;
+	ir_bb_t  *bb;
 } ir_function_t;
 
 typedef struct ir_static_declaration_s {

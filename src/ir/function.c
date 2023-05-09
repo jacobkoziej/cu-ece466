@@ -49,7 +49,6 @@ int ir_function_gen(
 	// reset registers
 	ir_context->current.dst = 0;
 
-	vector_t *argv;
 	{
 		ast_t *ast_list;
 
@@ -59,12 +58,14 @@ int ir_function_gen(
 		ast_list = ast_function_get_declaration_list(ast_function);
 
 argv_done:
-		argv = (ast_list) ? ast_list_get_list(ast_list) : NULL;
+		ir_function->argv = (ast_list)
+			? ast_list_get_list(ast_list)
+			: NULL;
 	}
 
-	if (argv) {
-		ast_t **declaration = argv->buf;
-		for (size_t i = 0; i < argv->use; i++) {
+	if (ir_function->argv) {
+		ast_t **declaration = ir_function->argv->buf;
+		for (size_t i = 0; i < ir_function->argv->use; i++) {
 			ast_t *ast_type
 				= ast_declaration_get_type(declaration[i]);
 
