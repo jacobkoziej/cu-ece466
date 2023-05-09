@@ -54,6 +54,11 @@ ast_t *ast_assignment_get_lvalue(ast_t *ast)
 	return OFFSETOF_AST_NODE(ast, ast_assignment_t)->lvalue;
 }
 
+ast_t *ast_assignment_get_rvalue(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_assignment_t)->rvalue;
+}
+
 void fprint_ast_assignment(
 	FILE         *stream,
 	const ast_t  *ast,
