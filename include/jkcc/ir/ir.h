@@ -85,7 +85,8 @@ typedef struct ir_unit_s {
 } ir_unit_t;
 
 typedef struct ir_context_s {
-	ir_unit_t *ir_unit;
+	ir_unit_t     *ir_unit;
+	ir_function_t *ir_function;
 	ht_t       static_declaration;
 	struct {
 		size_t    bb;

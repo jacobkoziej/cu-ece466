@@ -215,6 +215,8 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 					goto error;
 				}
 
+				ir_context.ir_function = ir_function;
+
 				int ret = ir_function_gen(
 					&ir_context,
 					ir_function,
