@@ -13,7 +13,6 @@
 
 #include <jkcc/ast/ast.h>
 #include <jkcc/ht.h>
-#include <jkcc/list.h>
 #include <jkcc/string.h>
 #include <jkcc/vector.h>
 
@@ -41,7 +40,6 @@ typedef enum ir_quad_e {
 typedef struct ir_bb_s {
 	size_t   id;
 	vector_t quad;  // ir_quad_t*
-	list_t   list;  // ir_bb_t*
 } ir_bb_t;
 
 typedef struct ir_function_s {
