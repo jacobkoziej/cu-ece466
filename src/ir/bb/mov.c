@@ -46,12 +46,12 @@ int ir_bb_mov_gen(
 	++ir_context->current.dst;
 
 	if (vector_append(
-		&ir_context->ir_function->bb,
-		&quad)) goto error_vector_append_bb;
+		&ir_context->ir_bb->quad,
+		&quad)) goto error_vector_append_ir_bb_quad;
 
 	return 0;
 
-error_vector_append_bb:
+error_vector_append_ir_bb_quad:
 	--ir_context->current.dst;
 
 	free(quad);
