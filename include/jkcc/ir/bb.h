@@ -10,6 +10,8 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <jkcc/ir/bb/statement.h>
+
 
 ir_bb_t *ir_bb_alloc(
 	size_t   id);
