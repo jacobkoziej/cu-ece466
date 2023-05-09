@@ -10,6 +10,7 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <jkcc/ir/bb/declaration.h>
 #include <jkcc/ir/bb/statement.h>
 
 #include <jkcc/ast.h>
