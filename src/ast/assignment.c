@@ -44,6 +44,11 @@ void ast_assignment_free(ast_t *ast)
 	free(node);
 }
 
+uint_fast16_t ast_assignment_get_assignment(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_assignment_t)->assignment;
+}
+
 void fprint_ast_assignment(
 	FILE         *stream,
 	const ast_t  *ast,
