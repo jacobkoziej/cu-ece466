@@ -10,9 +10,14 @@
 
 #include <jkcc/ir/ir.h>
 
+#include <stdio.h>
+
 
 ir_function_t *ir_function_alloc(
 	void);
+void ir_function_fprint(
+	FILE          *stream,
+	ir_function_t *ir_function);
 void ir_function_free(
 	ir_function_t *ir_function);
 int ir_function_gen(

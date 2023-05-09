@@ -7,15 +7,110 @@
 #include <jkcc/ir/function.h>
 #include <jkcc/ir/ir.h>
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <jkcc/ast.h>
 #include <jkcc/ir.h>
+#include <jkcc/string.h>
 
 
 ir_function_t *ir_function_alloc(void)
 {
 	return calloc(1, sizeof(ir_function_t));
+}
+
+void ir_function_fprint(FILE *stream, ir_function_t *ir_function)
+{
+	fprintf(stream, "define ");
+	{
+		ast_t *return_type = ast_function_get_return_type(
+			ir_function->declaration);
+
+		const char* storage_type;
+
+retry_return_type:
+		switch (*return_type) {
+			case AST_POINTER:
+				return_type
+					= ast_pointer_get_pointer(return_type);
+				goto retry_return_type;
+
+			case AST_ARRAY:
+				return_type = ast_array_get_type(return_type);
+				goto retry_return_type;
+
+			case AST_TYPE:;
+				ast_type_t *type = OFFSETOF_AST_NODE(
+					return_type,
+					ast_type_t);
+
+				switch (type->storage_class_specifier) {
+					case AST_STORAGE_CLASS_SPECIFIER_STATIC:
+						storage_type = "internal";
+						break;
+
+					default:
+						storage_type = "dso_local";
+						break;
+				}
+
+				break;
+
+			default:
+				storage_type = "(unknown)";
+				break;
+		}
+
+		fprintf(stream, "%s ", storage_type);
+	}
+
+	ir_reg_type_fprint(stream, ir_function->return_type);
+	fprintf(stream, " @");
+	{
+		const string_t *identifier = ast_identifier_get_string(
+			ast_function_get_identifier(ir_function->declaration));
+
+		fprintf(stream, "%s", identifier->head);
+	}
+
+	fprintf(stream, "(");
+	if (ir_function->argv) {
+		ast_t **declaration = ir_function->argv->buf;
+		for (size_t i = 0; i < ir_function->argv->use; i++) {
+			uintptr_t key = (uintptr_t) ast_declaration_get_type(
+				declaration[i]);
+
+			void *val;
+
+			ht_get(
+				&ir_function->reg.type,
+				&key,
+				sizeof(key),
+				&val);
+
+			ir_reg_type_t type = (uintptr_t) val;
+			ir_reg_type_fprint(stream, type);
+			fprintf(stream, " ");
+
+			ht_get(
+				&ir_function->reg.lookup,
+				&key,
+				sizeof(key),
+				&val);
+
+			uintptr_t reg = (uintptr_t) val;
+			ir_reg_fprint(stream, reg);
+
+			if (i < ir_function->argv->use - 1)
+				fprintf(stream, ", ");
+		}
+	}
+	fprintf(stream, ") {\n");
+
+	// TODO: print body
+
+	fprintf(stream, "}\n");
 }
 
 void ir_function_free(ir_function_t *ir_function)
