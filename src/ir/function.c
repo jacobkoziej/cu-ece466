@@ -108,7 +108,9 @@ retry_return_type:
 	}
 	fprintf(stream, ") {\n");
 
-	// TODO: print body
+	ir_bb_t **ir_bb = ir_function->bb.buf;
+	for (size_t i = 0; i < ir_function->bb.use; i++)
+		ir_bb_fprint(stream, ir_bb[i]);
 
 	fprintf(stream, "}\n");
 }

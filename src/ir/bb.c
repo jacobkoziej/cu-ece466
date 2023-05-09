@@ -8,9 +8,11 @@
 #include <jkcc/ir/ir.h>
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/ir.h>
 #include <jkcc/vector.h>
 
 
@@ -81,6 +83,15 @@ error:
 	free(ir_bb);
 
 	return NULL;
+}
+
+void ir_bb_fprint(FILE *stream, ir_bb_t *ir_bb)
+{
+	fprintf(stream, ".L%lu\n", ir_bb->id);
+
+	ir_quad_t **ir_quad = ir_bb->quad.buf;
+	for (size_t i = 0; i < ir_bb->quad.use; i++)
+		IR_QUAD_FPRINT(stream, ir_quad[i]);
 }
 
 void ir_bb_free(ir_bb_t *ir_bb)

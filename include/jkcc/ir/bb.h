@@ -14,6 +14,8 @@
 #include <jkcc/ir/bb/mov.h>
 #include <jkcc/ir/bb/statement.h>
 
+#include <stdio.h>
+
 #include <jkcc/ast.h>
 
 
@@ -27,6 +29,9 @@ extern int (*const ir_bb_gen[AST_NODES_TOTAL])(
 
 ir_bb_t *ir_bb_alloc(
 	size_t        id);
+void ir_bb_fprint(
+	FILE         *stream,
+	ir_bb_t      *ir_bb);
 void ir_bb_free(
 	ir_bb_t      *ir_bb);
 int ir_bb_unknown_gen(
