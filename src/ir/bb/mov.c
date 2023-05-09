@@ -43,17 +43,15 @@ int ir_bb_mov_gen(
 		integer_constant->INT);
 	if (ret) return ret;
 
-	++ir_context->current.dst;
-
 	if (vector_append(
 		&ir_context->ir_bb->quad,
 		&quad)) goto error_vector_append_ir_bb_quad;
 
+	ir_context->result = ir_context->current.dst++;
+
 	return 0;
 
 error_vector_append_ir_bb_quad:
-	--ir_context->current.dst;
-
 	free(quad);
 
 	return IR_ERROR_NOMEM;

@@ -63,17 +63,14 @@ int ir_bb_declaration_gen(
 		sizeof(key),
 		(void*) val)) goto error_ht_insert_reg_type;
 
-
-	++ir_context->current.dst;
-
 	if (vector_append(&ir_context->ir_bb->quad, &quad))
 		goto error_vector_append_ir_bb_quad;
+
+	ir_context->result = ir_context->current.dst++;
 
 	return 0;
 
 error_vector_append_ir_bb_quad:
-	--ir_context->current.bb;
-
 error_ht_insert_reg_type:
 	ht_rm(&ir_context->ir_function->reg.lookup, &key, sizeof(key), NULL);
 

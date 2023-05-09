@@ -87,11 +87,11 @@ int ir_bb_binop_gen(
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_lhs(ast));
 	if (ret) return ret;
-	binop.lhs = ir_context->current.dst - 1;
+	binop.lhs = ir_context->result;
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_rhs(ast));
 	if (ret) return ret;
-	binop.rhs = ir_context->current.dst - 1;
+	binop.rhs = ir_context->result;
 
 	ir_quad_t *quad;
 	ret = ir_quad_binop_gen(
