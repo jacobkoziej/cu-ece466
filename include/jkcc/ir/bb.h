@@ -15,6 +15,9 @@
 #include <jkcc/ast.h>
 
 
+#define IR_BB_GEN(ir_context, ast) ir_bb_gen[*ast](ir_context, ast)
+
+
 extern int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	ir_context_t *ir_context,
 	ast_t        *ast);
