@@ -67,6 +67,11 @@ void ast_pointer_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_pointer_get_pointer(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_pointer_t)->pointer;
+}
+
 void fprint_ast_pointer(
 	FILE         *stream,
 	const ast_t  *ast,
