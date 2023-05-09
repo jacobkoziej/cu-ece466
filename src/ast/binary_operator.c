@@ -45,6 +45,11 @@ void ast_binary_operator_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_binary_operator_get_lhs(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_binary_operator_t)->lhs;
+}
+
 uint_fast32_t ast_binary_operator_get_operator(ast_t *ast)
 {
 	return OFFSETOF_AST_NODE(ast, ast_binary_operator_t)->operator;
