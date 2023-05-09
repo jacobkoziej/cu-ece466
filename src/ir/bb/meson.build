@@ -7,4 +7,5 @@ jkcc_src += files(
         'declaration.c',
         'mov.c',
         'statement.c',
+        'store.c',
 )
