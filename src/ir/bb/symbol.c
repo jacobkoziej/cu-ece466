@@ -32,7 +32,42 @@ int ir_bb_symbol_gen(
 		return IR_ERROR_UNKNOWN_AST_NODE;
 	}
 
-	ir_context->result = (uintptr_t) val;
+	ir_location_t src = {
+		.type = IR_LOCATION_REG,
+		.reg  = (uintptr_t) val,
+	};
+
+	key = (uintptr_t) val;
+	ht_get(&ir_context->ir_function->reg.type, &key, sizeof(key), &val);
+
+	ir_reg_type_t type = (uintptr_t) val;
+
+	ir_quad_t *quad;
+	int ret = ir_quad_load_gen(&quad, ir_context->current.dst, type, &src);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		goto error_vector_append_ir_bb_quad;
+
+	key = ir_context->current.dst;
+	// TODO: determine result types
+	val = IR_REG_TYPE_I32;
+
+	if (ht_insert(
+		&ir_context->ir_function->reg.type,
+		&key,
+		sizeof(key),
+		val)) goto error_ht_insert_reg_type;
+
+	ir_context->result = ir_context->current.dst++;
 
 	return 0;
+
+error_ht_insert_reg_type:
+	vector_pop(&ir_context->ir_bb->quad, NULL);
+
+error_vector_append_ir_bb_quad:
+	free(quad);
+
+	return IR_ERROR_NOMEM;
 }
