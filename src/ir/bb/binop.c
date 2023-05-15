@@ -73,6 +73,8 @@ int ir_bb_binop_gen(
 		case AST_BINARY_OPERATOR_GREATER_THAN_OR_EQUAL:
 		case AST_BINARY_OPERATOR_EQUALITY:
 		case AST_BINARY_OPERATOR_INEQUALITY:
+			return ir_bb_cmp_gen(ir_context, ast);
+
 		case AST_BINARY_OPERATOR_LOGICAL_AND:
 		case AST_BINARY_OPERATOR_LOGICAL_OR:
 			// TODO: cmp
