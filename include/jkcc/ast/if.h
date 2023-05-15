@@ -33,6 +33,8 @@ ast_t *ast_if_init(
 	location_t   *location_end);
 void ast_if_free(
 	ast_t        *ast);
+ast_t *ast_if_get_expression(
+	ast_t        *ast);
 ast_t *ast_if_get_false_statement(
 	ast_t        *ast);
 ast_t *ast_if_get_true_statement(
