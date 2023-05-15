@@ -49,6 +49,11 @@ ast_t *ast_while_get_expression(ast_t *ast)
 	return OFFSETOF_AST_NODE(ast, ast_while_t)->expression;
 }
 
+ast_t *ast_while_get_statement(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_while_t)->statement;
+}
+
 void fprint_ast_while(
 	FILE         *stream,
 	const ast_t  *ast,
