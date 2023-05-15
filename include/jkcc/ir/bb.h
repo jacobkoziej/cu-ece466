@@ -19,6 +19,7 @@
 #include <jkcc/ir/bb/if.h>
 #include <jkcc/ir/bb/list.h>
 #include <jkcc/ir/bb/mov.h>
+#include <jkcc/ir/bb/return.h>
 #include <jkcc/ir/bb/sizeof.h>
 #include <jkcc/ir/bb/statement.h>
 #include <jkcc/ir/bb/store.h>
