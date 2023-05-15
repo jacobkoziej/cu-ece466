@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <jkcc/ir/bb/binop.h>
+#include <jkcc/ir/bb/break.h>
 #include <jkcc/ir/bb/cmp.h>
 #include <jkcc/ir/bb/declaration.h>
 #include <jkcc/ir/bb/dereference.h>
