@@ -40,6 +40,10 @@ void ir_quad_load_fprint(FILE *stream, ir_quad_t *ir_quad)
 				stream,
 				quad->src.static_declaration);
 			break;
+
+		case IR_LOCATION_IDENTIFIER:
+			fprintf(stream, "%s", quad->src.identifier->head);
+			break;
 	}
 
 	fprintf(stream, ", ");

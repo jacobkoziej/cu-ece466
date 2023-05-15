@@ -69,6 +69,7 @@ typedef enum ir_location_type_e {
 	IR_LOCATION_REG,
 	IR_LOCATION_EXTERN_DECLARATION,
 	IR_LOCATION_STATIC_DECLARATION,
+	IR_LOCATION_IDENTIFIER,
 } ir_location_type_t;
 
 typedef struct ir_location_s {
@@ -77,6 +78,7 @@ typedef struct ir_location_s {
 		uintptr_t                reg;
 		ast_t                   *extern_declaration;
 		ir_static_declaration_t *static_declaration;
+		const string_t          *identifier;
 	};
 } ir_location_t;
 
