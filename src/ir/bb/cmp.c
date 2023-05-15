@@ -38,10 +38,60 @@ int ir_bb_cmp_gen(
 	if (ret) return ret;
 
 	if (vector_append(&ir_context->ir_bb->quad, &quad))
-		goto error_vector_append_ir_bb_quad;
+		goto error_vector_append_ir_quad_cmp;
+
+	ir_quad_br_condition_t condition;
+
+	uint_fast32_t operator = ast_binary_operator_get_operator(ast);
+	switch (operator) {
+		case AST_BINARY_OPERATOR_LESS_THAN:
+			condition = IR_QUAD_BR_LT;
+			break;
+
+		case AST_BINARY_OPERATOR_GREATER_THAN:
+			condition = IR_QUAD_BR_GT;
+			break;
+
+		case AST_BINARY_OPERATOR_LESS_THAN_OR_EQUAL:
+			condition = IR_QUAD_BR_LE;
+			break;
+
+		case AST_BINARY_OPERATOR_GREATER_THAN_OR_EQUAL:
+			condition = IR_QUAD_BR_GE;
+			break;
+
+		case AST_BINARY_OPERATOR_EQUALITY:
+			condition = IR_QUAD_BR_EQ;
+			break;
+
+		case AST_BINARY_OPERATOR_INEQUALITY:
+			condition = IR_QUAD_BR_NE;
+			break;
+
+		default:
+			return IR_ERROR_UNKNOWN_AST_NODE;
+	}
+
+	ret = ir_quad_br_gen(&quad, condition, ir_context->br_true);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		goto error_vector_append_ir_quad_br_true;
+
+	ret = ir_quad_br_gen(&quad, IR_QUAD_BR_AL, ir_context->br_false);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		goto error_vector_append_ir_quad_br_false;
 
 	return 0;
 
-error_vector_append_ir_bb_quad:
+error_vector_append_ir_quad_br_false:
+	vector_pop(&ir_context->ir_bb->quad, NULL);
+
+error_vector_append_ir_quad_br_true:
+	vector_pop(&ir_context->ir_bb->quad, NULL);
+
+error_vector_append_ir_quad_cmp:
 	return IR_ERROR_NOMEM;
 }
