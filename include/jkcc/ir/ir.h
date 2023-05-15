@@ -92,6 +92,7 @@ typedef struct ir_context_s {
 	ht_t           static_declaration;
 	uintptr_t      result;
 	bool           lvalue;
+	size_t         br_loop_exit;
 	size_t         br_true;
 	size_t         br_false;
 	size_t         br_exit;

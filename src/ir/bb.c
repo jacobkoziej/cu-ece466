@@ -26,7 +26,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_ASSIGNMENT]               = ir_bb_store_gen,
 	[AST_ATOMIC]                   = ir_bb_unknown_gen,
 	[AST_BINARY_OPERATOR]          = ir_bb_binop_gen,
-	[AST_BREAK]                    = ir_bb_unknown_gen,
+	[AST_BREAK]                    = ir_bb_break_gen,
 	[AST_CALL]                     = ir_bb_unknown_gen,
 	[AST_CASE]                     = ir_bb_unknown_gen,
 	[AST_CAST]                     = ir_bb_unknown_gen,

@@ -71,6 +71,12 @@ int ir_bb_if_gen(
 
 	exit.id = ir_context->current.bb++;
 
+	// since we maintain the context between calls
+	// to IR_BR_GEN(), we need to "push" our stack
+	size_t br_true  = ir_context->br_true;
+	size_t br_false = ir_context->br_false;
+	size_t br_exit  = ir_context->br_exit;
+
 	ir_context->br_true = true_statement.id;
 	ir_context->br_false
 		= (ast_false_statement)
@@ -98,7 +104,11 @@ int ir_bb_if_gen(
 		if (ret) return ret;
 	}
 
-	ir_context->ir_bb = exit.bb;
+	// "popping" our stack
+	ir_context->br_true  = br_true;
+	ir_context->br_false = br_false;
+	ir_context->br_exit  = br_exit;
+	ir_context->ir_bb    = exit.bb;
 
 	return 0;
 }

@@ -58,7 +58,18 @@ int ir_bb_while_gen(
 
 	exit.id = ir_context->current.bb++;
 
-	ir_context->br_true  = (ast_statement) ? statement.id : expression.id;
+	// since we maintain the context between calls
+	// to IR_BR_GEN(), we need to "push" our stack
+	size_t br_loop_exit = ir_context->br_loop_exit;
+	size_t br_true      = ir_context->br_true;
+	size_t br_false     = ir_context->br_false;
+	size_t br_exit      = ir_context->br_exit;
+
+	ir_context->br_loop_exit = exit.id;
+	ir_context->br_true
+		= (ast_statement)
+		? statement.id
+		: expression.id;
 	ir_context->br_false = exit.id;
 	ir_context->br_exit  = exit.id;
 
@@ -75,7 +86,12 @@ int ir_bb_while_gen(
 		if (ret) return ret;
 	}
 
-	ir_context->ir_bb = exit.bb;
+	// "popping" our stack
+	ir_context->br_loop_exit = br_loop_exit;
+	ir_context->br_true      = br_true;
+	ir_context->br_false     = br_false;
+	ir_context->br_exit      = br_exit;
+	ir_context->ir_bb        = exit.bb;
 
 	return 0;
 }
