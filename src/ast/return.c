@@ -38,6 +38,11 @@ void ast_return_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_return_get_expression(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_return_t)->expression;
+}
+
 void fprint_ast_return(
 	FILE         *stream,
 	const ast_t  *ast,
