@@ -110,6 +110,9 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 		if (vector_append(&scope->history.identifier, &identifier))
 			goto error_vector_append_history_identifier;
 
+		identifier->list.prev
+			= &scope->context.current.identifier->list;
+
 		scope->context.current.identifier = identifier;
 		scope->context.current.type_stack = 0;
 	}
@@ -121,6 +124,8 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 		if (vector_append(&scope->history.label, &label))
 			goto error_vector_append_history_label;
 
+		label->list.prev = &scope->context.current.label->list;
+
 		scope->context.current.label = label;
 	}
 
@@ -130,6 +135,8 @@ int scope_push(scope_t *scope, uint_fast8_t flags)
 
 		if (vector_append(&scope->history.tag, &tag))
 			goto error_vector_append_history_tag;
+
+		tag->list.prev = &scope->context.current.tag->list;
 
 		scope->context.current.tag = tag;
 	}
