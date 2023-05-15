@@ -29,6 +29,8 @@ ast_t *ast_dereference_init(
 	location_t   *location_end);
 void ast_dereference_free(
 	ast_t        *ast);
+ast_t *ast_dereference_get_operand(
+	ast_t        *ast);
 void fprint_ast_dereference(
 	FILE         *stream,
 	const ast_t  *ast,

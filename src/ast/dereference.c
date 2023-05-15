@@ -38,6 +38,11 @@ void ast_dereference_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_dereference_get_operand(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_dereference_t)->operand;
+}
+
 void fprint_ast_dereference(
 	FILE         *stream,
 	const ast_t  *ast,
