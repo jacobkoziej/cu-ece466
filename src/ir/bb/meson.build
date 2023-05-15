@@ -9,6 +9,7 @@ jkcc_src += files(
         'declaration.c',
         'dereference.c',
         'if.c',
+        'list.c',
         'mov.c',
         'sizeof.c',
         'statement.c',
