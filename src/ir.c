@@ -26,12 +26,21 @@ void ir_align_fprint(FILE *stream, size_t align)
 int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 {
 	ir_static_declaration_t *ir_static_declaration;
+	ast_t                   *type;
 
 	switch (ast_declaration_get_storage_class(declaration)) {
 		case AST_DECLARATION_IMPLICIT_EXTERN:
 			if (vector_append(
 				&ir_context->ir_unit->extern_declaration,
 				&declaration)) return IR_ERROR_NOMEM;
+
+			type = ast_declaration_get_type(declaration);
+			if (ht_insert(
+				&ir_context->extern_declaration,
+				&type,
+				sizeof(ast_type_t*),
+				(void*) declaration))
+				goto error_ht_insert_ir_extern_declaration;
 
 			break;
 
@@ -46,11 +55,12 @@ int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 				&ir_static_declaration))
 				goto error_vector_append_ir_static_declaration;
 
+			type = ast_declaration_get_type(declaration);
 			if (ht_insert(
 				&ir_context->static_declaration,
-				ast_declaration_get_type(declaration),
+				&type,
 				sizeof(ast_type_t*),
-				(void*) ir_static_declaration->bb))
+				(void*) ir_static_declaration))
 				goto error_ht_insert_ir_static_declaration;
 
 			break;
@@ -61,6 +71,11 @@ int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 
 	return 0;
 
+error_ht_insert_ir_extern_declaration:
+	vector_pop(&ir_context->ir_unit->extern_declaration, NULL);
+
+	return IR_ERROR_NOMEM;
+
 error_ht_insert_ir_static_declaration:
 	vector_pop(&ir_context->ir_unit->static_declaration, NULL);
 
@@ -68,7 +83,7 @@ error_vector_append_ir_static_declaration:
 	--ir_context->current.bb;
 	free(ir_static_declaration);
 
-	return 0;
+	return IR_ERROR_NOMEM;
 }
 
 void ir_extern_declaration_symbol_fprint(FILE *stream, ast_t *declaration)
@@ -88,8 +103,8 @@ ir_static_declaration_t *ir_static_declaration_alloc(
 
 	if (!ir_static_declaration) return NULL;
 
-	ir_static_declaration->bb          = ++ir_context->current.bb;
-	ir_static_declaration->declaration =   declaration;
+	ir_static_declaration->bb          = ir_context->current.bb++;
+	ir_static_declaration->declaration = declaration;
 
 	return ir_static_declaration;
 }
@@ -185,6 +200,7 @@ int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 		.ir_unit = ir_unit,
 	};
 
+	if (ht_init(&ir_context.extern_declaration, 0)) goto error;
 	if (ht_init(&ir_context.static_declaration, 0)) goto error;
 
 	ast_t **declaration_list = list->buf;
@@ -292,7 +308,7 @@ int ir_unit_init(ir_unit_t *ir_unit)
 		0)) return -1;
 
 	if (vector_init(
-		&ir_unit->extern_declaration,
+		&ir_unit->static_declaration,
 		sizeof(ir_static_declaration_t*),
 		0)) goto error_vector_init_static_declaration;
 

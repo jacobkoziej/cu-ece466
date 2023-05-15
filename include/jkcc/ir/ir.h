@@ -89,6 +89,7 @@ typedef struct ir_context_s {
 	ir_unit_t     *ir_unit;
 	ir_function_t *ir_function;
 	ir_bb_t       *ir_bb;
+	ht_t           extern_declaration;
 	ht_t           static_declaration;
 	uintptr_t      result;
 	bool           lvalue;

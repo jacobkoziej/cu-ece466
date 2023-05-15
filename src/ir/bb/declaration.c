@@ -30,7 +30,6 @@ int ir_bb_declaration_gen(
 			int ret = ir_declaration(ir_context, ast);
 			if (ret) return ret;
 
-			++ir_context->current.bb;
 			return 0;
 
 		default:
