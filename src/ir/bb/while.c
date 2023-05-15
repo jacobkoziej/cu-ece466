@@ -5,3 +5,77 @@
  */
 
 #include <jkcc/ir/bb/while.h>
+#include <jkcc/ir/ir.h>
+#include <jkcc/private/ir.h>
+
+#include <jkcc/ast.h>
+#include <jkcc/ir.h>
+
+
+int ir_bb_while_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast)
+{
+	struct {
+		size_t   id;
+		ir_bb_t *bb;
+	} expression = {0}, statement = {0}, exit = {0};
+
+	ast_t *ast_expression = ast_while_get_expression(ast);
+	ast_t *ast_statement  = ast_while_get_statement(ast);
+
+	int        ret;
+	ir_quad_t *quad;
+
+	expression.bb = ir_bb_alloc(ir_context->current.bb);
+	if (!expression.bb) return IR_ERROR_NOMEM;
+
+	if (vector_append(&ir_context->ir_function->bb, &expression.bb))
+		return IR_ERROR_NOMEM;
+
+	expression.id = ir_context->current.bb++;
+
+	IR_BB_FINISH(ret, &quad, expression.id);
+	if (ret) return ret;
+
+	if (*ast_statement != AST_EMPTY) {
+		statement.bb = ir_bb_alloc(ir_context->current.bb);
+		if (!statement.bb) return IR_ERROR_NOMEM;
+
+		if (vector_append(
+			&ir_context->ir_function->bb,
+			&statement.bb))
+			return IR_ERROR_NOMEM;
+
+		statement.id = ir_context->current.bb++;
+	}
+
+	exit.bb = ir_bb_alloc(ir_context->current.bb);
+	if (!exit.bb) return IR_ERROR_NOMEM;
+
+	if (vector_append(&ir_context->ir_function->bb, &exit.bb))
+		return IR_ERROR_NOMEM;
+
+	exit.id = ir_context->current.bb++;
+
+	ir_context->br_true  = (ast_statement) ? statement.id : expression.id;
+	ir_context->br_false = exit.id;
+	ir_context->br_exit  = exit.id;
+
+	ir_context->ir_bb = expression.bb;
+	ret = IR_BB_GEN(ir_context, ast_expression);
+	if (ret) return ret;
+
+	if (*ast_statement != AST_EMPTY) {
+		ir_context->ir_bb = statement.bb;
+		ret = IR_BB_GEN(ir_context, ast_statement);
+		if (ret) return ret;
+
+		IR_BB_FINISH(ret, &quad, expression.id);
+		if (ret) return ret;
+	}
+
+	ir_context->ir_bb = exit.bb;
+
+	return 0;
+}

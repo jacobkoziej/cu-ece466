@@ -64,7 +64,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_TYPE_QUALIFIER]           = ir_bb_unknown_gen,
 	[AST_TYPE_SPECIFIER]           = ir_bb_unknown_gen,
 	[AST_UNARY_OPERATOR]           = ir_bb_unknown_gen,
-	[AST_WHILE]                    = ir_bb_unknown_gen,
+	[AST_WHILE]                    = ir_bb_while_gen,
 };
 
 
