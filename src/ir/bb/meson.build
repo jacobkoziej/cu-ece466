@@ -13,4 +13,5 @@ jkcc_src += files(
         'statement.c',
         'store.c',
         'symbol.c',
+        'while.c',
 )
