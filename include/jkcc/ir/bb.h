@@ -12,6 +12,7 @@
 
 #include <jkcc/ir/bb/binop.h>
 #include <jkcc/ir/bb/break.h>
+#include <jkcc/ir/bb/call.h>
 #include <jkcc/ir/bb/cmp.h>
 #include <jkcc/ir/bb/continue.h>
 #include <jkcc/ir/bb/declaration.h>
