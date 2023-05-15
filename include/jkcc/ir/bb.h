@@ -16,6 +16,7 @@
 #include <jkcc/ir/bb/dereference.h>
 #include <jkcc/ir/bb/if.h>
 #include <jkcc/ir/bb/mov.h>
+#include <jkcc/ir/bb/sizeof.h>
 #include <jkcc/ir/bb/statement.h>
 #include <jkcc/ir/bb/store.h>
 #include <jkcc/ir/bb/symbol.h>
