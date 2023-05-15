@@ -11,5 +11,6 @@ jkcc_src += files(
         'cmp.c',
         'load.c',
         'mov.c',
+        'ret.c',
         'store.c',
 )
