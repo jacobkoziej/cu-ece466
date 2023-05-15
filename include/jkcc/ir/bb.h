@@ -20,6 +20,7 @@
 #include <jkcc/ir/bb/statement.h>
 #include <jkcc/ir/bb/store.h>
 #include <jkcc/ir/bb/symbol.h>
+#include <jkcc/ir/bb/while.h>
 
 #include <stdio.h>
 
