@@ -8,6 +8,7 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/private/ir.h>
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <jkcc/ast.h>
@@ -95,6 +96,7 @@ int ir_bb_store_gen(
 	store.src = ir_context->result;
 
 assignment:
+	ir_context->lvalue = true;
 	ret = IR_BB_GEN(ir_context, lvalue);
 	if (ret) return ret;
 	store.dst = ir_context->result;
@@ -113,6 +115,8 @@ assignment:
 
 	if (vector_append(&ir_context->ir_bb->quad, &quad))
 		goto error_vector_append_ir_bb_quad;
+
+	ir_context->result = store.src;
 
 	return 0;
 

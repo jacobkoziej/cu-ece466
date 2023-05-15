@@ -8,6 +8,7 @@
 #define JKCC_IR_IR_H
 
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -90,6 +91,7 @@ typedef struct ir_context_s {
 	ir_bb_t       *ir_bb;
 	ht_t           static_declaration;
 	uintptr_t      result;
+	bool           lvalue;
 	struct {
 		size_t    bb;
 		uintptr_t dst;

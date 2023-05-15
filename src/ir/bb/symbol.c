@@ -32,6 +32,12 @@ int ir_bb_symbol_gen(
 		return IR_ERROR_UNKNOWN_AST_NODE;
 	}
 
+	if (ir_context->lvalue) {
+		ir_context->lvalue = false;
+		ir_context->result = (uintptr_t) val;
+		return 0;
+	}
+
 	ir_location_t src = {
 		.type = IR_LOCATION_REG,
 		.reg  = (uintptr_t) val,
