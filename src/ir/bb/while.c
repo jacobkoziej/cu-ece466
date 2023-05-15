@@ -27,6 +27,8 @@ int ir_bb_while_gen(
 	int        ret;
 	ir_quad_t *quad;
 
+	IR_BB_INIT;
+
 	expression.bb = ir_bb_alloc(ir_context->current.bb);
 	if (!expression.bb) return IR_ERROR_NOMEM;
 
