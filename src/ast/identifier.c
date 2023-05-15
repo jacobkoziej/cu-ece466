@@ -80,6 +80,7 @@ void fprint_ast_identifier(
 	FPRINT_AST_FIELD(
 		ast_node_str[AST_IDENTIFIER],
 		node->identifier.text.head);
+	FPRINT_AST_POINTER("type-id", node->type);
 
 	FPRINT_AST_NODE_FINISH;
 }
