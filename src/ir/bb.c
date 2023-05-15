@@ -33,7 +33,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_CHARACTER_CONSTANT]       = ir_bb_unknown_gen,
 	[AST_CONTINUE]                 = ir_bb_unknown_gen,
 	[AST_DECLARATION]              = ir_bb_declaration_gen,
-	[AST_DEREFERENCE]              = ir_bb_unknown_gen,
+	[AST_DEREFERENCE]              = ir_bb_dereference_gen,
 	[AST_EMPTY]                    = ir_bb_unknown_gen,
 	[AST_EXPRESSION]               = ir_bb_unknown_gen,
 	[AST_FLOATING_CONSTANT]        = ir_bb_unknown_gen,
