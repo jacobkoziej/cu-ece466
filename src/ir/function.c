@@ -138,7 +138,9 @@ int ir_function_gen(
 
 		if (!ast_list) return IR_ERROR_EMPTY_FUNCTION_BODY;
 
-		list = ast_list_get_list(ast_list);
+		list = (*ast_list == AST_LIST)
+			? ast_list_get_list(ast_list)
+			: NULL;
 	}
 
 	ir_function->return_type
@@ -195,6 +197,11 @@ argv_done:
 		goto error_vector_init_bb;
 
 	ir_context->ir_bb = NULL;
+
+	// body consists of one statement
+	if (!list) return IR_BB_GEN(
+		ir_context,
+		ast_function_get_body(ast_function));
 
 	ast_t **statement = list->buf;
 	for (size_t i = 0; i < list->use; i++) {
