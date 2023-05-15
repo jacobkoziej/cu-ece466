@@ -39,6 +39,7 @@ typedef enum ir_quad_e {
 	IR_QUAD_CMP,
 	IR_QUAD_LOAD,
 	IR_QUAD_MOV,
+	IR_QUAD_RET,
 	IR_QUAD_STORE,
 	IR_QUAD_TOTAL,
 } ir_quad_t;
