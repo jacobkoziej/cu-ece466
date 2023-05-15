@@ -16,6 +16,7 @@
 #include <jkcc/ir/quad/cmp.h>
 #include <jkcc/ir/quad/load.h>
 #include <jkcc/ir/quad/mov.h>
+#include <jkcc/ir/quad/ret.h>
 #include <jkcc/ir/quad/store.h>
 
 #include <stdint.h>
