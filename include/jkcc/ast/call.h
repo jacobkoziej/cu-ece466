@@ -32,6 +32,8 @@ ast_t *ast_call_init(
 	location_t   *location_end);
 void ast_call_free(
 	ast_t        *ast);
+ast_t *ast_call_get_expression(
+	ast_t        *ast);
 void fprint_ast_call(
 	FILE         *stream,
 	const ast_t  *ast,
