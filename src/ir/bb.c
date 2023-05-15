@@ -45,7 +45,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_GENERIC_SELECTION]        = ir_bb_unknown_gen,
 	[AST_GOTO]                     = ir_bb_unknown_gen,
 	[AST_IDENTIFIER]               = ir_bb_symbol_gen,
-	[AST_IF]                       = ir_bb_unknown_gen,
+	[AST_IF]                       = ir_bb_if_gen,
 	[AST_INTEGER_CONSTANT]         = ir_bb_mov_gen,
 	[AST_LABEL]                    = ir_bb_unknown_gen,
 	[AST_LIST]                     = ir_bb_unknown_gen,

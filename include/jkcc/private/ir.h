@@ -31,6 +31,15 @@
 		++ir_context->current.bb;                                \
 	}
 
+#define IR_BB_FINISH(ret, ir_quad, id)                                  \
+	ret = ir_quad_br_gen(ir_quad, IR_QUAD_BR_AL, id);               \
+	if (!ret) {                                                     \
+		if (vector_append(&ir_context->ir_bb->quad, ir_quad)) { \
+			free(quad);                                     \
+			ret = IR_ERROR_NOMEM;                           \
+		}                                                       \
+	}
+
 #define IR_QUAD_INIT(type)                  \
 	type *quad = malloc(sizeof(*quad)); \
 	if (!quad) return IR_ERROR_NOMEM;
