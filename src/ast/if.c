@@ -44,6 +44,11 @@ void ast_if_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_if_get_true_statement(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_if_t)->true_statement;
+}
+
 void fprint_ast_if(
 	FILE         *stream,
 	const ast_t  *ast,

@@ -33,6 +33,8 @@ ast_t *ast_if_init(
 	location_t   *location_end);
 void ast_if_free(
 	ast_t        *ast);
+ast_t *ast_if_get_true_statement(
+	ast_t        *ast);
 void fprint_ast_if(
 	FILE         *stream,
 	const ast_t  *ast,
