@@ -41,6 +41,11 @@ void ast_call_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_call_get_argument_list(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_call_t)->argument_list;
+}
+
 ast_t *ast_call_get_expression(ast_t *ast)
 {
 	return OFFSETOF_AST_NODE(ast, ast_call_t)->expression;
