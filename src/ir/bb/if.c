@@ -8,8 +8,6 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/private/ir.h>
 
-#include <stdint.h>
-
 #include <jkcc/ast.h>
 #include <jkcc/ir.h>
 
@@ -100,7 +98,7 @@ int ir_bb_if_gen(
 		if (ret) return ret;
 	}
 
-	ir_context->ir_bb    = exit.bb;
+	ir_context->ir_bb = exit.bb;
 
 	return 0;
 }
