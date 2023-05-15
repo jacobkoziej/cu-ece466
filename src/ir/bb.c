@@ -31,7 +31,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_CASE]                     = ir_bb_unknown_gen,
 	[AST_CAST]                     = ir_bb_unknown_gen,
 	[AST_CHARACTER_CONSTANT]       = ir_bb_unknown_gen,
-	[AST_CONTINUE]                 = ir_bb_unknown_gen,
+	[AST_CONTINUE]                 = ir_bb_continue_gen,
 	[AST_DECLARATION]              = ir_bb_declaration_gen,
 	[AST_DEREFERENCE]              = ir_bb_dereference_gen,
 	[AST_EMPTY]                    = ir_bb_unknown_gen,

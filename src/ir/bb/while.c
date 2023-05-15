@@ -60,12 +60,14 @@ int ir_bb_while_gen(
 
 	// since we maintain the context between calls
 	// to IR_BR_GEN(), we need to "push" our stack
-	size_t br_loop_exit = ir_context->br_loop_exit;
-	size_t br_true      = ir_context->br_true;
-	size_t br_false     = ir_context->br_false;
-	size_t br_exit      = ir_context->br_exit;
+	size_t br_loop_expression = ir_context->br_loop_expression;
+	size_t br_loop_exit       = ir_context->br_loop_exit;
+	size_t br_true            = ir_context->br_true;
+	size_t br_false           = ir_context->br_false;
+	size_t br_exit            = ir_context->br_exit;
 
-	ir_context->br_loop_exit = exit.id;
+	ir_context->br_loop_expression = expression.id;
+	ir_context->br_loop_exit       = exit.id;
 	ir_context->br_true
 		= (ast_statement)
 		? statement.id
@@ -87,11 +89,12 @@ int ir_bb_while_gen(
 	}
 
 	// "popping" our stack
-	ir_context->br_loop_exit = br_loop_exit;
-	ir_context->br_true      = br_true;
-	ir_context->br_false     = br_false;
-	ir_context->br_exit      = br_exit;
-	ir_context->ir_bb        = exit.bb;
+	ir_context->br_loop_expression = br_loop_expression;
+	ir_context->br_loop_exit       = br_loop_exit;
+	ir_context->br_true            = br_true;
+	ir_context->br_false           = br_false;
+	ir_context->br_exit            = br_exit;
+	ir_context->ir_bb              = exit.bb;
 
 	return 0;
 }
