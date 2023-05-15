@@ -87,7 +87,7 @@ error:
 
 void ir_bb_fprint(FILE *stream, ir_bb_t *ir_bb)
 {
-	fprintf(stream, ".L%lu\n", ir_bb->id);
+	fprintf(stream, ".L%lu:\n", ir_bb->id);
 
 	ir_quad_t **ir_quad = ir_bb->quad.buf;
 	for (size_t i = 0; i < ir_bb->quad.use; i++)
