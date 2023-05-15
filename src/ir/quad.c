@@ -21,5 +21,6 @@ void (*const ir_quad_fprint[IR_QUAD_TOTAL])(
 	[IR_QUAD_CMP]    = ir_quad_cmp_fprint,
 	[IR_QUAD_LOAD]   = ir_quad_load_fprint,
 	[IR_QUAD_MOV]    = ir_quad_mov_fprint,
+	[IR_QUAD_RET]    = ir_quad_ret_fprint,
 	[IR_QUAD_STORE]  = ir_quad_store_fprint,
 };

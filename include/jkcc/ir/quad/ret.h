@@ -11,6 +11,7 @@
 #include <jkcc/ir/ir.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 
 typedef struct ir_quad_ret_s {
@@ -20,6 +21,9 @@ typedef struct ir_quad_ret_s {
 } ir_quad_ret_t;
 
 
+void ir_quad_ret_fprint(
+	FILE           *stream,
+	ir_quad_t      *ir_quad);
 int ir_quad_ret_gen(
 	ir_quad_t     **ir_quad,
 	ir_reg_type_t   type,
