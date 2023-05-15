@@ -5,6 +5,7 @@
 jkcc_src += files(
         'binop.c',
         'break.c',
+        'call.c',
         'cmp.c',
         'continue.c',
         'declaration.c',
