@@ -49,6 +49,9 @@ void ir_unit_deinit(
 	ir_unit_t               *ir_unit);
 void ir_unit_free(
 	ir_unit_t               *ir_unit);
+void ir_unit_fprint(
+	FILE                    *stream,
+	ir_unit_t               *ir_unit);
 int ir_unit_gen(
 	ir_unit_t               *ir_unit,
 	ast_t                   *ast);

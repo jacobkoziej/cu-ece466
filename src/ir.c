@@ -187,6 +187,17 @@ void ir_unit_free(ir_unit_t *ir_unit)
 	free(ir_unit);
 }
 
+void ir_unit_fprint(FILE *stream, ir_unit_t *ir_unit)
+{
+	ir_function_t **ir_function = ir_unit->function.buf;
+	for (size_t i = 0; i < ir_unit->function.use; i++) {
+		ir_function_fprint(stream, ir_function[i]);
+
+		if (i < ir_unit->function.use - 1)
+			fprintf(stream, "\n");
+	}
+}
+
 int ir_unit_gen(ir_unit_t *ir_unit, ast_t *ast)
 {
 	int ir_error = IR_ERROR_NOMEM;
