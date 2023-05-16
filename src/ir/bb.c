@@ -52,7 +52,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_MEMBER_ACCESS]            = ir_bb_unknown_gen,
 	[AST_POINTER]                  = ir_bb_unknown_gen,
 	[AST_RETURN]                   = ir_bb_return_gen,
-	[AST_SIZEOF]                   = ir_bb_unknown_gen,
+	[AST_SIZEOF]                   = ir_bb_sizeof_gen,
 	[AST_STATIC_ASSERT]            = ir_bb_unknown_gen,
 	[AST_STORAGE_CLASS_SPECIFIER]  = ir_bb_unknown_gen,
 	[AST_STRING_LITERAL]           = ir_bb_unknown_gen,
