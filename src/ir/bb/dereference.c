@@ -36,6 +36,12 @@ int ir_bb_dereference_gen(
 
 	ast_t *operand = ast_dereference_get_operand(ast);
 
+	bool lvalue = ir_context->lvalue;
+
+	// if we're dereferencing, we're
+	// going to generate a valid lvalue
+	ir_context->lvalue = false;
+
 	if (*operand == AST_DEREFERENCE) {
 		ir_bb_dereference_gen(ir_context, operand);
 
@@ -47,14 +53,14 @@ int ir_bb_dereference_gen(
 
 	IR_BB_INIT;
 
-	// if we're dereferencing, we're
-	// going to generate a valid lvalue
-	ir_context->lvalue = false;
-
 	ret = IR_BB_GEN(ir_context, operand);
 	if (ret) return ret;
 	load.src.reg = ir_context->result;
 	load.type    = IR_REG_TYPE_PTR;
+
+	// we want to avoid the final dereference
+	// if we're generating an lvalue
+	if (lvalue) return 0;
 
 load_value:
 	ret = ir_quad_load_gen(
