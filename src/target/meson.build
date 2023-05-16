@@ -2,4 +2,8 @@
 #
 # Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
 
+jkcc_src += files(
+        'extern_declaration.c',
+)
+
 subdir('x86')
