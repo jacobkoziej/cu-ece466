@@ -7,6 +7,7 @@
 #include <jkcc/target/x86/static_declaration.h>
 #include <jkcc/target/x86/util.h>
 #include <jkcc/target/util.h>
+#include <jkcc/private/target.h>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -19,19 +20,15 @@ int target_x86_static_declaration(
 	ir_static_declaration_t *static_declaration)
 {
 	if (*static_declaration->declaration == AST_STRING_LITERAL) {
-		fprintf(
-			stream,
-			"\t.type\t.L%lu,@object\n",
-			static_declaration->bb);
-		fprintf(stream, "\t.section\t.rodata\n");
-		fprintf(stream, ".L%lu:\n", static_declaration->bb);
+		DIRECTIVE_ARG(".type\t.L%lu,@object", static_declaration->bb);
+		DIRECTIVE(".section\t.rodata");
+		LOCAL_LABEL(static_declaration->bb);
 		size_t size = target_util_string_literal(
 			stream,
 			static_declaration->declaration);
 		if (!size) return -1;
-		fprintf(
-			stream,
-			"\t.size\t.L%lu, %lu\n",
+		DIRECTIVE_ARG(
+			".size\t.L%lu, %lu",
 			static_declaration->bb,
 			size);
 
@@ -48,12 +45,12 @@ int target_x86_static_declaration(
 	size_t size = target_x86_util_sizeof(ast_type);
 	if (!size) return -1;
 
-	fprintf(stream, "\t.type\t%s,@object\n", identifier->head);
-	fprintf(stream, "\t.bss\n");
-	fprintf(stream, "\t.local\t%s\n", identifier->head);
-	fprintf(stream, "\t.p2align\t2, 0x0\n");
-	fprintf(stream, "%s:\n", identifier->head);
-	fprintf(stream, "\t.size\t%s, %lu\n", identifier->head, size);
+	DIRECTIVE_ARG(".type\t%s,@object", identifier->head);
+	DIRECTIVE(".bss");
+	DIRECTIVE_ARG(".local\t%s", identifier->head);
+	DIRECTIVE(".p2align\t2, 0x0");
+	LABEL(identifier->head);
+	DIRECTIVE_ARG(".size\t%s, %lu", identifier->head, size);
 
 	return 0;
 }

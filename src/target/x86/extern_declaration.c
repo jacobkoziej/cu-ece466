@@ -6,6 +6,7 @@
 
 #include <jkcc/target/x86/extern_declaration.h>
 #include <jkcc/target/x86/util.h>
+#include <jkcc/private/target.h>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -23,12 +24,12 @@ int target_x86_extern_declaration(FILE *stream, ast_t *ast)
 	size_t size = target_x86_util_sizeof(ast_type);
 	if (!size) return -1;
 
-	fprintf(stream, "\t.type\t%s,@object\n", identifier->head);
-	fprintf(stream, "\t.bss\n");
-	fprintf(stream, "\t.globl\t%s\n", identifier->head);
-	fprintf(stream, "\t.p2align\t2, 0x0\n");
-	fprintf(stream, "%s:\n", identifier->head);
-	fprintf(stream, "\t.size\t%s, %lu\n", identifier->head, size);
+	DIRECTIVE_ARG(".type\t%s,@object", identifier->head);
+	DIRECTIVE(".bss");
+	DIRECTIVE_ARG(".globl\t%s", identifier->head);
+	DIRECTIVE(".p2align\t2, 0x0");
+	LABEL(identifier->head);
+	DIRECTIVE_ARG(".size\t%s, %lu", identifier->head, size);
 
 	return 0;
 }
