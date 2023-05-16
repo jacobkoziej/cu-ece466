@@ -44,6 +44,7 @@ jkcc_src = files(
         'scope.c',
         'string.c',
         'symbol.c',
+        'target.c',
         'trace.c',
         'vector.c',
 )
