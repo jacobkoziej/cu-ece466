@@ -199,9 +199,15 @@ argv_done:
 	ir_context->ir_bb = NULL;
 
 	// body consists of one statement
-	if (!list) return IR_BB_GEN(
-		ir_context,
-		ast_function_get_body(ast_function));
+	if (!list) {
+		int ret = IR_BB_GEN(
+			ir_context,
+			ast_function_get_body(ast_function));
+		if (ret) return ret;
+
+		ir_function->reg_use = ir_context->current.dst;
+		return 0;
+	}
 
 	ast_t **statement = list->buf;
 	for (size_t i = 0; i < list->use; i++) {
@@ -211,6 +217,8 @@ argv_done:
 			goto error_ir_bb_statement_gen;
 		}
 	}
+
+	ir_function->reg_use = ir_context->current.dst;
 
 	return 0;
 

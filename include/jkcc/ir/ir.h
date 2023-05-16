@@ -54,6 +54,7 @@ typedef struct ir_function_s {
 	vector_t      *argv;         // ast_t*
 	ast_t         *declaration;
 	vector_t       bb;           // ir_bb_t*
+	uintptr_t      reg_use;
 	struct {
 		ht_t lookup;
 		ht_t type;
