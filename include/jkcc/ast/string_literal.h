@@ -30,6 +30,8 @@ ast_t *ast_string_literal_init(
 	location_t       *location);
 void ast_string_literal_free(
 	ast_t            *ast);
+const string_literal_t *ast_string_literal_get_string_literal(
+	ast_t            *ast);
 void fprint_ast_string_literal(
 	FILE             *stream,
 	const ast_t      *ast,

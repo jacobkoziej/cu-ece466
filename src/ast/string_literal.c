@@ -39,6 +39,11 @@ void ast_string_literal_free(ast_t *ast)
 	free(node);
 }
 
+const string_literal_t *ast_string_literal_get_string_literal(ast_t *ast)
+{
+	return &OFFSETOF_AST_NODE(ast, ast_string_literal_t)->string_literal;
+}
+
 void fprint_ast_string_literal(
 	FILE         *stream,
 	const ast_t  *ast,
