@@ -76,8 +76,7 @@ int ir_bb_binop_gen(
 			return ir_bb_cmp_gen(ir_context, ast);
 
 		case AST_BINARY_OPERATOR_LOGICAL_AND:
-			// TODO: cmp
-			return IR_ERROR_UNKNOWN_AST_NODE;
+			return ir_bb_cmp_and_gen(ir_context, ast);
 
 		case AST_BINARY_OPERATOR_LOGICAL_OR:
 			return ir_bb_cmp_or_gen(ir_context, ast);

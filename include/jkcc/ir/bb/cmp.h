@@ -13,6 +13,9 @@
 #include <jkcc/ast.h>
 
 
+int ir_bb_cmp_and_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast);
 int ir_bb_cmp_gen(
 	ir_context_t *ir_context,
 	ast_t        *ast);
