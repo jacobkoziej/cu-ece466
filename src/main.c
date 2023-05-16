@@ -132,6 +132,9 @@ parse_stdin:
 				goto error;
 		}
 
+		if (jkcc.config.print_ir)
+			ir_unit_fprint(stdout, ir_unit);
+
 		if (vector_append(&jkcc.ir_unit, &ir_unit)) goto error;
 	}
 
@@ -187,6 +190,11 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 			if (!strcmp(arg, "print-ast")) {
 				jkcc->config.print_ast = 1;
+				break;
+			}
+
+			if (!strcmp(arg, "print-ir")) {
+				jkcc->config.print_ir = 1;
 				break;
 			}
 
