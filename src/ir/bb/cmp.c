@@ -8,10 +8,12 @@
 #include <jkcc/ir/ir.h>
 #include <jkcc/private/ir.h>
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <jkcc/ast.h>
 #include <jkcc/ir.h>
+#include <jkcc/vector.h>
 
 
 int ir_bb_cmp_gen(
@@ -68,6 +70,9 @@ int ir_bb_cmp_gen(
 			condition = IR_QUAD_BR_NE;
 			break;
 
+		case AST_BINARY_OPERATOR_LOGICAL_OR:
+			return ir_bb_cmp_or_gen(ir_context, ast);
+
 		default:
 			return IR_ERROR_UNKNOWN_AST_NODE;
 	}
@@ -78,11 +83,17 @@ int ir_bb_cmp_gen(
 	if (vector_append(&ir_context->ir_bb->quad, &quad))
 		goto error_vector_append_ir_quad_br_true;
 
-	ret = ir_quad_br_gen(&quad, IR_QUAD_BR_AL, ir_context->br_false);
-	if (ret) return ret;
+	// remove unconditional branch for short-circuit operations
+	if (!ir_context->short_circuit) {
+		ret = ir_quad_br_gen(
+			&quad,
+			IR_QUAD_BR_AL,
+			ir_context->br_false);
+		if (ret) return ret;
 
-	if (vector_append(&ir_context->ir_bb->quad, &quad))
-		goto error_vector_append_ir_quad_br_false;
+		if (vector_append(&ir_context->ir_bb->quad, &quad))
+			goto error_vector_append_ir_quad_br_false;
+	}
 
 	return 0;
 
@@ -94,4 +105,30 @@ error_vector_append_ir_quad_br_true:
 
 error_vector_append_ir_quad_cmp:
 	return IR_ERROR_NOMEM;
+}
+
+int ir_bb_cmp_or_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast)
+{
+	int  ret;
+	bool reset = false;
+
+	ast_t *lhs = ast_binary_operator_get_lhs(ast);
+	ast_t *rhs = ast_binary_operator_get_rhs(ast);
+
+	if (!ir_context->short_circuit) {
+		ir_context->short_circuit = true;
+		reset                     = true;
+	}
+
+	ret = ir_bb_cmp_gen(ir_context, lhs);
+	if (ret) return ret;
+
+	if (reset) ir_context->short_circuit = false;
+
+	ret = ir_bb_cmp_gen(ir_context, rhs);
+	if (ret) return ret;
+
+	return 0;
 }

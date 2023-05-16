@@ -16,6 +16,9 @@
 int ir_bb_cmp_gen(
 	ir_context_t *ir_context,
 	ast_t        *ast);
+int ir_bb_cmp_or_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast);
 
 
 #endif  /* JKCC_IR_BB_CMP_H */
