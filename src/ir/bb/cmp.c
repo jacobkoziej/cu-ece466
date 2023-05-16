@@ -64,6 +64,9 @@ int ir_bb_cmp_gen(
 	ir_context_t *ir_context,
 	ast_t        *ast)
 {
+	if (*ast != AST_BINARY_OPERATOR)
+		return ir_bb_cmp_zr_gen(ir_context, ast);
+
 	struct {
 		uintptr_t lhs;
 		uintptr_t rhs;
@@ -107,7 +110,7 @@ int ir_bb_cmp_gen(
 			return ir_bb_cmp_or_gen(ir_context, ast);
 
 		default:
-			return IR_ERROR_UNKNOWN_AST_NODE;
+			return ir_bb_cmp_zr_gen(ir_context, ast);
 	}
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_lhs(ast));
@@ -176,6 +179,50 @@ int ir_bb_cmp_or_gen(
 
 	ret = ir_bb_cmp_gen(ir_context, rhs);
 	if (ret) return ret;
+
+	return 0;
+}
+
+int ir_bb_cmp_zr_gen(
+	ir_context_t *ir_context,
+	ast_t        *ast)
+{
+	struct {
+		uintptr_t lhs;
+		uintptr_t rhs;
+	} cmp;
+
+	int        ret;
+	ir_quad_t *quad;
+
+	ret = IR_BB_GEN(ir_context, ast);
+	if (ret) return ret;
+
+	cmp.lhs = ir_context->result;
+
+	ret = ir_quad_mov_gen(
+		&quad,
+		ir_context->current.dst,
+		IR_REG_TYPE_I32,
+		0);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		return IR_ERROR_NOMEM;
+
+	cmp.rhs = ir_context->current.dst++;
+
+	ret = ir_quad_cmp_gen(&quad, cmp.lhs, cmp.rhs);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		return IR_ERROR_NOMEM;
+
+	ret = ir_quad_br_gen(&quad, IR_QUAD_BR_NE, ir_context->br_true);
+	if (ret) return ret;
+
+	if (vector_append(&ir_context->ir_bb->quad, &quad))
+		return IR_ERROR_NOMEM;
 
 	return 0;
 }

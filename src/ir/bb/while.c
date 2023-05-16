@@ -78,7 +78,7 @@ int ir_bb_while_gen(
 	ir_context->br_exit  = exit.id;
 
 	ir_context->ir_bb = expression.bb;
-	ret = IR_BB_GEN(ir_context, ast_expression);
+	ret = ir_bb_cmp_gen(ir_context, ast_expression);
 	if (ret) return ret;
 
 	if (*ast_statement != AST_EMPTY) {
