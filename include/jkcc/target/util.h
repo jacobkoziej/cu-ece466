@@ -10,5 +10,13 @@
 
 #include <jkcc/target/x86/util.h>
 
+#include <stddef.h>
+#include <stdio.h>
+
+#include <jkcc/ast.h>
+
+
+size_t target_util_string_literal(FILE *stream, ast_t *ast);
+
 
 #endif  /* JKCC_TARGET_UTIL_H */
