@@ -29,6 +29,8 @@ ast_t *ast_sizeof_init(
 	location_t   *location_end);
 void ast_sizeof_free(
 	ast_t        *ast);
+ast_t *ast_sizeof_get_operand(
+	ast_t        *ast);
 void fprint_ast_sizeof(
 	FILE         *stream,
 	const ast_t  *ast,

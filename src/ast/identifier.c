@@ -48,6 +48,16 @@ const string_t *ast_identifier_get_string(
 	return &ast_identifier->identifier.IDENTIFIER;
 }
 
+ast_t *ast_identifier_get_type(
+	ast_t *identifier)
+{
+	ast_identifier_t *ast_identifier = OFFSETOF_AST_NODE(
+		identifier,
+		ast_identifier_t);
+
+	return ast_identifier->type;
+}
+
 void ast_identifier_set_type(
 	ast_t *identifier,
 	ast_t *type)
@@ -70,6 +80,7 @@ void fprint_ast_identifier(
 	FPRINT_AST_FIELD(
 		ast_node_str[AST_IDENTIFIER],
 		node->identifier.text.head);
+	FPRINT_AST_POINTER("type-id", node->type);
 
 	FPRINT_AST_NODE_FINISH;
 }

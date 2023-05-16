@@ -47,6 +47,12 @@ ast_t *ast_assignment_init(
 	location_t    *location_end);
 void ast_assignment_free(
 	ast_t         *ast);
+uint_fast16_t ast_assignment_get_assignment(
+	ast_t         *ast);
+ast_t *ast_assignment_get_lvalue(
+	ast_t         *ast);
+ast_t *ast_assignment_get_rvalue(
+	ast_t         *ast);
 void fprint_ast_assignment(
 	FILE          *stream,
 	const ast_t   *ast,

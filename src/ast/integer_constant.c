@@ -38,6 +38,13 @@ void ast_integer_constant_free(ast_t *ast)
 	free(node);
 }
 
+const integer_constant_t *ast_integer_constant_get_integer_constant(ast_t *ast)
+{
+	return &OFFSETOF_AST_NODE(
+		ast,
+		ast_integer_constant_t)->integer_constant;
+}
+
 void fprint_ast_integer_constant(
 	FILE         *stream,
 	const ast_t  *ast,

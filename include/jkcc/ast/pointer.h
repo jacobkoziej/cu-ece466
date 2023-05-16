@@ -34,6 +34,8 @@ ast_t *ast_pointer_init(
 	location_t   *location);
 void ast_pointer_free(
 	ast_t        *ast);
+ast_t *ast_pointer_get_pointer(
+	ast_t        *ast);
 void fprint_ast_pointer(
 	FILE         *stream,
 	const ast_t  *ast,

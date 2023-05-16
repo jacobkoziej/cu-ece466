@@ -38,6 +38,11 @@ void ast_sizeof_free(ast_t *ast)
 	free(node);
 }
 
+ast_t *ast_sizeof_get_operand(ast_t *ast)
+{
+	return OFFSETOF_AST_NODE(ast, ast_sizeof_t)->operand;
+}
+
 void fprint_ast_sizeof(
 	FILE         *stream,
 	const ast_t  *ast,

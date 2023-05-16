@@ -30,6 +30,8 @@ ast_t *ast_return_init(
 	location_t   *location_end);
 void ast_return_free(
 	ast_t        *ast);
+ast_t *ast_return_get_expression(
+	ast_t        *ast);
 void fprint_ast_return(
 	FILE         *stream,
 	const ast_t  *ast,

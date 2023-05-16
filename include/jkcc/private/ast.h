@@ -89,6 +89,11 @@
 	fprintf(stream, "\"%s\" : \"%s\",\n", name, value); \
 }
 
+#define FPRINT_AST_POINTER(name, value) {                           \
+	INDENT(stream, level);                                      \
+	fprintf(stream, "\"%s\" : \"%p\",\n", name, (void*) value); \
+}
+
 #define FPRINT_AST_LIST(name, member) {                 \
 	INDENT(stream, level);                          \
 	fprintf(stream, "\"%s\" : [\n", name);          \

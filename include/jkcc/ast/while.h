@@ -35,6 +35,10 @@ ast_t *ast_while_init(
 	location_t   *location_end);
 void ast_while_free(
 	ast_t        *ast);
+ast_t *ast_while_get_expression(
+	ast_t        *ast);
+ast_t *ast_while_get_statement(
+	ast_t        *ast);
 void fprint_ast_while(
 	FILE         *stream,
 	const ast_t  *ast,

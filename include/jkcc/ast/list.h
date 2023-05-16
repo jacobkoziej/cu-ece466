@@ -34,6 +34,8 @@ ast_t *ast_list_init(
 	location_t   *location);
 void ast_list_free(
 	ast_t        *ast);
+vector_t *ast_list_get_list(
+	ast_t        *ast);
 void fprint_ast_list(
 	FILE         *stream,
 	const ast_t  *ast,

@@ -14,6 +14,7 @@
 #include <unistd.h>
 
 #include <jkcc/ast.h>
+#include <jkcc/ir.h>
 #include <jkcc/jkcc.h>
 #include <jkcc/parser.h>
 #include <jkcc/trace.h>
@@ -82,10 +83,13 @@ int main(int argc, char **argv)
 
 	argp_parse(&argp, argc, argv, 0, 0, &jkcc);
 
-	ast_t *translation_unit;
+	ast_t     *translation_unit;
+	ir_unit_t *ir_unit;
 
 	if (vector_init(&jkcc.translation_unit, sizeof(translation_unit), 0))
 		return EXIT_FAILURE;
+
+	if (vector_init(&jkcc.ir_unit, sizeof(ir_unit), 0)) goto error;
 
 	parser_t parser = {
 		.path  = NULL,
@@ -111,6 +115,29 @@ parse_stdin:
 		++processed;
 	}
 
+	for (size_t i = 0; i < processed; i++) {
+		ir_unit = ir_unit_alloc();
+		if (!ir_unit) goto error;
+
+		ast_t **translation_unit = jkcc.translation_unit.buf;
+
+		switch (ir_unit_gen(ir_unit, translation_unit[i])) {
+			case IR_ERROR_EMPTY_TRANSLATION_UNIT:
+				break;
+
+			case 0:
+				break;
+
+			default:
+				goto error;
+		}
+
+		if (jkcc.config.print_ir)
+			ir_unit_fprint(stdout, ir_unit);
+
+		if (vector_append(&jkcc.ir_unit, &ir_unit)) goto error;
+	}
+
 	return EXIT_SUCCESS;
 
 error:
@@ -129,6 +156,15 @@ static void cleanup(void)
 			AST_NODE_FREE(translation_unit[i]);
 
 		vector_free(&jkcc.translation_unit);
+	}
+
+	if (jkcc.ir_unit.buf) {
+		ir_unit_t **ir_unit = jkcc.ir_unit.buf;
+
+		for (size_t i = 0; i < jkcc.ir_unit.use; i++)
+			ir_unit_free(ir_unit[i]);
+
+		vector_free(&jkcc.ir_unit);
 	}
 }
 
@@ -154,6 +190,11 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 			if (!strcmp(arg, "print-ast")) {
 				jkcc->config.print_ast = 1;
+				break;
+			}
+
+			if (!strcmp(arg, "print-ir")) {
+				jkcc->config.print_ir = 1;
 				break;
 			}
 

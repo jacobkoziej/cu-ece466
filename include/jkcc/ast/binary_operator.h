@@ -54,6 +54,12 @@ ast_t *ast_binary_operator_init(
 	location_t    *location_end);
 void ast_binary_operator_free(
 	ast_t         *ast);
+ast_t *ast_binary_operator_get_lhs(
+	ast_t         *ast);
+uint_fast32_t ast_binary_operator_get_operator(
+	ast_t         *ast);
+ast_t *ast_binary_operator_get_rhs(
+	ast_t         *ast);
 void fprint_ast_binary_operator(
 	FILE          *stream,
 	const ast_t   *ast,

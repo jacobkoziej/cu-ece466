@@ -33,6 +33,10 @@ ast_t *ast_array_init(
 	location_t   *location_end);
 void ast_array_free(
 	ast_t        *ast);
+ast_t *ast_array_get_size(
+	ast_t        *array);
+ast_t *ast_array_get_type(
+	ast_t        *array);
 void ast_array_set_type(
 	ast_t        *array,
 	ast_t        *type);
