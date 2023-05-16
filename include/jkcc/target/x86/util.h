@@ -8,4 +8,12 @@
 #define JKCC_TARGET_X86_UTIL_H
 
 
+#include <stddef.h>
+
+#include <jkcc/ast.h>
+
+
+size_t target_x86_util_sizeof(ast_t *type);
+
+
 #endif  /* JKCC_TARGET_X86_UTIL_H */
