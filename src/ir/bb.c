@@ -55,7 +55,7 @@ int (*const ir_bb_gen[AST_NODES_TOTAL])(
 	[AST_SIZEOF]                   = ir_bb_sizeof_gen,
 	[AST_STATIC_ASSERT]            = ir_bb_unknown_gen,
 	[AST_STORAGE_CLASS_SPECIFIER]  = ir_bb_unknown_gen,
-	[AST_STRING_LITERAL]           = ir_bb_unknown_gen,
+	[AST_STRING_LITERAL]           = ir_bb_string_literal_gen,
 	[AST_STRUCT]                   = ir_bb_unknown_gen,
 	[AST_SWITCH]                   = ir_bb_unknown_gen,
 	[AST_TERNARY_OPERATOR]         = ir_bb_unknown_gen,

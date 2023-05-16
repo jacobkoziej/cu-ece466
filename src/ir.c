@@ -28,6 +28,8 @@ int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 	ir_static_declaration_t *ir_static_declaration;
 	ast_t                   *type;
 
+	if (*declaration == AST_STRING_LITERAL) goto string_literal;
+
 	switch (ast_declaration_get_storage_class(declaration)) {
 		case AST_DECLARATION_IMPLICIT_EXTERN:
 			if (vector_append(
@@ -44,6 +46,7 @@ int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 
 			break;
 
+string_literal:
 		case AST_DECLARATION_STATIC:
 			ir_static_declaration = ir_static_declaration_alloc(
 				ir_context,
@@ -55,11 +58,14 @@ int ir_declaration(ir_context_t *ir_context, ast_t *declaration)
 				&ir_static_declaration))
 				goto error_vector_append_ir_static_declaration;
 
-			type = ast_declaration_get_type(declaration);
+			// small hack to get strings literals working
+			type = (*declaration != AST_STRING_LITERAL)
+				? ast_declaration_get_type(declaration)
+				: declaration;
 			if (ht_insert(
 				&ir_context->static_declaration,
 				&type,
-				sizeof(ast_type_t*),
+				sizeof(type),
 				(void*) ir_static_declaration))
 				goto error_ht_insert_ir_static_declaration;
 
