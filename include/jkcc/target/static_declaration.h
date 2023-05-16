@@ -8,4 +8,16 @@
 #define JKCC_TARGET_STATIC_DECLARATION_H
 
 
+#include <jkcc/target/target.h>
+
+#include <stdio.h>
+
+#include <jkcc/ir.h>
+
+
+extern int (*const target_static_declaration[TARGET_TOTAL])(
+	FILE                    *stream,
+	ir_static_declaration_t *static_declaration);
+
+
 #endif  /* JKCC_TARGET_STATIC_DECLARATION_H */
