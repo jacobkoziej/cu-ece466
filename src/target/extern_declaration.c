@@ -16,5 +16,5 @@
 int (*const target_extern_declaration[TARGET_TOTAL])(
 	FILE  *stream,
 	ast_t *ast) = {
-	[TARGET_X86] = NULL,
+	[TARGET_X86] = target_x86_extern_declaration,
 };
