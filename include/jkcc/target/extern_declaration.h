@@ -8,4 +8,16 @@
 #define JKCC_TARGET_EXTERN_DECLARATION_H
 
 
+#include <jkcc/target/target.h>
+
+#include <stdio.h>
+
+#include <jkcc/ast.h>
+
+
+extern int (*const target_extern_declaration[TARGET_TOTAL])(
+	FILE  *stream,
+	ast_t *ast);
+
+
 #endif  /* JKCC_TARGET_EXTERN_DECLARATION_H */
