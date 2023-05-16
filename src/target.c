@@ -26,6 +26,16 @@ int target_gen(FILE *stream, target_t target, ir_unit_t *ir_unit)
 		fprintf(stream, "\n");
 	}
 
+	ir_static_declaration_t **static_declaration
+		= ir_unit->static_declaration.buf;
+	for (size_t i = 0; i < ir_unit->static_declaration.use; i++) {
+		if (target_static_declaration[target](
+			stream,
+			static_declaration[i])) return -1;
+
+		fprintf(stream, "\n");
+	}
+
 	fprintf(stream, "\t.ident\t\"jkcc version %s\"\n", JKCC_VERSION);
 	fprintf(stream, "\t.section\t\".note.GNU-stack\",\"\",@progbits\n");
 

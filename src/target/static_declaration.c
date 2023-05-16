@@ -16,5 +16,5 @@
 int (*const target_static_declaration[TARGET_TOTAL])(
 	FILE                    *stream,
 	ir_static_declaration_t *static_declaration) = {
-	[TARGET_X86] = NULL,
+	[TARGET_X86] = target_x86_static_declaration,
 };

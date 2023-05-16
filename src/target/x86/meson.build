@@ -4,5 +4,6 @@
 
 jkcc_src += files(
         'extern_declaration.c',
+        'static_declaration.c',
         'util.c',
 )

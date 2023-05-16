@@ -9,6 +9,7 @@
 
 
 #include <jkcc/target/target.h>
+#include <jkcc/target/x86/static_declaration.h>
 
 #include <stdio.h>
 
