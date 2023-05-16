@@ -60,6 +60,7 @@ int ir_bb_mov_gen(
 		(void*) val)) goto error_ht_insert_reg_type;
 
 	ir_context->result = ir_context->current.dst++;
+	ir_context->type   = reg_type;
 
 	return 0;
 

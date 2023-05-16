@@ -66,6 +66,7 @@ int ir_bb_declaration_gen(
 		goto error_vector_append_ir_bb_quad;
 
 	ir_context->result = ir_context->current.dst++;
+	ir_context->type   = reg_type;
 
 	return 0;
 

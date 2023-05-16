@@ -98,6 +98,7 @@ int ir_bb_call_gen(
 		val)) return IR_ERROR_NOMEM;
 
 	ir_context->result = ir_context->current.dst++;
+	ir_context->type   = type;
 
 	// a call terminates a basic block
 	ret = ir_quad_br_gen(&quad, IR_QUAD_BR_AL, ir_context->current.bb);

@@ -95,6 +95,7 @@ typedef struct ir_context_s {
 	ht_t           extern_declaration;
 	ht_t           static_declaration;
 	uintptr_t      result;
+	ir_reg_type_t  type;
 	bool           lvalue;
 	bool           short_circuit;
 	size_t         br_loop_expression;

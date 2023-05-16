@@ -21,8 +21,10 @@ int ir_bb_binop_gen(
 {
 	struct {
 		ir_quad_binop_op_t op;
-		uintptr_t          lhs;
-		uintptr_t          rhs;
+		struct {
+			uintptr_t     reg;
+			ir_reg_type_t type;
+		} lhs, rhs;
 	} binop = {0};
 
 	uint_fast32_t operator = ast_binary_operator_get_operator(ast);
@@ -91,19 +93,21 @@ int ir_bb_binop_gen(
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_lhs(ast));
 	if (ret) return ret;
-	binop.lhs = ir_context->result;
+	binop.lhs.reg  = ir_context->result;
+	binop.lhs.type = ir_context->type;
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_rhs(ast));
 	if (ret) return ret;
-	binop.rhs = ir_context->result;
+	binop.rhs.reg  = ir_context->result;
+	binop.rhs.type = ir_context->type;
 
 	ir_quad_t *quad;
 	ret = ir_quad_binop_gen(
 		&quad,
 		ir_context->current.dst,
 		binop.op,
-		binop.lhs,
-		binop.rhs);
+		binop.lhs.reg,
+		binop.rhs.reg);
 	if (ret) return ret;
 
 	if (vector_append(&ir_context->ir_bb->quad, &quad))

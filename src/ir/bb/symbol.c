@@ -98,6 +98,7 @@ src_set:
 	if (ir_context->lvalue) {
 		ir_context->lvalue = false;
 		ir_context->result = (uintptr_t) val;
+		ir_context->type   = type;
 		return 0;
 	}
 
@@ -126,6 +127,7 @@ src_set:
 		val)) goto error_ht_insert_reg_type;
 
 	ir_context->result = ir_context->current.dst++;
+	ir_context->type   = type;
 
 	return 0;
 
