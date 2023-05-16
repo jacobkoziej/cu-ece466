@@ -21,6 +21,7 @@ int ir_bb_binop_gen(
 {
 	struct {
 		ir_quad_binop_op_t op;
+		ir_reg_type_t      type;
 		struct {
 			uintptr_t     reg;
 			ir_reg_type_t type;
@@ -89,7 +90,10 @@ int ir_bb_binop_gen(
 
 	IR_BB_INIT;
 
-	int ret;
+	int        ret;
+	ir_quad_t *quad;
+
+	binop.type = IR_REG_TYPE_I32;
 
 	ret = IR_BB_GEN(ir_context, ast_binary_operator_get_lhs(ast));
 	if (ret) return ret;
@@ -101,11 +105,58 @@ int ir_bb_binop_gen(
 	binop.rhs.reg  = ir_context->result;
 	binop.rhs.type = ir_context->type;
 
-	ir_quad_t *quad;
+	// integer "promotion"
+	if (binop.lhs.type != binop.rhs.type) {
+		ret = ir_quad_mov_gen(
+				&quad,
+				ir_context->current.dst,
+				IR_REG_TYPE_I32,
+				4);
+		if (ret) return ret;
+
+		if (vector_append(
+			&ir_context->ir_bb->quad,
+			&quad)) return IR_ERROR_NOMEM;
+
+		ir_context->result = ir_context->current.dst++;
+		ir_context->type   = IR_REG_TYPE_I32;
+
+		uintptr_t src = (binop.lhs.type == IR_REG_TYPE_I32)
+			? binop.lhs.reg
+			: binop.rhs.reg;
+
+		ret = ir_quad_binop_gen(
+			&quad,
+			ir_context->current.dst,
+			IR_QUAD_BINOP_MUL,
+			IR_REG_TYPE_I32,
+			src,
+			ir_context->result);
+		if (ret) return ret;
+
+		if (vector_append(
+			&ir_context->ir_bb->quad,
+			&quad)) return IR_ERROR_NOMEM;
+
+		ir_context->result = ir_context->current.dst++;
+		ir_context->type   = IR_REG_TYPE_PTR;
+
+		if (binop.lhs.type == IR_REG_TYPE_I32) {
+			binop.lhs.reg  = ir_context->result;
+			binop.lhs.type = ir_context->type;
+		} else {
+			binop.rhs.reg  = ir_context->result;
+			binop.rhs.type = ir_context->type;
+		}
+
+		binop.type = IR_REG_TYPE_PTR;
+	}
+
 	ret = ir_quad_binop_gen(
 		&quad,
 		ir_context->current.dst,
 		binop.op,
+		binop.type,
 		binop.lhs.reg,
 		binop.rhs.reg);
 	if (ret) return ret;
