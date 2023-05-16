@@ -8,6 +8,7 @@
 #define JKCC_TARGET_H
 
 
+#include <jkcc/target/extern_declaration.h>
 #include <jkcc/target/target.h>
 #include <jkcc/target/x86.h>
 
