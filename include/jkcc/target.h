@@ -10,5 +10,12 @@
 
 #include <jkcc/target/target.h>
 
+#include <stdio.h>
+
+#include <jkcc/ir.h>
+
+
+int target_gen(FILE *stream, target_t target, ir_unit_t *ir_unit);
+
 
 #endif  /* JKCC_TARGET_H */
