@@ -4,6 +4,7 @@
 
 jkcc_src += files(
         'extern_declaration.c',
+        'util.c',
 )
 
 subdir('x86')
