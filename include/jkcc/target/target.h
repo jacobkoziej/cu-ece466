@@ -4,11 +4,14 @@
  * Copyright (C) 2023  Jacob Koziej <jacobkoziej@gmail.com>
  */
 
-#ifndef JKCC_TARGET_H
-#define JKCC_TARGET_H
+#ifndef JKCC_TARGET_TARGET_H
+#define JKCC_TARGET_TARGET_H
 
 
-#include <jkcc/target/target.h>
+typedef enum target_e {
+	TARGET_X86,
+	TARGET_TOTAL,
+} target_t;
 
 
-#endif  /* JKCC_TARGET_H */
+#endif  /* JKCC_TARGET_TARGET_H */
