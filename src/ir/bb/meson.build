@@ -17,6 +17,7 @@ jkcc_src += files(
         'sizeof.c',
         'statement.c',
         'store.c',
+        'string_literal.c',
         'symbol.c',
         'while.c',
 )
