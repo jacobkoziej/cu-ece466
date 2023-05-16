@@ -8,4 +8,7 @@
 #define JKCC_TARGET_X86_H
 
 
+#include <jkcc/target/x86/util.h>
+
+
 #endif  /* JKCC_TARGET_X86_H */
