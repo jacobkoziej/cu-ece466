@@ -112,7 +112,11 @@ int ir_bb_unknown_gen(
 	ast_t        *ast)
 {
 	(void) ir_context;
-	(void) ast;
 
-	return IR_ERROR_UNKNOWN_AST_NODE;
+	fprintf(
+		stderr,
+		"error: ir: unknown AST node type: %s\n",
+		AST_NODE_STR(ast));
+
+	exit(EXIT_FAILURE);
 }
