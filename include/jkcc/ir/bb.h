@@ -24,6 +24,7 @@
 #include <jkcc/ir/bb/sizeof.h>
 #include <jkcc/ir/bb/statement.h>
 #include <jkcc/ir/bb/store.h>
+#include <jkcc/ir/bb/string_literal.h>
 #include <jkcc/ir/bb/symbol.h>
 #include <jkcc/ir/bb/while.h>
 
