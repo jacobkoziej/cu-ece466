@@ -5,3 +5,16 @@
  */
 
 #include <jkcc/target/function.h>
+#include <jkcc/target/target.h>
+
+#include <stdio.h>
+#include <stddef.h>
+
+#include <jkcc/ir.h>
+
+
+int (*const target_function[TARGET_TOTAL])(
+	FILE          *stream,
+	ir_function_t *function) = {
+	[TARGET_X86] = NULL,
+};

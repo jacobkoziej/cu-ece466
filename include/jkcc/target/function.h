@@ -10,5 +10,14 @@
 
 #include <jkcc/target/target.h>
 
+#include <stdio.h>
+
+#include <jkcc/ir.h>
+
+
+extern int (*const target_function[TARGET_TOTAL])(
+	FILE          *stream,
+	ir_function_t *function);
+
 
 #endif  /* JKCC_TARGET_FUNCTION_H */
