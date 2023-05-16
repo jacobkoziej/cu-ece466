@@ -9,6 +9,7 @@
 
 
 #include <jkcc/target/extern_declaration.h>
+#include <jkcc/target/static_declaration.h>
 #include <jkcc/target/target.h>
 #include <jkcc/target/x86.h>
 
