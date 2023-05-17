@@ -37,6 +37,8 @@
 
 #define LABEL(label) fprintf(stream, "%s:\n", label)
 
+#define LEAVE fprintf(stream, "\tleave\n")
+
 #define LOCAL_LABEL(bb) fprintf(stream, ".L%lu:\n", bb)
 
 #define MOVL(src, dst) fprintf(stream, "\tmovl\t%" src ", %" dst "\n")
