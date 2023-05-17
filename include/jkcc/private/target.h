@@ -41,6 +41,8 @@
 
 #define MOVL(src, dst) fprintf(stream, "\tmovl\t%" src ", %" dst "\n")
 
+#define MOVL_EDX(val) fprintf(stream, "\tmovl\t$%lu, %%edx\n", val)
+
 #define SAL fprintf(stream, "\tsal\t %%eax, %%edx\n")
 
 #define SAR fprintf(stream, "\tsar\t %%eax, %%edx\n")
