@@ -12,6 +12,8 @@
 #define AND fprintf(stream, "\tand\t %%eax, %%edx\n")
 
 #define CMPL fprintf(stream, "\tcmpl\t %%eax, %%edx\n")
+#define CMPL fprintf(stream, "\tcmpl\t %%edx, %%eax\n")
+
 
 #define DIRECTIVE(directive) fprintf(stream, "\t" directive "\n")
 
@@ -61,7 +63,7 @@
 
 #define STORE_EDX_DEREF_EAX fprintf(stream, "\tmovl\t%%edx, (%%eax)\n")
 
-#define SUBL fprintf(stream, "\tsubl\t %%eax, %%edx\n")
+#define SUBL fprintf(stream, "\tsubl\t%%eax, %%edx\n")
 
 #define OR fprintf(stream, "\tor\t %%eax, %%edx\n")
 

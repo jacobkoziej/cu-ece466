@@ -64,8 +64,8 @@ int target_x86_quad_binop(
 
 	ir_quad_binop_t *binop = OFFSETOF_IR_QUAD(quad, ir_quad_binop_t);
 
-	SET_EAX(target_x86_util_ebp_offset(binop->lhs, args));
-	SET_EDX(target_x86_util_ebp_offset(binop->rhs, args));
+	SET_EDX(target_x86_util_ebp_offset(binop->lhs, args));
+	SET_EAX(target_x86_util_ebp_offset(binop->rhs, args));
 
 	switch (binop->op) {
 		case IR_QUAD_BINOP_ADD:
