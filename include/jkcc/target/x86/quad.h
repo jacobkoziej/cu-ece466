@@ -54,6 +54,11 @@ int target_x86_quad_ret(
 	ir_quad_t *quad,
 	uintptr_t  regs,
 	uintptr_t  args);
+int target_x86_quad_store(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args);
 
 
 #endif  /* JKCC_TARGET_X86_QUAD_H */

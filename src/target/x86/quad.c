@@ -29,7 +29,7 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	[IR_QUAD_LOAD]   = NULL,
 	[IR_QUAD_MOV]    = target_x86_quad_mov,
 	[IR_QUAD_RET]    = target_x86_quad_ret,
-	[IR_QUAD_STORE]  = NULL,
+	[IR_QUAD_STORE]  = target_x86_quad_store,
 };
 
 
@@ -223,6 +223,25 @@ int target_x86_quad_ret(
 
 	LEAVE;
 	RET;
+
+	return 0;
+}
+
+int target_x86_quad_store(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args)
+{
+	(void) regs;
+
+	fprintf(stream, "\t#");
+	IR_QUAD_FPRINT(stream, quad);
+
+	ir_quad_store_t *store = OFFSETOF_IR_QUAD(quad, ir_quad_store_t);
+
+	SET_EDX(target_x86_util_ebp_offset(store->src, args));
+	STORE_RESULT(target_x86_util_ebp_offset(store->dst, args));
 
 	return 0;
 }
