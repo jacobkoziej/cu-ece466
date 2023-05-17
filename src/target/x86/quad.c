@@ -25,7 +25,7 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	[IR_QUAD_BINOP]  = target_x86_quad_binop,
 	[IR_QUAD_BR]     = NULL,
 	[IR_QUAD_CALL]   = NULL,
-	[IR_QUAD_CMP]    = NULL,
+	[IR_QUAD_CMP]    = target_x86_quad_cmp,
 	[IR_QUAD_LOAD]   = NULL,
 	[IR_QUAD_MOV]    = NULL,
 	[IR_QUAD_RET]    = NULL,
@@ -112,6 +112,26 @@ int target_x86_quad_binop(
 			return -1;
 	}
 	STORE_RESULT(target_x86_util_ebp_offset(binop->dst, args));
+
+	return 0;
+}
+
+int target_x86_quad_cmp(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args)
+{
+	(void) regs;
+
+	fprintf(stream, "\t#");
+	IR_QUAD_FPRINT(stream, quad);
+
+	ir_quad_cmp_t *cmp = OFFSETOF_IR_QUAD(quad, ir_quad_cmp_t);
+
+	SET_EAX(target_x86_util_ebp_offset(cmp->lhs, args));
+	SET_EDX(target_x86_util_ebp_offset(cmp->rhs, args));
+	CMPL;
 
 	return 0;
 }

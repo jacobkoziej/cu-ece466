@@ -11,6 +11,8 @@
 
 #define AND fprintf(stream, "\tand\t %%eax, %%edx\n")
 
+#define CMPL fprintf(stream, "\tcmpl\t %%eax, %%edx\n")
+
 #define DIRECTIVE(directive) fprintf(stream, "\t" directive "\n")
 
 #define DIRECTIVE_ARG(directive, ...) fprintf(stream, "\t" directive "\n", __VA_ARGS__)
