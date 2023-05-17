@@ -65,7 +65,13 @@ int ir_bb_symbol_gen(
 		return IR_ERROR_UNKNOWN_AST_NODE;
 
 src_set:
-		type = IR_REG_TYPE_PTR;
+		// HAK <3
+		if (ir_context->lvalue) {
+			type = IR_REG_TYPE_LEA;
+			ir_context->lea = true;
+		} else {
+			type = IR_REG_TYPE_PTR;
+		}
 
 		ret = ir_quad_load_gen(
 			&quad,

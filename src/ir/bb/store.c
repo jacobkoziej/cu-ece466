@@ -107,6 +107,12 @@ assignment:
 	if (ret) return ret;
 	store.dst = ir_context->result;
 
+	// HAK <3
+	if (ir_context->lea) {
+		ir_context->lea = false;
+		store.type = IR_REG_TYPE_LEA;
+	}
+
 	ret = ir_quad_store_gen(
 		&quad,
 		store.src,

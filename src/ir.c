@@ -131,6 +131,10 @@ void ir_reg_type_fprint(FILE *stream, ir_reg_type_t type)
 		case IR_REG_TYPE_PTR:
 			type_str = "ptr";
 			break;
+
+		case IR_REG_TYPE_LEA:
+			type_str = "lea";
+			break;
 	}
 
 	fprintf(stream, "%s", type_str);

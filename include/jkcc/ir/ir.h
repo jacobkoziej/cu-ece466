@@ -28,6 +28,7 @@
 typedef enum ir_reg_type_e {
 	IR_REG_TYPE_I32,
 	IR_REG_TYPE_PTR,
+	IR_REG_TYPE_LEA,
 } ir_reg_type_t;
 
 typedef enum ir_quad_e {
@@ -99,6 +100,7 @@ typedef struct ir_context_s {
 	ir_reg_type_t  type;
 	bool           lvalue;
 	bool           short_circuit;
+	bool           lea;
 	size_t         br_loop_expression;
 	size_t         br_loop_exit;
 	size_t         br_true;
