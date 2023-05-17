@@ -21,6 +21,20 @@
 
 #define IMUL fprintf(stream, "\timul\t %%eax, %%edx\n")
 
+#define JE(location) fprintf(stream, "\tje\t.L%lu\n", location)
+
+#define JG(location) fprintf(stream, "\tjg\t.L%lu\n", location)
+
+#define JGE(location) fprintf(stream, "\tjge\t.L%lu\n", location)
+
+#define JL(location) fprintf(stream, "\tjl\t.L%lu\n", location)
+
+#define JLE(location) fprintf(stream, "\tjle\t.L%lu\n", location)
+
+#define JNE(location) fprintf(stream, "\tjne\t.L%lu\n", location)
+
+#define JMP(location) fprintf(stream, "\tjmp\t.L%lu\n", location)
+
 #define LABEL(label) fprintf(stream, "%s:\n", label)
 
 #define LOCAL_LABEL(bb) fprintf(stream, ".L%lu:\n", bb)

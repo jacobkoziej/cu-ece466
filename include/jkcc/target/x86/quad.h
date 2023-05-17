@@ -34,6 +34,11 @@ int target_x86_quad_binop(
 	ir_quad_t *quad,
 	uintptr_t  regs,
 	uintptr_t  args);
+int target_x86_quad_br(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args);
 int target_x86_quad_cmp(
 	FILE      *stream,
 	ir_quad_t *quad,

@@ -23,7 +23,7 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	[IR_QUAD_ALLOCA] = target_x86_quad_alloca,
 	[IR_QUAD_ARG]    = NULL,
 	[IR_QUAD_BINOP]  = target_x86_quad_binop,
-	[IR_QUAD_BR]     = NULL,
+	[IR_QUAD_BR]     = target_x86_quad_br,
 	[IR_QUAD_CALL]   = NULL,
 	[IR_QUAD_CMP]    = target_x86_quad_cmp,
 	[IR_QUAD_LOAD]   = NULL,
@@ -112,6 +112,56 @@ int target_x86_quad_binop(
 			return -1;
 	}
 	STORE_RESULT(target_x86_util_ebp_offset(binop->dst, args));
+
+	return 0;
+}
+
+int target_x86_quad_br(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args)
+{
+	(void) regs;
+	(void) args;
+
+	fprintf(stream, "\t#");
+	IR_QUAD_FPRINT(stream, quad);
+
+	ir_quad_br_t *br = OFFSETOF_IR_QUAD(quad, ir_quad_br_t);
+
+	switch (br->condition) {
+		case IR_QUAD_BR_EQ:
+			JE(br->bb);
+			break;
+
+		case IR_QUAD_BR_NE:
+			JNE(br->bb);
+			break;
+
+		case IR_QUAD_BR_GE:
+			JGE(br->bb);
+			break;
+
+		case IR_QUAD_BR_LT:
+			JL(br->bb);
+			break;
+
+		case IR_QUAD_BR_GT:
+			JG(br->bb);
+			break;
+
+		case IR_QUAD_BR_LE:
+			JLE(br->bb);
+			break;
+
+		case IR_QUAD_BR_AL:
+			JMP(br->bb);
+			break;
+
+		default:
+			return -1;
+	}
 
 	return 0;
 }
