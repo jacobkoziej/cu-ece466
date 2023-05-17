@@ -7,10 +7,18 @@
 #include <jkcc/target/x86/util.h>
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <jkcc/ast.h>
 #include <jkcc/constant.h>
 
+
+int target_x86_util_ebp_offset(uintptr_t reg, uintptr_t args)
+{
+	if (reg < args) return (reg * 4) + 8;
+
+	return -((reg - args) * 4) - 4;
+}
 
 size_t target_x86_util_sizeof(ast_t *type)
 {

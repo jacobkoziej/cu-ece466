@@ -9,10 +9,12 @@
 
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <jkcc/ast.h>
 
 
+int target_x86_util_ebp_offset(uintptr_t reg, uintptr_t args);
 size_t target_x86_util_sizeof(ast_t *type);
 
 
