@@ -14,6 +14,9 @@
 #include <jkcc/ir.h>
 
 
+#define TARGET_X86_QUAD(stream, quad, regs, args) target_x86_quad[*quad](stream, quad, regs, args)
+
+
 extern int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	FILE      *stream,
 	ir_quad_t *quad,
