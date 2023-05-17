@@ -6,6 +6,7 @@
 
 #include <jkcc/target/x86/quad.h>
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -17,7 +18,7 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	ir_quad_t *quad,
 	uintptr_t  regs,
 	uintptr_t  args) = {
-	[IR_QUAD_ALLOCA] = NULL,
+	[IR_QUAD_ALLOCA] = target_x86_quad_alloca,
 	[IR_QUAD_ARG]    = NULL,
 	[IR_QUAD_BINOP]  = NULL,
 	[IR_QUAD_BR]     = NULL,
@@ -28,3 +29,21 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	[IR_QUAD_RET]    = NULL,
 	[IR_QUAD_STORE]  = NULL,
 };
+
+
+int target_x86_quad_alloca(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args)
+{
+	(void) regs;
+	(void) args;
+
+	// NOTE: we prealloc all our stack space
+
+	fprintf(stream, "\t#");
+	IR_QUAD_FPRINT(stream, quad);
+
+	return 0;
+}

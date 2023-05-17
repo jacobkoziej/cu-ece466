@@ -24,4 +24,11 @@ extern int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	uintptr_t  args);
 
 
+int target_x86_quad_alloca(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args);
+
+
 #endif  /* JKCC_TARGET_X86_QUAD_H */
