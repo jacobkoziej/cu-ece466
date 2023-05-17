@@ -8,4 +8,17 @@
 #define JKCC_TARGET_X86_QUAD_H
 
 
+#include <stdint.h>
+#include <stdio.h>
+
+#include <jkcc/ir.h>
+
+
+extern int (*const target_x86_quad[IR_QUAD_TOTAL])(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args);
+
+
 #endif  /* JKCC_TARGET_X86_QUAD_H */
