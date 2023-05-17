@@ -37,6 +37,10 @@
 
 #define LABEL(label) fprintf(stream, "%s:\n", label)
 
+#define LEA_BB(bb) fprintf(stream, "\tlea\t.L%lu, %%edx\n", bb)
+
+#define LEA_IDENTIFIER(identifier) fprintf(stream, "\tlea\t%s, %%edx\n", identifier)
+
 #define LEAVE fprintf(stream, "\tleave\n")
 
 #define LOCAL_LABEL(bb) fprintf(stream, ".L%lu:\n", bb)
@@ -54,6 +58,8 @@
 #define SET_EDX(offset) fprintf(stream, "\tmovl\t-%d(%%ebp), %%edx\n", offset)
 
 #define STORE_RESULT(offset) fprintf(stream, "\tmovl\t%%edx, -%d(%%ebp)\n", offset)
+
+#define STORE_EDX_DEREF_EAX fprintf(stream, "\tmovl\t%%edx, (%%eax)\n")
 
 #define SUBL fprintf(stream, "\tsubl\t %%eax, %%edx\n")
 

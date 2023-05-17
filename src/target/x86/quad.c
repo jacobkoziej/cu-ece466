@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <jkcc/ast.h>
 #include <jkcc/ir.h>
 
 
@@ -26,7 +27,7 @@ int (*const target_x86_quad[IR_QUAD_TOTAL])(
 	[IR_QUAD_BR]     = target_x86_quad_br,
 	[IR_QUAD_CALL]   = NULL,
 	[IR_QUAD_CMP]    = target_x86_quad_cmp,
-	[IR_QUAD_LOAD]   = NULL,
+	[IR_QUAD_LOAD]   = target_x86_quad_load,
 	[IR_QUAD_MOV]    = target_x86_quad_mov,
 	[IR_QUAD_RET]    = target_x86_quad_ret,
 	[IR_QUAD_STORE]  = target_x86_quad_store,
@@ -186,6 +187,56 @@ int target_x86_quad_cmp(
 	return 0;
 }
 
+int target_x86_quad_load(
+	FILE      *stream,
+	ir_quad_t *quad,
+	uintptr_t  regs,
+	uintptr_t  args)
+{
+	(void) regs;
+
+	fprintf(stream, "\t#");
+	IR_QUAD_FPRINT(stream, quad);
+
+	ir_quad_load_t *load = OFFSETOF_IR_QUAD(quad, ir_quad_load_t);
+
+	switch (load->src.type) {
+		case IR_LOCATION_REG:
+			SET_EDX(target_x86_util_ebp_offset(load->src.reg, args));
+			break;
+
+		case IR_LOCATION_EXTERN_DECLARATION: {
+			ast_t *ast_identifier = ast_declaration_get_identifier(load->src.extern_declaration);
+			const string_t *identifier = ast_identifier_get_string(ast_identifier);
+
+			LEA_IDENTIFIER(identifier->head);
+			if (load->type != IR_REG_TYPE_LEA) DEREF_EDX;
+			STORE_RESULT(target_x86_util_ebp_offset(load->dst, args));
+			return 0;
+		}
+
+		case IR_LOCATION_STATIC_DECLARATION: {
+			ir_static_declaration_t *static_declaration = load->src.static_declaration;
+
+			// no worky :(
+			LEA_BB(static_declaration->bb);
+			if (load->type != IR_REG_TYPE_LEA) DEREF_EDX;
+			STORE_RESULT(target_x86_util_ebp_offset(load->dst, args));
+			return 0;
+		}
+
+		case IR_LOCATION_IDENTIFIER:
+			LEA_IDENTIFIER(load->src.identifier->head);
+			return 0;
+
+		default:
+			return -1;
+	}
+
+	STORE_RESULT(target_x86_util_ebp_offset(load->dst, args));
+	return 0;
+}
+
 int target_x86_quad_mov(
 	FILE      *stream,
 	ir_quad_t *quad,
@@ -240,8 +291,14 @@ int target_x86_quad_store(
 
 	ir_quad_store_t *store = OFFSETOF_IR_QUAD(quad, ir_quad_store_t);
 
-	SET_EDX(target_x86_util_ebp_offset(store->src, args));
-	STORE_RESULT(target_x86_util_ebp_offset(store->dst, args));
+	if (store->type != IR_REG_TYPE_LEA) {
+		SET_EDX(target_x86_util_ebp_offset(store->src, args));
+		STORE_RESULT(target_x86_util_ebp_offset(store->dst, args));
+	} else {
+		SET_EDX(target_x86_util_ebp_offset(store->src, args));
+		SET_EAX(target_x86_util_ebp_offset(store->dst, args));
+		STORE_EDX_DEREF_EAX;
+	}
 
 	return 0;
 }
